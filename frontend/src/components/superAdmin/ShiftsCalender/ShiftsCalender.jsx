@@ -3,6 +3,10 @@ import { Calendar, momentLocalizer, Views } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { Modal } from "antd";
+import CustomeEvents from "./components/customEvents/CustomeEvents";
+import FullCalendar from "@fullcalendar/react";
+import interactionPlugin from "@fullcalendar/interaction"; // needed for dayClick
+import dayGridPlugin from "@fullcalendar/daygrid";
 import axios from "axios";
 moment.locale("ko", {
   week: {
@@ -90,9 +94,17 @@ const ShiftsCalender = () => {
       </div>
     );
   };
+  console.log(events);
   return (
     <div className="m-sm-4 m-2">
-      <Calendar
+      <FullCalendar
+        defaultView="dayGridMonth"
+        plugins={[dayGridPlugin, interactionPlugin]}
+        dateClick={showModal}
+        // eventClick={handelModal}
+        events={events}
+      />
+      {/* <Calendar
         selectable
         localizer={localizer}
         onSelectSlot={showModal}
@@ -101,13 +113,12 @@ const ShiftsCalender = () => {
         endAccessor="end"
         defaultView={Views.MONTH}
         views={{ month: true, week: true }}
-        style={{ height: 500 }}
-        // components={
-        //  {
-        //  event: cutomEvent,
-        //  }
-        //  }
-      />{" "}
+        style={{ minHeight: '300vh' }}
+        components={{
+          event: CustomeEvents,
+        }}
+      /> */}
+
       <Modal
         title="Create Shift"
         visible={visible}

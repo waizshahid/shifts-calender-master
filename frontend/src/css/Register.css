@@ -1,0 +1,8 @@
+.outer {
+  height: 100vh;
+  background-color: white;
+}
+
+.register-form {
+  width: 450px;
+}

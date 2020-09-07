@@ -1,0 +1,7 @@
+@import "~antd/dist/antd.css";
+
+@media (max-width: 767px) {
+	.hide-collape-icon {
+		display: none;
+	}
+}

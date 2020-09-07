@@ -1,0 +1,14 @@
+.login-form {
+  width: 400px;
+}
+.login-form-forgot {
+  float: right;
+}
+.login-form-button {
+  width: 100%;
+}
+
+.outer {
+  height: 100vh;
+  background-color: white;
+}

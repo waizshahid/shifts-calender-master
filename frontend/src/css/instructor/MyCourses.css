@@ -1,0 +1,7 @@
+.site-card-wrapper {
+  background: #ececec;
+  padding: 30px;
+}
+[data-theme="dark"] .site-card-wrapper {
+  background: #303030;
+}

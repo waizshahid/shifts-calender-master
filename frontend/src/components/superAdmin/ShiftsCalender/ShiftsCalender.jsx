@@ -25,7 +25,97 @@ const ShiftsCalender = () => {
   const [start, setStart] = useState("");
   const [end, setEnd] = useState("");
   const [users, setUsers] = useState([]);
-
+  const custEvents = [
+    {
+      end: "2020-09-10",
+      start: "2020-09-10",
+      title: "Something",
+    },
+    {
+      end: "2020-09-30",
+      start: "2020-09-10",
+      title: "Something",
+      color: "#1db847", // override!
+    },
+    {
+      end: "2020-09-30",
+      start: "2020-09-10",
+      title: "Something",
+      color: "#b8b31d", // override!
+    },
+    {
+      end: "2020-09-10",
+      start: "2020-09-10",
+      title: "Something",
+      color: "#b81d1d", // override!
+    },
+    {
+      end: "2020-09-30",
+      start: "2020-09-10",
+      title: "Something",
+      color: "#b81db3", // override!
+    },
+    {
+      end: "2020-09-10",
+      start: "2020-09-30",
+      title: "Something",
+    },
+    {
+      end: "2020-09-20",
+      start: "2020-09-10",
+      title: "Something",
+    },
+    {
+      end: "2020-09-20",
+      start: "2020-09-10",
+      title: "Something",
+      color: "#1db847", // override!
+    },
+    {
+      end: "2020-09-10",
+      start: "2020-09-10",
+      title: "Something",
+      color: "#b81d1d", // override!
+    },
+    {
+      end: "2020-09-10",
+      start: "2020-09-10",
+      title: "Something",
+    },
+    {
+      end: "2020-09-10",
+      start: "2020-09-10",
+      title: "Something",
+    },
+    {
+      end: "2020-09-10",
+      start: "2020-09-10",
+      title: "Something",
+      color: "#b8b31d", // override!
+    },
+    {
+      end: "2020-09-10",
+      start: "2020-09-10",
+      title: "Something",
+    },
+    {
+      end: "2020-09-10",
+      start: "2020-09-10",
+      title: "Something",
+      color: "#b81d1d", // override!
+    },
+    {
+      end: "2020-09-10",
+      start: "2020-09-10",
+      title: "Something",
+      color: "#b81db3", // override!
+    },
+    {
+      end: "2020-09-10",
+      start: "2020-09-10",
+      title: "Something",
+    },
+  ];
   const showModal = () => {
     setVisible(true);
   };
@@ -102,7 +192,7 @@ const ShiftsCalender = () => {
         plugins={[dayGridPlugin, interactionPlugin]}
         dateClick={showModal}
         // eventClick={handelModal}
-        events={events}
+        events={custEvents}
       />
       {/* <Calendar
         selectable

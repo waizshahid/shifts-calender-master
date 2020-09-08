@@ -201,11 +201,7 @@ const ShiftsCalender = () => {
         plugins={[dayGridPlugin, interactionPlugin]}
         dateClick={showModal}
         // eventClick={handelModal}
-<<<<<<< HEAD
         events={events}
-=======
-        events={custEvents}
->>>>>>> 4478af4ae280cec70b8f1bf7c7987f8b8c3e86da
       />
       {/* <Calendar
         selectable

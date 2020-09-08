@@ -7,6 +7,7 @@ const { check, validationResult } = require("express-validator");
 const Shift = require("../models/Shift");
 const createShift = require("../models/createShift");
 const User = require("../models/User");
+var nodemailer = require("nodemailer");
 
 //@route  GET api/shift/getshift
 //@desc   Get all shift
@@ -30,9 +31,10 @@ router.post("/createShift", (req, res) => {
   console.log(req.body);
   if (req.body === null) res.status(400).send("Bad Request");
   let newShift = new createShift({
-    title: req.body.title,
     start: new Date(req.body.start),
     end: new Date(req.body.end),
+    title: req.body.title,
+    color: req.body.color,
   });
 
   newShift
@@ -57,40 +59,94 @@ router.get("/currentUserShifts", (req, res) => {
 
 router.get("/currentUserOffShifts", (req, res) => {
   if (req.body === null) res.status(400).send("Bad Request");
-  createShift.createIndex({ title: "text" });
-  createShift.find({ $text: { $search: "off" } }).then((shfts) => {
-    res.send(shfts);
-  });
+  createShift
+    .find({
+      $or: [
+        { title: { $regex: req.body.username + " OFF" } },
+        { title: { $regex: req.body.username + " off" } },
+        { title: { $regex: req.body.username + " Off" } },
+        { title: { $regex: req.body.username + " OFf" } },
+        { title: { $regex: req.body.username + " oFF" } },
+        { title: { $regex: req.body.username + " OfF" } },
+      ],
+    })
+    .then((shfts) => {
+      res.send(shfts);
+    });
 });
 
 router.put("/swapShifts", (req, res) => {
   if (req.body === null) res.status(400).send("Bad Request");
-  var user1 = "";
-  var user2 = "";
-  User.find({ username: req.body.user1 }).then((usr) => {
-    user1 = usr;
-    User.find({ username: req.body.user1 }).then((usr) => {
-      user2 = usr;
-    });
-    createShift.updateOne(
-      { title: req.body.title1, start },
-      {
-        $set: { title: req.body.title2 },
-        $currentDate: { lastModified: true },
-      }
-    );
-    createShift.updateOne(
-      { title: req.body.title2 },
-      {
-        $set: { title: req.body.title1 },
-        $currentDate: { lastModified: true },
-      }
-    );
-    createShift.find().then((shfts) => {
-      res.send(shfts);
-    });
-  });
+  try {
+    createShift
+      .replaceOne(
+        { _id: req.body.id1 },
+        { title: req.body.title1, start: req.body.start1, end: req.body.end1 }
+      )
+      .then(() => {
+        createShift
+          .replaceOne(
+            { _id: req.body.id2 },
+            {
+              title: req.body.title2,
+              start: req.body.start2,
+              end: req.body.end2,
+            }
+          )
+          .then(() => {
+            User.find({
+              $or: [
+                { username: { $regex: req.body.title1.split(" ")[0] } },
+                { username: { $regex: req.body.title2.split(" ")[0] } },
+              ],
+            }).then((user) => {
+              sendMail(
+                user[0].email,
+                user[1].email,
+                req.body.title1.toString(),
+                req.body.title2.toString()
+              );
+              res.send("Shifts are swapped");
+            });
+          });
+      });
+  } catch (err) {
+    console.log(err);
+  }
 });
+async function sendMail(user1, user2, title_1, title_2) {
+  var transport = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 587,
+    secure: false,
+    requireTLS: true,
+    auth: {
+      // enter your account details to send email from
+      user: "",
+      pass: "",
+    },
+  });
+
+  var mailOptions = {
+    from: user1,
+    to: user2,
+    subject: "Shift Transfer Log",
+    html:
+      "<p> This mail sent as shift transfer log. <br/> Shift <b>" +
+      title_1 +
+      "</b> to this <b>" +
+      title_2 +
+      "</b> </p>",
+  };
+
+  transport.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      return console.log(error);
+    }
+    console.log("Message sent: %s", info.messageId);
+  });
+}
+
 //@route  PUT api/shift/updateshift
 //@desc   Update shift by id
 //@access Public

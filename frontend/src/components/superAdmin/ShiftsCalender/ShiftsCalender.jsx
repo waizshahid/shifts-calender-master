@@ -3,6 +3,10 @@ import { Calendar, momentLocalizer, Views } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { Modal } from "antd";
+import CustomeEvents from "./components/customEvents/CustomeEvents";
+import FullCalendar from "@fullcalendar/react";
+import interactionPlugin from "@fullcalendar/interaction"; // needed for dayClick
+import dayGridPlugin from "@fullcalendar/daygrid";
 import axios from "axios";
 moment.locale("ko", {
   week: {
@@ -21,7 +25,97 @@ const ShiftsCalender = () => {
   const [start, setStart] = useState("");
   const [end, setEnd] = useState("");
   const [users, setUsers] = useState([]);
-
+  const custEvents = [
+    {
+      end: "2020-09-10",
+      start: "2020-09-10",
+      title: "Something",
+    },
+    {
+      end: "2020-09-30",
+      start: "2020-09-10",
+      title: "Something",
+      color: "#1db847", // override!
+    },
+    {
+      end: "2020-09-30",
+      start: "2020-09-10",
+      title: "Something",
+      color: "#b8b31d", // override!
+    },
+    {
+      end: "2020-09-10",
+      start: "2020-09-10",
+      title: "Something",
+      color: "#b81d1d", // override!
+    },
+    {
+      end: "2020-09-30",
+      start: "2020-09-10",
+      title: "Something",
+      color: "#b81db3", // override!
+    },
+    {
+      end: "2020-09-10",
+      start: "2020-09-30",
+      title: "Something",
+    },
+    {
+      end: "2020-09-20",
+      start: "2020-09-10",
+      title: "Something",
+    },
+    {
+      end: "2020-09-20",
+      start: "2020-09-10",
+      title: "Something",
+      color: "#1db847", // override!
+    },
+    {
+      end: "2020-09-10",
+      start: "2020-09-10",
+      title: "Something",
+      color: "#b81d1d", // override!
+    },
+    {
+      end: "2020-09-10",
+      start: "2020-09-10",
+      title: "Something",
+    },
+    {
+      end: "2020-09-10",
+      start: "2020-09-10",
+      title: "Something",
+    },
+    {
+      end: "2020-09-10",
+      start: "2020-09-10",
+      title: "Something",
+      color: "#b8b31d", // override!
+    },
+    {
+      end: "2020-09-10",
+      start: "2020-09-10",
+      title: "Something",
+    },
+    {
+      end: "2020-09-10",
+      start: "2020-09-10",
+      title: "Something",
+      color: "#b81d1d", // override!
+    },
+    {
+      end: "2020-09-10",
+      start: "2020-09-10",
+      title: "Something",
+      color: "#b81db3", // override!
+    },
+    {
+      end: "2020-09-10",
+      start: "2020-09-10",
+      title: "Something",
+    },
+  ];
   const showModal = () => {
     setVisible(true);
   };
@@ -42,6 +136,13 @@ const ShiftsCalender = () => {
   const handleOk = (e) => {
     setVisible(false);
     const title = assign + " " + shiftType;
+    let color = "";
+    for (let i = 0; i < data.length; i++) {
+      if (shiftType === data[i].shiftname) {
+        color = data[i].color;
+        break;
+      }
+    }
     const options = {
       url: "http://localhost:4000/api/shift/createShift",
       method: "POST",
@@ -53,6 +154,7 @@ const ShiftsCalender = () => {
         title: title.toString(),
         start: start,
         end: end,
+        color: color,
       },
     };
     axios(options).then((res) => {
@@ -64,6 +166,7 @@ const ShiftsCalender = () => {
   };
   useEffect(() => {
     axios.get("http://localhost:4000/api/shift/currentShifts").then((res) => {
+      console.log(res.data);
       setEvents(res.data);
     });
     const options = {
@@ -90,9 +193,21 @@ const ShiftsCalender = () => {
       </div>
     );
   };
+  console.log(events);
   return (
     <div className="m-sm-4 m-2">
-      <Calendar
+      <FullCalendar
+        defaultView="dayGridMonth"
+        plugins={[dayGridPlugin, interactionPlugin]}
+        dateClick={showModal}
+        // eventClick={handelModal}
+<<<<<<< HEAD
+        events={events}
+=======
+        events={custEvents}
+>>>>>>> 4478af4ae280cec70b8f1bf7c7987f8b8c3e86da
+      />
+      {/* <Calendar
         selectable
         localizer={localizer}
         onSelectSlot={showModal}
@@ -101,13 +216,12 @@ const ShiftsCalender = () => {
         endAccessor="end"
         defaultView={Views.MONTH}
         views={{ month: true, week: true }}
-        style={{ height: 500 }}
-        // components={
-        //  {
-        //  event: cutomEvent,
-        //  }
-        //  }
-      />{" "}
+        style={{ minHeight: '300vh' }}
+        components={{
+          event: CustomeEvents,
+        }}
+      /> */}
+
       <Modal
         title="Create Shift"
         visible={visible}

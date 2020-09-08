@@ -36,3 +36,14 @@
     transform: rotate(360deg);
   }
 }
+
+
+/* calendar */
+.fc-daygrid-event-dot {
+  border: calc(var(--fc-daygrid-event-dot-width, 8px) / 2) solid #ffffff !important;  
+}
+
+.fc-direction-ltr .fc-daygrid-event.fc-event-end {
+  background-color: #3788d8;
+  color: #fff;
+}

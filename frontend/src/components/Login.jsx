@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Form, Input, Button, Radio } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
@@ -13,7 +13,6 @@ const Login = (props) => {
 
 	const onFinish = (values) => {
 		const { email, pass } = values;
-		console.log(values);
 		setError(" ");
 
 		//if person is a SuperAdmin i-e- SuperAdmin radio is selected
@@ -40,12 +39,13 @@ const Login = (props) => {
 
 				if (res.data.type === "user") {
 					localStorage.setItem("usertoken", res.data.token);
-					props.history.push("/user");
+					props.history.push("/user/shifts-calender");
 				}
 			})
 			.catch((err) => {
-				setError(err.response.data.errors[0]);
+				setError(err);
 			});
+
 		// } else {
 		// 	if (person === "1") {
 		// 		//when admin is logged in
@@ -104,6 +104,7 @@ const Login = (props) => {
 					]}
 				>
 					<Input
+						id="email"
 						prefix={<UserOutlined className="site-form-item-icon" style={{ color: "rgba(0,0,0,.25)" }} />}
 						placeholder="Email"
 					/>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, Switch, Route } from "react-router-dom";
 import Sidebar from "react-sidebar";
 import Logout from "../superAdmin/Logout/Logout";
+import ShiftsCalendar from "../user/shiftsCalendar";
 
 import { Layout, Menu, Avatar } from "antd";
 import {
@@ -35,7 +36,7 @@ const Side = ({ user }) => {
                   <Link to="/superadmin/profile">Profile</Link>
                 </Menu.Item>
                 <Menu.Item key="2" icon={<CalendarOutlined />}>
-                  <Link to="/superadmin/shifts-calender">Shifts Calender</Link>
+                  <Link to="/user/shifts-calender">Shifts Calender</Link>
                 </Menu.Item>
                 <Menu.Item key="10" icon={<LogoutOutlined />}>
                   <Link to="/superadmin/logout">Logout</Link>
@@ -77,6 +78,11 @@ const Side = ({ user }) => {
         </nav>
 
         <Switch>
+          <Route
+            exact
+            path="/user/shifts-calender"
+            component={ShiftsCalendar}
+          />
           <Route exact path="/superadmin/logout" component={Logout} />
         </Switch>
       </Sidebar>

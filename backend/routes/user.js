@@ -36,6 +36,13 @@ router.get("/getusers", (req, res) => {
 		res.send(allUsers);
 	});
 });
+router.get("/getuser", (req, res) => {
+	const { email, pass } = req.body;
+	console.log(email);
+	User.find({ email: email }).then((user) => {
+		res.send(user);
+	});
+});
 
 //@route  DELETE api/user/deleteuser
 //@desc   Delete user by id

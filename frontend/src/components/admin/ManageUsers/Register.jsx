@@ -1,7 +1,7 @@
 import React from "react";
 import "antd/dist/antd.css";
 import "../../../css/Register.css";
-import { Form, Input, Button, Select, Row, Col } from "antd";
+import { Form, Input, Button, Select, Radio, Row, Col } from "antd";
 import { Link } from "react-router-dom";
 import axios from "axios";
 
@@ -12,34 +12,39 @@ const Register = ({ setVisible, setEditVisible, isEdit, id }) => {
 
 	const [form] = Form.useForm();
 	const onFinish = (values) => {
-		const { email, username, pass } = values;
+		const { email, username, partener, pass, person } = values;
+		console.log("person = ", person);
 		setError("");
 		//Student registered
 		if (isEdit) {
 			axios
-				.put("http://localhost:4000/api/admin/updateadmin", {
+				.put("http://localhost:4000/api/user/updateuser", {
 					id,
-					newData: { email, username, pass },
+					newData: { email, username, partener, pass, person },
 				})
 				.then((res) => {
 					setEditVisible(false);
 					console.log(res.data);
 				})
 				.catch((err) => {
+					console.log(err.response);
 					setError(err.response.data);
 				});
 		} else {
 			axios
-				.post("http://localhost:4000/api/adminauth/register", {
+				.post("http://localhost:4000/api/userauth/register", {
 					email,
 					username,
+					partener,
 					pass,
+					person,
 				})
 				.then((res) => {
 					setVisible(false);
 					console.log(res.data);
 				})
 				.catch((err) => {
+					console.log(err.response);
 					setError(err.response.data);
 				});
 		}
@@ -54,7 +59,7 @@ const Register = ({ setVisible, setEditVisible, isEdit, id }) => {
 				onFinish={onFinish}
 				className="register-form shadow-lg p-4 bg-white border border-dark rounded"
 			>
-				<h5 className="d-flex justify-content-center">Create New Admin</h5>
+				<h5 className="d-flex justify-content-center">Create New User</h5>
 				<br />
 				<Form.Item
 					name="username"
@@ -82,6 +87,22 @@ const Register = ({ setVisible, setEditVisible, isEdit, id }) => {
 					]}
 				>
 					<Input placeholder="E-mail" />
+				</Form.Item>
+
+				<Form.Item
+					name="partener"
+					hasFeedback
+					rules={[
+						{
+							required: true,
+							message: "Please select your partener!",
+						},
+					]}
+				>
+					<Select placeholder="Partener">
+						<Option value="yes">Yes</Option>
+						<Option value="no">No</Option>
+					</Select>
 				</Form.Item>
 
 				<Row>
@@ -127,6 +148,21 @@ const Register = ({ setVisible, setEditVisible, isEdit, id }) => {
 					</Col>
 				</Row>
 
+				<Form.Item
+					name="person"
+					rules={[
+						{
+							required: true,
+							message: "Please select one!",
+						},
+					]}
+				>
+					<Radio.Group>
+						<Radio value="admin">Admin</Radio>
+						<Radio value="user">User</Radio>
+					</Radio.Group>
+				</Form.Item>
+
 				<label>Use 6 or more characters with a mix of letters, numbers & symbols</label>
 				<label className="text-danger">{error.email}</label>
 				<Row>
@@ -137,7 +173,7 @@ const Register = ({ setVisible, setEditVisible, isEdit, id }) => {
 					<Col span={11}>
 						<Form.Item>
 							<Button className="w-100" type="primary" htmlType="submit">
-								{isEdit ? <p>Register</p> : <p>Update</p>}
+								{isEdit ? <p>Update</p> : <p>Register</p>}
 							</Button>
 						</Form.Item>
 					</Col>

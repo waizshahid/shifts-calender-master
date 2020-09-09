@@ -1,0 +1,77 @@
+.custEvent {
+  .button {
+    background-color: #232323 !important;
+    color: #fff !important;
+    width: 100% !important;
+    text-align: center !important;
+    height: 35px !important;
+    border-radius: 0 !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    text-transform: uppercase !important;
+    font-size: 12px !important;
+    letter-spacing: 0.02em !important;
+    position: relative;
+    border: none;
+    // padding: 10px 15px;
+    cursor: pointer;
+    text-decoration: none;
+  }
+
+  .button::before {
+    content: "";
+    display: block;
+    width: 0%;
+    height: 100%;
+    background-color: #fb383c;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 10;
+    transition: 0.5s;
+  }
+
+  .button:hover::before {
+    width: 100%;
+    transition: 0.5s;
+  }
+
+  .button span {
+    z-index: 15;
+  }
+
+  small {
+    color: #fff;
+    text-transform: none;
+    display: block;
+    // padding: 36px 0 10px;
+  }
+
+  @media only screen and (max-width: 1024px) {
+    small {
+      font-size: 10px;
+    }
+
+    .button {
+      font-size: 10px !important ;
+    }
+  }
+
+  @media only screen and (max-width: 575px) {
+    small {
+      font-size: 7px;
+      word-break: break-word;
+      white-space: break-spaces;
+      // padding: 18px 0 2px;
+    }
+
+    .button {
+      font-size: 8px !important;
+      // padding: 0;
+      white-space: break-spaces;
+      text-align: center !important;
+      height: 30px !important;
+    }
+  }
+}

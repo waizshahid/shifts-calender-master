@@ -13,6 +13,7 @@ const Register = ({ setVisible, setEditVisible, isEdit, id }) => {
 	const [form] = Form.useForm();
 	const onFinish = (values) => {
 		const { email, username, partener, pass, person } = values;
+		console.log("person = ", person);
 		setError("");
 		//Student registered
 		if (isEdit) {

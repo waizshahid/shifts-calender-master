@@ -5,6 +5,7 @@ const gravatar = require("gravatar");
 const userauth = require("../middleware/userauth");
 const { check, validationResult } = require("express-validator");
 const User = require("../models/User");
+const Admin = require("../models/Admin");
 
 //@route  GET api/user/test
 //@desc   Test User Route
@@ -40,10 +41,17 @@ router.get("/getusers", (req, res) => {
 //@desc   Delete user by id
 //@access Public
 router.delete("/deleteuser", (req, res) => {
-	User.findOneAndDelete({ _id: req.query.id }).then((resp) => {
-		console.log(resp);
-		res.send(resp);
-	});
+	User.findOneAndDelete({ _id: req.query.id })
+		.then((resp) => {
+			console.log(resp);
+			res.send(resp);
+		})
+		.catch((err) => {
+			Admin.findOneAndDelete({ _id: req.query.id }).then((resp) => {
+				console.log(resp);
+				res.send(resp);
+			});
+		});
 });
 
 //@route  PUT api/user/updateuser
@@ -62,40 +70,94 @@ router.put(
 	],
 	async (req, res) => {
 		try {
-			console.log("in try !");
-			const avatar = gravatar.url(req.body.newData.email, {
-				s: "200", //mm
-				r: "pg", //Rating
-				d: "mm", //Default
-			});
+			//check if Admin exists
+			if (req.body.newData.person === "admin") {
+				Admin.findOne({ email: req.body.newData.email }).then((person) => {
+					if (person) {
+						return res.status(400).json({ email: "Email already exists!" });
+					}
+				});
+				console.log("in try !");
+				const avatar = gravatar.url(req.body.newData.email, {
+					s: "200", //mm
+					r: "pg", //Rating
+					d: "mm", //Default
+				});
 
-			let date_ob = new Date();
-			// current date
-			// adjust 0 before single digit date
-			let date = ("0" + date_ob.getDate()).slice(-2);
-			// current month
-			let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
-			// current year
-			let year = date_ob.getFullYear();
+				let date_ob = new Date();
+				// current date
+				// adjust 0 before single digit date
+				let date = ("0" + date_ob.getDate()).slice(-2);
+				// current month
+				let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
+				// current year
+				let year = date_ob.getFullYear();
 
-			let newPerson = {
-				username: req.body.newData.username,
-				email: req.body.newData.email,
-				pass: req.body.newData.pass,
-				avatar,
-				regDate: year + "-" + month + "-" + date,
-			};
+				let newPerson = {
+					username: req.body.newData.username,
+					email: req.body.newData.email,
+					partener: req.body.newData.partener,
+					type: req.body.newData.person,
+					pass: req.body.newData.pass,
+					avatar,
+					regDate: year + "-" + month + "-" + date,
+				};
 
-			bcrypt.genSalt(10, (err, salt) => {
-				bcrypt.hash(newPerson.pass, salt, (err, hash) => {
-					if (err) throw err;
-					newPerson.pass = hash;
+				bcrypt.genSalt(10, (err, salt) => {
+					bcrypt.hash(newPerson.pass, salt, (err, hash) => {
+						if (err) throw err;
+						newPerson.pass = hash;
 
-					User.update({ _id: req.body.id }, { $set: newPerson }).then((resp) => {
-						console.log(resp);
+						Admin.update({ _id: req.body.id }, { $set: newPerson }).then((resp) => {
+							console.log(resp);
+						});
 					});
 				});
-			});
+			}
+			//check if User exists
+			if (req.body.newData.person === "user") {
+				User.findOne({ email: req.body.newData.email }).then((person) => {
+					if (person) {
+						return res.status(400).json({ email: "Email already exists!" });
+					}
+				});
+				console.log("in try !");
+				const avatar = gravatar.url(req.body.newData.email, {
+					s: "200", //mm
+					r: "pg", //Rating
+					d: "mm", //Default
+				});
+
+				let date_ob = new Date();
+				// current date
+				// adjust 0 before single digit date
+				let date = ("0" + date_ob.getDate()).slice(-2);
+				// current month
+				let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
+				// current year
+				let year = date_ob.getFullYear();
+
+				let newPerson = {
+					username: req.body.newData.username,
+					email: req.body.newData.email,
+					partener: req.body.newData.partener,
+					type: req.body.newData.person,
+					pass: req.body.newData.pass,
+					avatar,
+					regDate: year + "-" + month + "-" + date,
+				};
+
+				bcrypt.genSalt(10, (err, salt) => {
+					bcrypt.hash(newPerson.pass, salt, (err, hash) => {
+						if (err) throw err;
+						newPerson.pass = hash;
+
+						User.update({ _id: req.body.id }, { $set: newPerson }).then((resp) => {
+							console.log(resp);
+						});
+					});
+				});
+			}
 		} catch (err) {
 			console.error(err.message);
 			res.status(500).send("Server error");

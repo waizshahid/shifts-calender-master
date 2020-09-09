@@ -13,6 +13,10 @@ const AdminSchema = new mongoose.Schema({
 		type: String,
 		required: true,
 	},
+	type: {
+		type: String,
+		required: true,
+	},
 	pass: {
 		type: String,
 		required: true,

@@ -5,7 +5,6 @@ import Sidebar from "react-sidebar";
 import Profile from "./Profile/Profile";
 import ShiftsCalender from "./ShiftsCalender/ShiftsCalender";
 import ManageShiftTypes from "./ManageShiftTypes/ManageShiftTypes";
-import ManageAdmins from "./ManageAdmins/ManageAdmins";
 import ManageUsers from "./ManageUsers/ManageUsers";
 import Logout from "./Logout/Logout";
 
@@ -50,10 +49,7 @@ const SuperAdmin = ({ superAdmin }) => {
 								<Menu.Item key="3" icon={<FormOutlined />}>
 									<Link to="/superadmin/manage-shift-types">Manage Shift Types</Link>
 								</Menu.Item>
-								<Menu.Item key="4" icon={<UserAddOutlined />}>
-									<Link to="/superadmin/manage-admins">Manage Admins</Link>
-								</Menu.Item>
-								<Menu.Item key="5" icon={<UsergroupAddOutlined />}>
+								<Menu.Item key="4" icon={<UsergroupAddOutlined />}>
 									<Link to="/superadmin/manage-users">Manage Users</Link>
 								</Menu.Item>
 								<Menu.Item key="10" icon={<LogoutOutlined />}>
@@ -91,7 +87,6 @@ const SuperAdmin = ({ superAdmin }) => {
 					<Route exact path="/superadmin/profile" component={Profile} />
 					<Route exact path="/superadmin/shifts-calender" component={ShiftsCalender} />
 					<Route exact path="/superadmin/manage-shift-types" component={ManageShiftTypes} />
-					<Route exact path="/superadmin/manage-admins" component={ManageAdmins} />
 					<Route exact path="/superadmin/manage-users" component={ManageUsers} />
 					<Route exact path="/superadmin/logout" component={Logout} />
 				</Switch>

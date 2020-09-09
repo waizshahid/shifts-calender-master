@@ -25,16 +25,17 @@ const Login = (props) => {
 			})
 			.then((res) => {
 				window.localStorage.clear();
-				console.log(res.data);
+				console.log("hhh", res.data);
 				// const stdid = jwt_decode(res.data.token).student.StdID;
 				if (res.data.type === "superadmin") {
+					console.log("ssss");
 					localStorage.setItem("superadmintoken", res.data.token);
 					props.history.push("/superadmin/shifts-calender");
 				}
 
 				if (res.data.type === "admin") {
 					localStorage.setItem("admintoken", res.data.token);
-					props.history.push("/admin");
+					props.history.push("/admin/shifts-calender");
 				}
 
 				if (res.data.type === "user") {

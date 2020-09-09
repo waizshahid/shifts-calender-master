@@ -10,97 +10,106 @@ const User = require("../models/User");
 //@desc   Test User Route
 //@access Private
 router.get("/test", userauth, (req, res) => {
-	res.send("User works!");
+  res.send("User works!");
 });
 
 //@route  GET api/user
 //@desc   Test Loggen In User Data
 //@access Private
 router.get("/", userauth, async (req, res) => {
-	try {
-		User.findById(req.user.id).then((user) => {
-			res.json(user);
-		});
-	} catch (err) {
-		console.log(err.message);
-		res.status(500).send("Server Error");
-	}
+  try {
+    User.findById(req.user.id).then((user) => {
+      res.json(user);
+    });
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).send("Server Error");
+  }
 });
 
 //@route  GET api/user/getusers
 //@desc   Get all users
 //@access Public
 router.get("/getusers", (req, res) => {
-	User.find().then((allUsers) => {
-		res.send(allUsers);
-	});
+  User.find().then((allUsers) => {
+    res.send(allUsers);
+  });
+});
+router.get("/getuser", (req, res) => {
+  const { email, pass } = req.body;
+  console.log(email);
+  User.find({ email: email }).then((user) => {
+    res.send(user);
+  });
 });
 
 //@route  DELETE api/user/deleteuser
 //@desc   Delete user by id
 //@access Public
 router.delete("/deleteuser", (req, res) => {
-	User.findOneAndDelete({ _id: req.query.id }).then((resp) => {
-		console.log(resp);
-		res.send(resp);
-	});
+  User.findOneAndDelete({ _id: req.query.id }).then((resp) => {
+    console.log(resp);
+    res.send(resp);
+  });
 });
 
 //@route  PUT api/user/updateuser
 //@desc   Update user by id
 //@access Public
 router.put(
-	"/updateuser",
-	[
-		check("username", "Please enter a valid name.").not().isEmpty(),
-		// username must be an email
-		check("email", "Please enter a valid email.").isEmail(),
-		// password must be at least 5 chars long
-		check("pass", "Enter password of atleast 6 characters.").isLength({
-			min: 6,
-		}),
-	],
-	async (req, res) => {
-		try {
-			console.log("in try !");
-			const avatar = gravatar.url(req.body.newData.email, {
-				s: "200", //mm
-				r: "pg", //Rating
-				d: "mm", //Default
-			});
+  "/updateuser",
+  [
+    check("username", "Please enter a valid name.").not().isEmpty(),
+    // username must be an email
+    check("email", "Please enter a valid email.").isEmail(),
+    // password must be at least 5 chars long
+    check("pass", "Enter password of atleast 6 characters.").isLength({
+      min: 6,
+    }),
+  ],
+  async (req, res) => {
+    try {
+      console.log("in try !");
+      const avatar = gravatar.url(req.body.newData.email, {
+        s: "200", //mm
+        r: "pg", //Rating
+        d: "mm", //Default
+      });
 
-			let date_ob = new Date();
-			// current date
-			// adjust 0 before single digit date
-			let date = ("0" + date_ob.getDate()).slice(-2);
-			// current month
-			let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
-			// current year
-			let year = date_ob.getFullYear();
+      let date_ob = new Date();
+      // current date
+      // adjust 0 before single digit date
+      let date = ("0" + date_ob.getDate()).slice(-2);
+      // current month
+      let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
+      // current year
+      let year = date_ob.getFullYear();
 
-			let newPerson = {
-				username: req.body.newData.username,
-				email: req.body.newData.email,
-				pass: req.body.newData.pass,
-				avatar,
-				regDate: year + "-" + month + "-" + date,
-			};
+      let newPerson = {
+        username: req.body.newData.username,
+        email: req.body.newData.email,
+        pass: req.body.newData.pass,
+        avatar,
+        regDate: year + "-" + month + "-" + date,
+      };
 
-			bcrypt.genSalt(10, (err, salt) => {
-				bcrypt.hash(newPerson.pass, salt, (err, hash) => {
-					if (err) throw err;
-					newPerson.pass = hash;
+      bcrypt.genSalt(10, (err, salt) => {
+        bcrypt.hash(newPerson.pass, salt, (err, hash) => {
+          if (err) throw err;
+          newPerson.pass = hash;
 
-					User.update({ _id: req.body.id }, { $set: newPerson }).then((resp) => {
-						console.log(resp);
-					});
-				});
-			});
-		} catch (err) {
-			console.error(err.message);
-			res.status(500).send("Server error");
-		}
-	}
+          User.update({ _id: req.body.id }, { $set: newPerson }).then(
+            (resp) => {
+              console.log(resp);
+            }
+          );
+        });
+      });
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send("Server error");
+    }
+  }
 );
 
 module.exports = router;

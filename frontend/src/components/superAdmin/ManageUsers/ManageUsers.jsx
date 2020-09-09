@@ -55,7 +55,6 @@ const ManageUsers = () => {
     axios.get("http://localhost:4000/api/user/getusers").then((response) => {
       console.log("req  = ", getRequiredValues(response.data));
       setResult(getRequiredValues(response.data));
-      console.log(result);
     });
 
     axios.get("http://localhost:4000/api/admin/getadmins").then((response) => {

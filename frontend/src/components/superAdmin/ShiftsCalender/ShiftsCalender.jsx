@@ -184,7 +184,7 @@ const ShiftsCalender = () => {
     axios.get("http://localhost:4000/api/user/getusers").then((res) => {
       setUsers(res.data);
     });
-  }, []);
+  }, [visible, events]);
 
   const cutomEvent = () => {
     return (

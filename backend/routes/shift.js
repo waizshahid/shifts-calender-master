@@ -50,24 +50,23 @@ router.get("/currentShifts", (req, res) => {
 });
 
 router.get("/currentUserShifts", (req, res) => {
-  if (req.body === null) res.status(400).send("Bad Request");
-
-  createShift.find({ title: { $regex: req.body.username } }).then((shfts) => {
+  if (req.query === null) res.status(400).send("Bad Request");
+  createShift.find({ title: { $regex: req.query.username } }).then((shfts) => {
     res.send(shfts);
   });
 });
 
 router.get("/currentUserOffShifts", (req, res) => {
-  if (req.body === null) res.status(400).send("Bad Request");
+  if (req.query === null) res.status(400).send("Bad Request");
   createShift
     .find({
       $or: [
-        { title: { $regex: req.body.username + " OFF" } },
-        { title: { $regex: req.body.username + " off" } },
-        { title: { $regex: req.body.username + " Off" } },
-        { title: { $regex: req.body.username + " OFf" } },
-        { title: { $regex: req.body.username + " oFF" } },
-        { title: { $regex: req.body.username + " OfF" } },
+        { title: req.query.username + " OFF" },
+        { title: req.query.username + " off" },
+        { title: req.query.username + " Off" },
+        { title: req.query.username + " OFf" },
+        { title: req.query.username + " oFF" },
+        { title: req.query.username + " OfF" },
       ],
     })
     .then((shfts) => {
@@ -128,8 +127,8 @@ async function sendMail(user1, user2, title_1, title_2) {
   });
 
   var mailOptions = {
-    from: user1,
-    to: user2,
+    from: "",
+    to: "",
     subject: "Shift Transfer Log",
     html:
       "<p> This mail sent as shift transfer log. <br/> Shift <b>" +

@@ -52,7 +52,9 @@ router.delete("/deleteadmin", (req, res) => {
 router.put(
 	"/updateadmin",
 	[
-		check("username", "Please enter a valid name.").not().isEmpty(),
+		check("username", "Please enter a valid username.").not().isEmpty(),
+		check("firstName", "Please enter a valid firstname.").not().isEmpty(),
+		check("lastName", "Please enter a valid lastname.").not().isEmpty(),
 		// username must be an email
 		check("email", "Please enter a valid email.").isEmail(),
 		// password must be at least 5 chars long
@@ -87,6 +89,8 @@ router.put(
 
 			let newPerson = {
 				username: req.body.newData.username,
+				firstName: req.body.newData.firstName,
+				lastName: req.body.newData.lastName,
 				email: req.body.newData.email,
 				pass: req.body.newData.pass,
 				avatar,

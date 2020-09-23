@@ -9,6 +9,15 @@ const ShiftSchema = new mongoose.Schema({
 		type: String,
 		required: true,
 	},
+	editable: {
+		type: String,
+		required: true,
+	},
+	priority: {
+		type: Number,
+		required: true,
+	}
+	
 });
 
 module.exports = mongoose.model("shifts", ShiftSchema);

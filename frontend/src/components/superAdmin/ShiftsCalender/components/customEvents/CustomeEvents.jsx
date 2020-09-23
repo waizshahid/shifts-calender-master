@@ -6,7 +6,7 @@ const CustomeEvents = event => {
   return (
     <div className="custEvent">
       <small className="">No Such Title</small>
-      {/* <small className="">{event.title !== '' ? `${event.title}` : 'No Such Title' }</small> */}
+      { <small className="">{event.title !== '' ? `${event.title}` : 'No Such Title' }</small>}
     </div>
   );
 };

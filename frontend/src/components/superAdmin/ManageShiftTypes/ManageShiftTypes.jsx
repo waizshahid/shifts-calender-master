@@ -2,7 +2,9 @@ import React, { useState, useEffect } from "react";
 import MaterialTable from "material-table";
 import axios from "axios";
 // import { EditTwoTone, DeleteTwoTone } from "@ant-design/icons";
-import { Modal, Table, Popconfirm } from "antd";
+import { Modal, Table, Button } from "antd";
+import { PlusCircleFilled } from '@ant-design/icons';
+
 
 import Register from "./Register";
 
@@ -19,6 +21,8 @@ const ManageShiftTypes = () => {
 			temp.push({
 				key: data[i]._id,
 				shiftname: data[i].shiftname,
+				editable: data[i].editable,
+				priority: data[i].priority,
 				color: <div style={{ backgroundColor: data[i].color, width: "30px", height: "20px" }}></div>,
 				action: (
 					<div>
@@ -79,6 +83,16 @@ const ManageShiftTypes = () => {
 			key: "color",
 		},
 		{
+			title: "Editable",
+			dataIndex: "editable",
+			key: "editable",
+		},
+		{
+			title: "Priority",
+			dataIndex: "priority",
+			key: "priority",
+		},
+		{
 			title: "Action",
 			dataIndex: "action",
 			key: "action",
@@ -87,14 +101,23 @@ const ManageShiftTypes = () => {
 
 	return (
 		<div className="container pt-5">
-			<button className="btn btn-outline-primary" onClick={() => setVisible(true)}>
-				+ Add New Shift Type
-			</button>
+			<Button type="primary"
+				style={{
+					fontSize: '25px',
+					padding: '10px 10px 50px 10px'
+				}}
+				onClick={() => setVisible(true)} icon={ <PlusCircleFilled style={{
+					fontSize: '20px',
+					
+				}}/> }>
+				Create Shift Type	
+			</Button>
+			
 			<br />
 			<br />
 			<Table dataSource={result} columns={columns} />;{/* Register New User */}
 			<Modal
-				title="Basic Modal"
+				title="Create a new Shift Type"
 				maskClosable={true}
 				onCancel={() => setVisible(false)}
 				visible={visible}
@@ -104,7 +127,7 @@ const ManageShiftTypes = () => {
 			</Modal>
 			{/* Edit User */}
 			<Modal
-				title="Basic Modal"
+				title="Edit Shift"
 				maskClosable={true}
 				onCancel={() => setEditVisible(false)}
 				visible={editVisible}

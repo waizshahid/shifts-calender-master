@@ -3,11 +3,11 @@ import { Calendar, momentLocalizer, Views } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { Modal } from "antd";
-import CustomeEvents from "./components/customEvents/CustomeEvents";
 import FullCalendar from "@fullcalendar/react";
 import interactionPlugin from "@fullcalendar/interaction"; // needed for dayClick
 import dayGridPlugin from "@fullcalendar/daygrid";
 import axios from "axios";
+
 moment.locale("ko", {
   week: {
     dow: 1,
@@ -25,97 +25,7 @@ const ShiftsCalender = () => {
   const [start, setStart] = useState("");
   const [end, setEnd] = useState("");
   const [users, setUsers] = useState([]);
-  const custEvents = [
-    {
-      end: "2020-09-10",
-      start: "2020-09-10",
-      title: "Something",
-    },
-    {
-      end: "2020-09-30",
-      start: "2020-09-10",
-      title: "Something",
-      color: "#1db847", // override!
-    },
-    {
-      end: "2020-09-30",
-      start: "2020-09-10",
-      title: "Something",
-      color: "#b8b31d", // override!
-    },
-    {
-      end: "2020-09-10",
-      start: "2020-09-10",
-      title: "Something",
-      color: "#b81d1d", // override!
-    },
-    {
-      end: "2020-09-30",
-      start: "2020-09-10",
-      title: "Something",
-      color: "#b81db3", // override!
-    },
-    {
-      end: "2020-09-10",
-      start: "2020-09-30",
-      title: "Something",
-    },
-    {
-      end: "2020-09-20",
-      start: "2020-09-10",
-      title: "Something",
-    },
-    {
-      end: "2020-09-20",
-      start: "2020-09-10",
-      title: "Something",
-      color: "#1db847", // override!
-    },
-    {
-      end: "2020-09-10",
-      start: "2020-09-10",
-      title: "Something",
-      color: "#b81d1d", // override!
-    },
-    {
-      end: "2020-09-10",
-      start: "2020-09-10",
-      title: "Something",
-    },
-    {
-      end: "2020-09-10",
-      start: "2020-09-10",
-      title: "Something",
-    },
-    {
-      end: "2020-09-10",
-      start: "2020-09-10",
-      title: "Something",
-      color: "#b8b31d", // override!
-    },
-    {
-      end: "2020-09-10",
-      start: "2020-09-10",
-      title: "Something",
-    },
-    {
-      end: "2020-09-10",
-      start: "2020-09-10",
-      title: "Something",
-      color: "#b81d1d", // override!
-    },
-    {
-      end: "2020-09-10",
-      start: "2020-09-10",
-      title: "Something",
-      color: "#b81db3", // override!
-    },
-    {
-      end: "2020-09-10",
-      start: "2020-09-10",
-      title: "Something",
-    },
-  ];
+  
   const showModal = () => {
     setVisible(true);
   };
@@ -128,6 +38,7 @@ const ShiftsCalender = () => {
   };
   const handelDate = (e) => {
     setStart(e.target.value);
+    setEnd(e.target.value);
   };
   const handelEndDate = (e) => {
     setEnd(e.target.value);
@@ -135,14 +46,26 @@ const ShiftsCalender = () => {
 
   const handleOk = (e) => {
     setVisible(false);
-    const title = assign + " " + shiftType;
-    let color = "";
-    for (let i = 0; i < data.length; i++) {
-      if (shiftType === data[i].shiftname) {
-        color = data[i].color;
-        break;
-      }
-    }
+    const userId = assign;
+    // const title = shiftType;
+    // let priority = "";
+    // let color = "";
+    let shiftTypeId = shiftType;
+    var swapable = "true";
+    
+
+    // for (let i = 0; i < data.length; i++) {
+    //   if (shiftType === data[i].shiftname) {
+    //     color = data[i].color;
+    //     break;
+    //   }
+    // }
+    // for (let i = 0; i < data.length; i++) {
+    //   if (shiftType === data[i].shiftname) {
+    //     priority = data[i].priority;
+    //     break;
+    //   }
+    // }
     const options = {
       url: "http://localhost:4000/api/shift/createShift",
       method: "POST",
@@ -151,10 +74,11 @@ const ShiftsCalender = () => {
         "Content-Type": "application/json;charset=UTF-8",
       },
       data: {
-        title: title.toString(),
+        userId: userId,
         start: start,
+        shiftTypeId: shiftTypeId,
         end: end,
-        color: color,
+        swapable: swapable,
       },
     };
     axios(options).then((res) => {
@@ -164,10 +88,32 @@ const ShiftsCalender = () => {
   const handleCancel = (e) => {
     setVisible(false);
   };
+
+  const handleDoctors = (e) => {
+    if(e.target.value === "All"){
+      axios.get("http://localhost:4000/api/shift/currentShifts").then((res) => {
+        console.log(res.data.shifts);
+        setEvents(res.data.shifts);
+      });
+    }else{
+      axios.get("http://localhost:4000/api/shift/getUserByName/"+e.target.value).then((res) => {
+      console.log('User Id:');
+      console.log(res.data.shifts);
+      setEvents(res.data.shifts);
+    });
+        
+    }
+  }
+
   useEffect(() => {
     axios.get("http://localhost:4000/api/shift/currentShifts").then((res) => {
-      console.log(res.data);
-      setEvents(res.data);
+    
+      setEvents(res.data.shifts);
+      console.log("DATA Gotten:",res.data.shifts); //[0].userId._id
+      // for(var i=0; i <  res.data.length ; i++){
+      //   console.log("User names for the shifts are:"+res.data[i].userId.firstName+res.data[i].userId.lastName)
+      // }    
+
     });
     const options = {
       url: "http://localhost:4000/api/shift/getshifts",
@@ -178,46 +124,49 @@ const ShiftsCalender = () => {
       },
     };
     axios(options).then((res) => {
+      console.log('Shift Ids:');
+      console.log(res.data);
       setData(res.data);
     });
 
     axios.get("http://localhost:4000/api/user/getusers").then((res) => {
       setUsers(res.data);
     });
-  }, [visible, events]);
-
-  const cutomEvent = () => {
-    return (
-      <div style={{ backgroundColor: "red" }}>
-        <p>{events.title}</p>
-      </div>
-    );
-  };
-  console.log(events);
+  }, [visible]);
+  
+  
   return (
     <div className="m-sm-4 m-2">
+      <div className="col-3">
+        <select
+          id="selectDoctor"
+          name="cars"
+          className="custom-select bg-light m-2 shadow-sm"
+          onChange={handleDoctors}
+        >
+          <option defaultValue="All">
+           All
+          </option>
+          {users.map((dat) => (
+            <option value={dat._id} key={dat._id}>
+              {dat.firstName+' '+dat.lastName}
+            </option>
+          ))}
+          </select>
+        </div>
+        <br/>
       <FullCalendar
         defaultView="dayGridMonth"
         plugins={[dayGridPlugin, interactionPlugin]}
         dateClick={showModal}
+        weekNumberCalculation= 'ISO'
+        eventOrder="priority"
+
         // eventClick={handelModal}
         events={events}
+        
       />
-      {/* <Calendar
-        selectable
-        localizer={localizer}
-        onSelectSlot={showModal}
-        events={events}
-        startAccessor="start"
-        endAccessor="end"
-        defaultView={Views.MONTH}
-        views={{ month: true, week: true }}
-        style={{ minHeight: '300vh' }}
-        components={{
-          event: CustomeEvents,
-        }}
-      /> */}
-
+  
       <Modal
         title="Create Shift"
         visible={visible}
@@ -234,9 +183,9 @@ const ShiftsCalender = () => {
             Doctor Assigned
           </option>
           {users.map((dat) => (
-            <option value={dat.username} key={dat._id}>
-              {dat.username}
-            </option>
+            <option value={dat._id} key={dat._id}>
+            {dat.firstName+' '+dat.lastName}
+          </option>
           ))}{" "}
         </select>
         <select
@@ -246,10 +195,10 @@ const ShiftsCalender = () => {
           onChange={handelShift}
         >
           <option defaultValue="Shift Type " id="shType">
-            Shift Type
+            No shift right now
           </option>
           {data.map((sh) => (
-            <option value={sh.shiftname} key={sh._id}>
+            <option value={sh._id} key={sh._id}>
               {sh.shiftname}
             </option>
           ))}
@@ -265,10 +214,12 @@ const ShiftsCalender = () => {
           className="form-control m-2 bg-light shadow-sm"
           placeholder="End Date"
           onChange={handelEndDate}
+          defaultValue={start}
         />
       </Modal>
     </div>
   );
+  
 };
 
 export default ShiftsCalender;

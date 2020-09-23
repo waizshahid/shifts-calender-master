@@ -14,7 +14,9 @@ const Admin = require("../models/Admin");
 router.post(
 	"/register",
 	[
-		check("username", "Please enter a valid name.").not().isEmpty(),
+		check("username", "Please enter a valid username.").not().isEmpty(),
+		check("firstName", "Please enter a valid firstname.").not().isEmpty(),
+		check("lastName", "Please enter a valid lastname.").not().isEmpty(),
 		// username must be an email
 		check("email", "Please enter a valid email.").isEmail(),
 		// password must be at least 5 chars long
@@ -56,6 +58,8 @@ router.post(
 
 						let newPerson = new Admin({
 							username: req.body.username,
+							firstName: req.body.firstName,
+							lastName: req.body.lastName,
 							email: req.body.email,
 							partener: req.body.partener,
 							type: req.body.person,
@@ -102,6 +106,8 @@ router.post(
 
 						let newPerson = new User({
 							username: req.body.username,
+							firstName: req.body.firstName,
+							lastName: req.body.lastName,
 							email: req.body.email,
 							partener: req.body.partener,
 							type: req.body.person,

@@ -11,3 +11,10 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.fa-bell{
+  color: white;
+  font-size: 20px;
+  padding-right: 15px;
+  cursor: pointer;
+}

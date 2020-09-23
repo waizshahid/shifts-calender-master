@@ -1,24 +1,33 @@
 const mongoose = require("mongoose");
 
 const createShift = new mongoose.Schema({
-
+  userId: {
+		type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    ref: 'users'
+  },
+  shiftTypeId: {
+		type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    ref: 'shifts'
+  },
+  swapable:{
+    type: String,
+    required: true,
+  },
+  
   start: {
-    type: Date,
+    type: String,
     required: true,
   },
   end: {
-    type: Date,
-    required: true,
-  },
-  title: {
     type: String,
     required: true,
   },
-
-  color: {
+   
+  comment: {
     type: String,
-    required: true,
-  },
+  }
 });
 
 module.exports = mongoose.model("shiftAssigned", createShift);

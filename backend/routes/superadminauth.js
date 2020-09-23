@@ -16,7 +16,9 @@ const User = require("../models/User");
 router.post(
   "/register",
   [
-    check("username", "Please enter a valid name.").not().isEmpty(),
+    check("username", "Please enter a valid username.").not().isEmpty(),
+		check("firstName", "Please enter a valid firstname.").not().isEmpty(),
+		check("lastName", "Please enter a valid lastname.").not().isEmpty(),
     // username must be an email
     check("email", "Please enter a valid email.").isEmail(),
     // password must be at least 5 chars long

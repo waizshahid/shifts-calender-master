@@ -12,7 +12,7 @@ const Register = ({ setVisible, setEditVisible, isEdit, id }) => {
 
 	const [form] = Form.useForm();
 	const onFinish = (values) => {
-		const { email, username, partener, pass, person } = values;
+		const { email, firstName, lastName, username, partener, pass, person } = values;
 		console.log("person = ", person);
 		setError("");
 		//Student registered
@@ -20,7 +20,7 @@ const Register = ({ setVisible, setEditVisible, isEdit, id }) => {
 			axios
 				.put("http://localhost:4000/api/user/updateuser", {
 					id,
-					newData: { email, username, partener, pass, person },
+					newData: { email, username,firstName, lastName, partener, pass, person },
 				})
 				.then((res) => {
 					setEditVisible(false);
@@ -35,6 +35,8 @@ const Register = ({ setVisible, setEditVisible, isEdit, id }) => {
 				.post("http://localhost:4000/api/userauth/register", {
 					email,
 					username,
+					firstName, 
+					lastName,
 					partener,
 					pass,
 					person,
@@ -57,10 +59,39 @@ const Register = ({ setVisible, setEditVisible, isEdit, id }) => {
 				form={form}
 				name="register"
 				onFinish={onFinish}
-				className="register-form shadow-lg p-4 bg-white border border-dark rounded"
+				className="register-form p-2 bg-white"
 			>
-				<h5 className="d-flex justify-content-center">Create New User</h5>
-				<br />
+				<Row>
+					<Col span={11}>
+						<Form.Item
+							name="firstName"
+							rules={[
+								{
+									required: true,
+									message: "Please input your First name!",
+									whitespace: true,
+								},
+							]}
+						>
+							<Input placeholder="First Name" />
+						</Form.Item>
+					</Col>
+					<Col span={2}></Col>
+					<Col span={11}>
+						<Form.Item
+							name="lastName"
+							rules={[
+								{
+									required: true,
+									message: "Please input your Last name!",
+									whitespace: true,
+								},
+							]}
+						>
+							<Input placeholder="Last Name" />
+						</Form.Item>
+					</Col>
+				</Row>
 				<Form.Item
 					name="username"
 					rules={[
@@ -73,6 +104,7 @@ const Register = ({ setVisible, setEditVisible, isEdit, id }) => {
 				>
 					<Input placeholder="User Name" />
 				</Form.Item>
+				
 				<Form.Item
 					name="email"
 					rules={[

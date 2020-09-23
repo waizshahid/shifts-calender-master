@@ -1,25 +1,30 @@
 import React from "react";
 import "antd/dist/antd.css";
 import "../../../css/Register.css";
-import { Form, Input, Button, Select, Row, Col } from "antd";
+import { Form, Input, Button, Select, Row, Col, Switch } from "antd";
 import { Link } from "react-router-dom";
 import axios from "axios";
+
 
 const { Option } = Select;
 
 const Register = ({ setVisible, setEditVisible, isEdit, id }) => {
 	const [error, setError] = React.useState(" ");
-
 	const [form] = Form.useForm();
 	const onFinish = (values) => {
-		const { shiftname, color } = values;
+		const { shiftname, color, editable, priority} = values;
 		setError("");
 		//Student registered
 		if (isEdit) {
 			axios
 				.put("http://localhost:4000/api/shift/updateshift", {
 					id,
-					newData: { shiftname, color },
+					newData: { 
+						shiftname,
+						color,
+						editable,
+						priority
+					},
 				})
 				.then((res) => {
 					setEditVisible(false);
@@ -34,6 +39,8 @@ const Register = ({ setVisible, setEditVisible, isEdit, id }) => {
 				.post("http://localhost:4000/api/shift/register", {
 					shiftname,
 					color,
+					editable,
+					priority
 				})
 				.then((res) => {
 					setVisible(false);
@@ -46,17 +53,17 @@ const Register = ({ setVisible, setEditVisible, isEdit, id }) => {
 		}
 		console.log("Received values of form: ", values);
 	};
-
+	// const handleToggler = (e) => {
+    //     setToggler(e.target.value);
+    // };
 	return (
 		<div className="p-0">
 			<Form
 				form={form}
 				name="register"
 				onFinish={onFinish}
-				className="register-form shadow-lg p-4 bg-white border border-dark rounded"
+				className="register-form p-2 bg-white"
 			>
-				<h5 className="d-flex justify-content-center">Create New Shift Type</h5>
-				<br />
 				<Form.Item
 					name="shiftname"
 					rules={[
@@ -81,6 +88,37 @@ const Register = ({ setVisible, setEditVisible, isEdit, id }) => {
 				>
 					<Input type="color" placeholder="Color " />
 				</Form.Item>
+				
+				<Row>
+					<Col span={10}>
+						<Form.Item
+							name="priority"
+							rules={[
+								{
+									required: true,
+									message: "Please input your Shift Priority!",
+								},
+							]}
+						>
+							<Input min="0" type="number" placeholder="Shift Priority" />
+						</Form.Item>
+					</Col>
+					<Col span={4}></Col>
+					<Col span={10}>
+							<Form.Item
+							name="editable"
+							>
+							<Switch
+								//onChange={handleToggler}
+								defaultChecked = {false}
+								checkedChildren="Enabled Editable By User"
+								unCheckedChildren="Disabled Editable By User"
+								size="large"
+							/>
+						</Form.Item>
+					</Col>
+				</Row>
+				
 
 				<label className="text-danger">{error.email}</label>
 				<Row>
@@ -99,6 +137,7 @@ const Register = ({ setVisible, setEditVisible, isEdit, id }) => {
 			</Form>
 		</div>
 	);
+	
 };
 
 export default Register;

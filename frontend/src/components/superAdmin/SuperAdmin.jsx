@@ -1,26 +1,39 @@
 import React, { useState, useEffect } from "react";
 import { Link, Switch, Route } from "react-router-dom";
 import Sidebar from "react-sidebar";
-
 import Profile from "./Profile/Profile";
 import ShiftsCalender from "./ShiftsCalender/ShiftsCalender";
+import ExchangeShift from './exchangeShifts'
 import ManageShiftTypes from "./ManageShiftTypes/ManageShiftTypes";
+import OffShift from './OffShiftsRequest'
 import ManageUsers from "./ManageUsers/ManageUsers";
 import Logout from "./Logout/Logout";
+import Upload from './ShiftsCalender/uploadfile'
 
-import { Layout, Menu, Avatar } from "antd";
+import { Layout, Menu, Avatar, notification } from "antd";
 import {
 	FormOutlined,
 	UserOutlined,
 	LogoutOutlined,
+	UserSwitchOutlined,
 	MenuOutlined,
 	CalendarOutlined,
+	MinusCircleOutlined,
 	UserAddOutlined,
+	UploadOutlined,
 	UsergroupAddOutlined,
 } from "@ant-design/icons";
 
 const { Header, Content, Footer, Sider } = Layout;
-
+const openNotification = () => {
+	const args = {
+	  message: 'Swap Requests',
+	  description:
+	  {} + 'wants to swap his shift with you',
+	  duration: 0,
+	};
+	notification.open(args);
+  };
 const SuperAdmin = ({ superAdmin }) => {
 	const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -52,6 +65,15 @@ const SuperAdmin = ({ superAdmin }) => {
 								<Menu.Item key="4" icon={<UsergroupAddOutlined />}>
 									<Link to="/superadmin/manage-users">Manage Users</Link>
 								</Menu.Item>
+								<Menu.Item key="5" icon={<UserSwitchOutlined />}>
+									<Link to="/superadmin/exchange-shifts">Exhange Shifts</Link>
+								</Menu.Item>
+								<Menu.Item key="6" icon={<MinusCircleOutlined />}>
+									<Link to="/superadmin/off-shifts">Off Shifts</Link>
+								</Menu.Item>
+								<Menu.Item key="7" icon={<UploadOutlined />}>
+									<Link to="/superadmin/upload">Upload Excel</Link>
+								</Menu.Item>
 								<Menu.Item key="10" icon={<LogoutOutlined />}>
 									<Link to="/superadmin/logout">Logout</Link>
 								</Menu.Item>
@@ -64,7 +86,7 @@ const SuperAdmin = ({ superAdmin }) => {
 				touch={true}
 				styles={{ backgroundColor: "black" }}
 			>
-				<nav className="navbar navbar-dark bg-primary" style={{ height: "9vh" }}>
+				<nav className="navbar navbar-dark bg-primary" style={{ height: "80px" }}>
 					<MenuOutlined
 						className="text-white"
 						style={{ fontSize: "25px" }}
@@ -72,6 +94,7 @@ const SuperAdmin = ({ superAdmin }) => {
 					/>
 					<a className="navbar-brand">ShiftsCalender</a>
 					<div>
+					<span onClick={openNotification}><i class="fa fa-bell"></i></span>
 						<Link to="/superadmin/profile">
 							<span className="ml-2">
 								<Avatar style={{ backgroundColor: "#001529", verticalAlign: "middle" }} size="large">
@@ -88,6 +111,9 @@ const SuperAdmin = ({ superAdmin }) => {
 					<Route exact path="/superadmin/shifts-calender" component={ShiftsCalender} />
 					<Route exact path="/superadmin/manage-shift-types" component={ManageShiftTypes} />
 					<Route exact path="/superadmin/manage-users" component={ManageUsers} />
+					<Route exact path="/superadmin/upload" component={Upload} />
+					<Route exact path="/superadmin/off-shifts" component={OffShift} />
+					<Route exact path="/superadmin/exchange-shifts" component={ExchangeShift} />
 					<Route exact path="/superadmin/logout" component={Logout} />
 				</Switch>
 			</Sidebar>

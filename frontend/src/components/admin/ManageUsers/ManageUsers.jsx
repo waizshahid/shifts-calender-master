@@ -19,6 +19,8 @@ const ManageUsers = () => {
 			temp.push({
 				key: data[i]._id,
 				username: data[i].username,
+				firstName: data[i].firstName,
+				lastName: data[i].lastName,
 				email: data[i].email,
 				type: data[i].type,
 				partener: data[i].partener,
@@ -95,6 +97,16 @@ const ManageUsers = () => {
 			key: "username",
 		},
 		{
+			title: "First Name",
+			dataIndex: "firstName",
+			key: "firstName",
+		},
+		{
+			title: "Last Name",
+			dataIndex: "lastName",
+			key: "lastName",
+		},
+		{
 			title: "Email",
 			dataIndex: "email",
 			key: "email",
@@ -130,7 +142,7 @@ const ManageUsers = () => {
 			<br />
 			<Table dataSource={result} columns={columns} />;{/* Register New User */}
 			<Modal
-				title="Basic Modal"
+				title="Create A New User"
 				maskClosable={true}
 				onCancel={() => setVisible(false)}
 				visible={visible}
@@ -140,7 +152,7 @@ const ManageUsers = () => {
 			</Modal>
 			{/* Edit User */}
 			<Modal
-				title="Basic Modal"
+				title="Update User Details"
 				maskClosable={true}
 				onCancel={() => setEditVisible(false)}
 				visible={editVisible}

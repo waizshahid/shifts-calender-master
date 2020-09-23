@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Button, Upload } from "antd";
 import axios from "axios";
 import {OutTable, ExcelRenderer} from 'react-excel-renderer';
+import { indigo } from "@material-ui/core/colors";
 
 class uploadfile extends Component {
   state = { 
@@ -15,7 +16,8 @@ class uploadfile extends Component {
       
       let typeArr = []
       response.data.map(resp=> {
-        typeArr.push(resp.shiftname)
+        typeArr.push({"name":resp.shiftname,
+      "id":resp._id })
       })
       this.setState({types: typeArr});
     });
@@ -51,29 +53,79 @@ class uploadfile extends Component {
         console.log(err);            
       }
       else{
+        let newRows=[];
+        resp.rows.map((rows, index) => {
+          if(rows.length >2)
+          newRows.push(rows)
+        })
         this.setState({
           cols: resp.cols,
-          rows: resp.rows
+          rows: newRows
         });
+        this.UpdateExcel(newRows)
         let last;
-        this.setState({startDate:this.ExcelDateToJSDate(resp.rows[1][1]).toISOString().toString().slice(0,10)})
+        this.setState({startDate:this.ExcelDateToJSDate(resp.rows[1][0]).toISOString().toString().slice(0,10)})
         resp.rows.map((rows, index) => {
           if(rows.length >5)
           last = index
         })
-        this.setState({endDate:this.ExcelDateToJSDate(resp.rows[last][1]).toISOString().toString().slice(0,10)})
+        this.setState({endDate:this.ExcelDateToJSDate(resp.rows[last][0]).toISOString().toString().slice(0,10)})
       }
-    });     
+    });
   };
+
+
+  UpdateExcel = (rows) => {
+    let shiftTitles = []
+    let shiftTitleIndex = []
+    console.log(this.state.types)
+
+    console.log(rows[0])
+
+    let newArr =[]
+    rows[0].map((name, index) => {
+      this.state.types.map(type => {
+        if(name === type.name)
+        {
+          newArr.push(type);
+          shiftTitleIndex.push(index)
+        }
+        
+      })
+    })
+    console.log(newArr);
+    console.log(shiftTitleIndex)
+    let Arr =[]
+    let Obj ={}
+    newArr.map((shift,index) => {
+      
+        this.state.rows[0].map((row,index )=> {
+          if(row === shift.name)
+          this.state.rows.map((col,i) => {
+            //console.log(col[index])
+            if(i>0){
+              let JSdate = this.ExcelDateToJSDate(col[0]).toISOString().toString().slice(0,10)
+              Obj = {"name": col[index], "shift": shift.name, "_id": shift.id, "date": JSdate}
+              Arr.push(Obj)
+
+            }
+           
+          })
+        })
+    })
+    console.log(Arr)
+
+  }
 
   
 
   onFileUpload = () => {
-    const formData = new FormData();
-    formData.append("file", this.state.file);
-    let types = this.state.rows[0]
+    console.log(this.state.rows)
+    // const formData = new FormData();
+    // formData.append("file", this.state.file);
+    // let types = this.state.rows[0]
 
-    console.log(this.state.rows[0])
+    // console.log(this.state.rows[0])
 
   //   axios
   //     .post("http://localhost:4000/api/shift/excelFile/uploadFile", formData)

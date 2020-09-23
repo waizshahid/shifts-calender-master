@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Button } from "antd";
+import { Button, Upload } from "antd";
 import axios from "axios";
 import {OutTable, ExcelRenderer} from 'react-excel-renderer';
 
@@ -83,6 +83,14 @@ class uploadfile extends Component {
   //     .catch((err) => console.log("err", err));
    };
 
+   deletePreviousData = () => {
+    axios
+        .post("http://localhost:4000/api/shift/deleteEventsBetweenTwoDates/"+this.state.startDate+'/'+this.state.endDate)
+        .then((response) => {
+          console.log("response", response);
+        })
+        .catch((err) => console.log("err", err));
+   }
   render() {
     return (
       
@@ -94,15 +102,18 @@ class uploadfile extends Component {
                     onChange={this.onFileChange}
                   />
                 {this.state.file && (
-                    <Button variant="info" onClick={this.onFileUpload}>
-                      Upload Selected file
-                    </Button>
+                    <Upload variant="info" onClick={this.onFileUpload}>
+                      Update Existing Sheet
+                    </Upload>
                 )}
             
               <br />
               <br />
               <Button className="mb-3" variant="info">
                 Download File
+              </Button>
+              <Button type="primary" className="mb-3" variant="info" onClick={this.deletePreviousData}>
+                Delete
               </Button>
 
               {this.state.rows && 

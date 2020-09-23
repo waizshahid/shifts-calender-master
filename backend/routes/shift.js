@@ -11,6 +11,7 @@ var nodemailer = require("nodemailer");
 
 var bodyParser = require('body-parser');
 var multer = require('multer');
+const { eventNames } = require("../models/Shift");
 router.use(bodyParser.json());
 //@route  GET api/shift/getshift
 //@desc   Get all shift
@@ -46,7 +47,44 @@ router.delete("/deleteAllShifts", (req, res) => {
   });
 });
 
+//Deleting all past data
+router.get("/deleteEventsBetweenTwoDates/:start/:end", async(req, res, next) => {
+  const startDate = req.params.start;
+  const endDate = req.params.end;
+  var array = [];
+  await createShift.find({
+    'end' : { $lte: endDate},
+    'start' : { $gte: startDate }
+  }).then((allShift) => {
+    //res.send(allShift);
+    for(let i = 0 ; i < allShift.length ; i++){
+      array.push(allShift[i])
+    }
+  });
+  
 
+  console.log('Array of Shift')
+  console.log(array)
+
+  await array.forEach( eachEvent => {
+    createShift.remove({
+      _id: eachEvent._id
+    })
+    .exec();
+  })
+  res.status(201).json({
+    message: "SHIFTS ARE DELETED SUCCESSFULLY"
+  })
+  // console.log('Deleting index: '+array[1]._id);
+  //  //  for(let i = 0 ; i < array.length ; i++){
+  //   // console.log(array[i]._id)
+  //   createShift.remove({
+  //     _id : '5f648e9720a0a7134cb83d2c'
+  //   })
+  //   console.log('Deleted Arry index');
+  //   console.log(array.length)
+  // // }
+});
 
 router.delete("/deleteCurrentShift/:id", (req, res) => {
   const id = req.params.id;

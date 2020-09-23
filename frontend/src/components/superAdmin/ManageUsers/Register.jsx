@@ -35,7 +35,7 @@ const Register = ({ setVisible, setEditVisible, isEdit, id }) => {
 				.post("http://localhost:4000/api/userauth/register", {
 					email,
 					username,
-					firstName, 
+					firstName,
 					lastName,
 					partener,
 					pass,

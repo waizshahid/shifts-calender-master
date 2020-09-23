@@ -56,15 +56,17 @@ class uploadfile extends Component {
           rows: resp.rows
         });
         let last;
-        console.log(this.ExcelDateToJSDate(resp.rows[1][1]).toISOString().toString().slice(0,10))
+        this.setState({startDate:this.ExcelDateToJSDate(resp.rows[1][1]).toISOString().toString().slice(0,10)})
         resp.rows.map((rows, index) => {
           if(rows.length >5)
           last = index
         })
-        console.log(this.ExcelDateToJSDate(resp.rows[last][1]).toISOString().toString().slice(0,10))
+        this.setState({endDate:this.ExcelDateToJSDate(resp.rows[last][1]).toISOString().toString().slice(0,10)})
       }
     });     
   };
+
+  
 
   onFileUpload = () => {
     const formData = new FormData();

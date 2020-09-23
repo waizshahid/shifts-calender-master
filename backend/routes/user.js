@@ -81,11 +81,11 @@ router.put(
 		try {
 			//check if Admin exists
 			if (req.body.newData.person === "admin") {
-				Admin.findOne({ email: req.body.newData.email }).then((person) => {
-					if (person) {
-						return res.status(400).json({ email: "Email already exists!" });
-					}
-				});
+				// Admin.findOne({ email: req.body.newData.email }).then((person) => {
+				// 	if (person) {
+				// 		return res.status(400).json({ email: "Email already exists!" });
+				// 	}
+				// });
 				console.log("in try !");
 				const avatar = gravatar.url(req.body.newData.email, {
 					s: "200", //mm
@@ -127,11 +127,11 @@ router.put(
 			}
 			//check if User exists
 			if (req.body.newData.person === "user") {
-				User.findOne({ email: req.body.newData.email }).then((person) => {
-					if (person) {
-						return res.status(400).json({ email: "Email already exists!" });
-					}
-				});
+				// User.findOne({ email: req.body.newData.email }).then((person) => {
+				// 	if (person) {
+				// 		return res.status(400).json({ email: "Email already exists!" });
+				// 	}
+				// });
 				console.log("in try !");
 				const avatar = gravatar.url(req.body.newData.email, {
 					s: "200", //mm

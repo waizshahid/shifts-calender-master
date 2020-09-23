@@ -158,7 +158,7 @@ const ManageUsers = () => {
 				visible={editVisible}
 				footer={false}
 			>
-				<Register setEditVisible={(val) => setEditVisible(val)} isEdit={true} id={targetUser} />
+				<Register  setEditVisible={(val) => setEditVisible(val)} isEdit={true} id={targetUser} />
 			</Modal>
 			{/* Delete User */}
 			<Modal

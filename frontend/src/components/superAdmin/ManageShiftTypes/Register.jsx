@@ -10,9 +10,20 @@ const { Option } = Select;
 
 const Register = ({ setVisible, setEditVisible, isEdit, id }) => {
 	const [error, setError] = React.useState(" ");
+	const [fields, setFields] = React.useState([
+		{
+		  name: ["editable"],
+		  value: false,
+		},
+		{
+			name: ["color"],
+			value: "#ab12ac",
+		  },
+	  ]);
 	const [form] = Form.useForm();
 	const onFinish = (values) => {
 		const { shiftname, color, editable, priority} = values;
+		console.log(values)
 		setError("");
 		//Student registered
 		if (isEdit) {
@@ -60,6 +71,7 @@ const Register = ({ setVisible, setEditVisible, isEdit, id }) => {
 		<div className="p-0">
 			<Form
 				form={form}
+				fields={fields}
 				name="register"
 				onFinish={onFinish}
 				className="register-form p-2 bg-white"
@@ -110,7 +122,6 @@ const Register = ({ setVisible, setEditVisible, isEdit, id }) => {
 							>
 							<Switch
 								//onChange={handleToggler}
-								defaultChecked = {false}
 								checkedChildren="Enabled Editable By User"
 								unCheckedChildren="Disabled Editable By User"
 								size="large"

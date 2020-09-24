@@ -10,8 +10,16 @@ class uploadfile extends Component {
     types: '',
     startDate: '',
     endDate: '',
+    users: ''
   };
   componentDidMount = () =>  {
+    axios.get("http://localhost:4000/api/user/getusers").then((response1) => {
+			axios.get("http://localhost:4000/api/admin/getadmins").then((response2) => {
+				
+				let arr = [...response1.data, ...response2.data];
+				this.setState({users: arr})
+			});
+		});
     axios.get("http://localhost:4000/api/shift/getshifts").then((response) => {
       
       let typeArr = []
@@ -98,18 +106,18 @@ class uploadfile extends Component {
     let Arr =[]
     let Obj ={}
     newArr.map((shift,index) => {
-      
         this.state.rows[0].map((row,index )=> {
           if(row === shift.name)
           this.state.rows.map((col,i) => {
-            //console.log(col[index])
             if(i>0){
               let JSdate = this.ExcelDateToJSDate(col[0]).toISOString().toString().slice(0,10)
-              Obj = {"name": col[index], "shift": shift.name, "_id": shift.id, "date": JSdate}
-              Arr.push(Obj)
-
+              this.state.users.map(user => {
+                if(user.username === col[index]){
+                      Obj = {"name": col[index],"userId":user._id, "shiftTypeId": shift.id, "start": JSdate, "end": JSdate, "swappable": true}
+                      Arr.push(Obj)
+                }
+              })
             }
-           
           })
         })
     })

@@ -47,12 +47,13 @@ router.get("/getuser", (req, res) => {
 router.delete("/deleteAndUpdateUsers", (req, res) => {
 	User.remove().then((resp) => {
 	  console.log('All Users deleted');
-	  res.send(resp);
-	});
-	Admin.remove().then((resp) => {
+	  //res.send(resp);
+	  Admin.remove().then((resp1) => {
 		console.log('All Admins deleted');
-		res.send(resp);
+		res.send(resp1);
 	  });
+	});
+	
 
 	  
   });

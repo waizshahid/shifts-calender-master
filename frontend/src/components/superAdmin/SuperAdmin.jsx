@@ -9,7 +9,7 @@ import OffShift from './OffShiftsRequest'
 import ManageUsers from "./ManageUsers/ManageUsers";
 import Logout from "./Logout/Logout";
 import Upload from './ShiftsCalender/uploadfile'
-
+import UserSheet from './ManageUsers/uploadUsersSheet'
 import { Layout, Menu, Avatar, notification } from "antd";
 import {
 	FormOutlined,
@@ -65,6 +65,9 @@ const SuperAdmin = ({ superAdmin }) => {
 								<Menu.Item key="4" icon={<UsergroupAddOutlined />}>
 									<Link to="/superadmin/manage-users">Manage Users</Link>
 								</Menu.Item>
+								<Menu.Item key="8" icon={<UploadOutlined />}>
+									<Link to="/superadmin/users-sheet">Upload User Excel</Link>
+								</Menu.Item>
 								<Menu.Item key="5" icon={<UserSwitchOutlined />}>
 									<Link to="/superadmin/exchange-shifts">Exhange Shifts</Link>
 								</Menu.Item>
@@ -74,6 +77,7 @@ const SuperAdmin = ({ superAdmin }) => {
 								<Menu.Item key="7" icon={<UploadOutlined />}>
 									<Link to="/superadmin/upload">Upload Excel</Link>
 								</Menu.Item>
+								
 								<Menu.Item key="10" icon={<LogoutOutlined />}>
 									<Link to="/superadmin/logout">Logout</Link>
 								</Menu.Item>
@@ -114,6 +118,7 @@ const SuperAdmin = ({ superAdmin }) => {
 					<Route exact path="/superadmin/upload" component={Upload} />
 					<Route exact path="/superadmin/off-shifts" component={OffShift} />
 					<Route exact path="/superadmin/exchange-shifts" component={ExchangeShift} />
+					<Route exact path="/superadmin/users-sheet" component={UserSheet} />
 					<Route exact path="/superadmin/logout" component={Logout} />
 				</Switch>
 			</Sidebar>

@@ -35,7 +35,8 @@ export default class uploadUsersSheet extends Component {
             });
 
             console.log(newRows)
-            let finalArr = []
+            let finalArrAdmin = []
+            let finalArrUser = []
             newRows.map((row,i) => {
                 
                 let obj = {
@@ -52,11 +53,14 @@ export default class uploadUsersSheet extends Component {
                 obj.partener = "yes"
                 : obj.partner = "no"
 
-
-                finalArr.push(obj)
+                if(row[4]==="admin")
+                finalArrAdmin.push(obj)
+                if(row[4]==="user")
+                finalArrUser.push(obj)
             })
-            this.setState({finalArrayUsers: finalArr}, () => {
-
+            this.setState({finalArrayUsers: finalArrUser, finalArrayAdmin: finalArrAdmin}, () => {
+              console.log("Admin = ", this.state.finalArrayAdmin)
+              console.log("Users = ", this.state.finalArrayUsers)
                 
             })
             

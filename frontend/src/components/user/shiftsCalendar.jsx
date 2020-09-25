@@ -10,7 +10,7 @@ const ShiftsCalendar = () => {
   const [visible, setVisible] = useState(false);
   const [commentVisible, setcommentVisible] = useState(false);
   const [data, setData] = useState([]);
-  const [length, setLength] = useState([]);
+  const [off, setOff] = useState([]);
   const [assign, setAssign] = useState("");
   const [shiftType, setShiftType] = useState("");
   const [start, setStart] = useState("");
@@ -51,17 +51,13 @@ const ShiftsCalendar = () => {
 
   const handleOk = (e) => {
     setVisible(false);
-    var count = 0;
-    let offApprovalStat;
-    let tempArr = []
-   
-    axios.get("http://localhost:4000/api/shift/specificDateOffEvents/"+start)
-    .then((res) => {
-      setLength(res.data.shifts);
-    });
+    let counter;
+    axios.get("http://localhost:4000/api/shift/specificDateOffEvents/"+start).then((res) => {
+       counter = res.data.shifts.length;
+        console.log(counter);
+      });
+      console.log(counter);
 
-    console.log('Length of the array made')
-    console.log(length.length)
     const userId = assign;
     let shiftTypeId = shiftType;
     var swapable = "true";

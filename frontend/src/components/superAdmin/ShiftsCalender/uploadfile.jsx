@@ -132,13 +132,10 @@ class uploadfile extends Component {
 
 
   Process = () => {
-    console.log('Final Array')
-    console.log(this.state.finalArray);
-    axios.post("http://localhost:4000/api/shift/createUsersFromExcel",this.state.finalArray)
+    this.deletePreviousData();
+    axios.post("http://localhost:4000/api/shift/createShiftsFromExcel",this.state.finalArray)
     .then((res) => {
-      console.log('Array sent to backend')
-      console.log(res)
-      // console.log(res.data);
+      console.log('Array sent to backend'+res)
     })
     .catch((err) => console.log(err));
   }
@@ -180,9 +177,9 @@ class uploadfile extends Component {
               <Button className="mb-3" variant="info">
                 Download File
               </Button>
-              <Button type="primary" className="mb-3" variant="info" onClick={this.deletePreviousData}>
+              {/* <Button type="primary" className="mb-3" variant="info" onClick={this.deletePreviousData}>
                 Delete
-              </Button>
+              </Button> */}
 
               {this.state.rows && 
               <OutTable data={this.state.rows} columns={this.state.cols} tableClassName="ExcelTable2007" tableHeaderRowClass="heading" />

@@ -47,7 +47,7 @@ router.delete("/deleteAllShifts", (req, res) => {
   });
 });
 
-router.post("/createUsersFromExcel",(req,res)=> {
+router.post("/createShiftsFromExcel",(req,res)=> {
    const shiftsArray = req.body;
   // console.log('Array recieved to backend')
   //console.log(req.body)
@@ -58,17 +58,20 @@ router.post("/createUsersFromExcel",(req,res)=> {
          start:         eachShift.start,
          end:           eachShift.end,
          shiftTypeId:   eachShift.shiftTypeId,
-         swapable:      eachShift.swapable,
-         comment:       eachShift.comment
+         swapable:      eachShift.swappable,
     })
     temp.push(shift)
   })
   console.log('Temp array');
   console.log(temp);
-  console.log('Array recieved to backend');
+  console.log('Array of Shifts recieved to backend');
 
   temp.forEach(tempObj => {
-    tempObj.save().then(obj=>console.log(obj));
+    tempObj.save()
+    .then(obj => 
+      console.log(obj)
+      )
+     .catch((err) => console.log("Could not saved shifts from excel", err));
   })
 
   res.status(201).json({
@@ -348,8 +351,8 @@ router.get("/AllOffEvents" , (req,res) => {
 router.get("/currentShifts", (req, res) => {
   console.log('shifts')
   createShift.find()
-  // .populate('userId')
-  // .populate('shiftTypeId')
+  .populate('userId')
+  .populate('shiftTypeId')
   .exec()
   .then(shifts => {
 

@@ -73,13 +73,13 @@ export default class uploadUsersSheet extends Component {
         axios.delete("http://localhost:4000/api/user/deleteAndUpdateUsers").then((res) => {
              console.log('All users deleted'+res);
          })
-        console.log(this.state.finalArrayAdmin)
-         axios.post("http://localhost:4000/api/user/createAdminFromExcel",this.state.finalArrayAdmin).then((response1) => {
-            axios.post("http://localhost:4000/api/user/createUserFromExcel",this.state.finalArrayUsers).then((response2) => {
-             console.log('Admins Created'+response1);
+         axios.post("http://localhost:4000/api/user/createUserFromExcel",this.state.finalArrayUsers).then((response2) => {
              console.log('Users Created'+response2);
          })
+         axios.post("http://localhost:4000/api/user/createAdminFromExcel",this.state.finalArrayAdmin).then((response1) => {
+            console.log('Admins Created'+response1);
         })
+        
     }
     render() {
         return (

@@ -122,9 +122,7 @@ class uploadfile extends Component {
         })
     })
     console.log(Arr)
-
   }
-
   
 
   onFileUpload = () => {

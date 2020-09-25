@@ -44,6 +44,19 @@ router.get("/getuser", (req, res) => {
 	});
 });
 
+router.delete("/deleteAndUpdateUsers", (req, res) => {
+	User.remove().then((resp) => {
+	  console.log('All Users deleted');
+	  res.send(resp);
+	});
+	Admin.remove().then((resp) => {
+		console.log('All Admins deleted');
+		res.send(resp);
+	  });
+
+	  
+  });
+
 //@route  DELETE api/user/deleteuser
 //@desc   Delete user by id
 //@access Public

@@ -41,11 +41,30 @@ router.delete("/deleteshiftUser", (req, res) => {
 });
 
 router.delete("/deleteAllShifts", (req, res) => {
-  createShift.deleteMany().then((resp) => {
+  createShift.remove().then((resp) => {
     console.log(resp);
     res.send(resp);
   });
 });
+
+router.post("/createUsersFromExcel",(req,res)=> {
+   const shiftsArray = req.body;
+  // console.log('Array recieved to backend')
+  console.log(req.body)
+  let temp = [];
+  shiftsArray.forEach(eachShift => {
+    const shift = new createShift({
+         userId :       eachShift.userId,
+         start:         eachShift.start,
+         end:           eachShift.end,
+         shiftTypeId:   eachShift.shiftTypeId,
+         swapable:      eachShift.swapable,
+         comment:       eachShift.comment
+    })
+    temp.push(shift)
+  })
+})
+
 
 //Deleting all past data
 router.get("/deleteEventsBetweenTwoDates/:start/:end", async(req, res, next) => {

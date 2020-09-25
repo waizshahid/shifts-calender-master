@@ -10,7 +10,8 @@ class uploadfile extends Component {
     types: '',
     startDate: '',
     endDate: '',
-    users: ''
+    users: '',
+    finalArray: ''
   };
   componentDidMount = () =>  {
     axios.get("http://localhost:4000/api/user/getusers").then((response1) => {
@@ -84,6 +85,7 @@ class uploadfile extends Component {
 
 
   UpdateExcel = (rows) => {
+    // this.deletePreviousData();
     let shiftTitles = []
     let shiftTitleIndex = []
     console.log(this.state.types)
@@ -121,29 +123,33 @@ class uploadfile extends Component {
           })
         })
     })
+    console.log('Array to be pass to backend')
     console.log(Arr)
+    
+    	this.setState({finalArray: Arr})	
+        
+  }
+
+
+  Process = () => {
+    console.log('Final Array')
+    console.log(this.state.finalArray);
+    axios
+    .post("http://localhost:4000/api/shift/createUsersFromExcel",this.state.finalArray)
+    .then((res) => {
+      console.log('Array sent to backend')
+      console.log(res)
+      // console.log(res.data);
+    })
+    .catch((err) => console.log(err));
   }
   
 
-  onFileUpload = () => {
-    console.log(this.state.rows)
-    // const formData = new FormData();
-    // formData.append("file", this.state.file);
-    // let types = this.state.rows[0]
-
-    // console.log(this.state.rows[0])
-
-  //   axios
-  //     .post("http://localhost:4000/api/shift/excelFile/uploadFile", formData)
-  //     .then((response) => {
-  //       console.log("response", response);
-  //     })
-  //     .catch((err) => console.log("err", err));
-   };
+  
 
    deletePreviousData = () => {
     axios
-        .post("http://localhost:4000/api/shift/deleteEventsBetweenTwoDates/"+this.state.startDate+'/'+this.state.endDate)
+        .get("http://localhost:4000/api/shift/deleteEventsBetweenTwoDates/"+this.state.startDate+'/'+this.state.endDate)
         .then((response) => {
           console.log("response", response);
         })
@@ -159,11 +165,16 @@ class uploadfile extends Component {
                     type="file"
                     onChange={this.onFileChange}
                   />
-                {this.state.file && (
-                    <Upload variant="info" onClick={this.onFileUpload}>
+
+              <Button type="primary" onClick={this.Process}>
+                Process Excel to Database
+              </Button>
+              
+                {/* {this.state.file && (
+                    <Upload variant="info" onClick={this.UpdateExcel}>
                       Update Existing Sheet
                     </Upload>
-                )}
+                )} */}
             
               <br />
               <br />

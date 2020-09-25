@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Modal, Table, Button } from "antd";
 import jwt_decode from 'jwt-decode'
+import { Switch } from "antd";
 
-  import { Switch } from "antd";
 const OffShifts = () => { 
 	const [result, setResult] = useState();
 	 const [visible, setVisible] = useState(false);

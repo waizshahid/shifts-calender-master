@@ -44,6 +44,8 @@ router.get("/getuser", (req, res) => {
 	});
 });
 
+
+
 router.delete("/deleteAndUpdateUsers", (req, res) => {
 	User.remove().then((resp) => {
 	  console.log('All Users deleted');
@@ -192,4 +194,77 @@ router.put(
 	}
 );
 
+router.post("/createUserFromExcel",(req,res)=> {
+	const userArray = req.body;
+   // console.log('Array recieved to backend')
+   //console.log(req.body)
+   let temp = [];
+   userArray.forEach(eachUser => {
+	 const user = new User({
+		username: eachUser.username,
+		firstName: eachUser.firstName,
+		lastName: eachUser.lastName,
+		email: eachUser.email,
+		partener: eachUser.partener,
+		type: eachUser.type,
+		pass: eachUser.pass,
+		avatar: eachUser.avatar,
+		regDate: eachUser.regDate,
+	 })
+	 temp.push(user)
+   })
+   console.log('Temp array');
+   console.log(temp);
+   console.log('Array recieved to backend');
+ 
+   temp.forEach(tempObj => {
+	 tempObj.save()
+	 .then(obj => 
+		console.log(obj)
+		)
+	 .catch((err) => console.log("Could not saved admins", err));
+   })
+ 
+   res.status(201).json({
+	 message : "users added successfully"
+   })})
+
+   router.post("/createAdminFromExcel",(req,res)=> {
+	const userArray = req.body;
+//    console.log('Admins recieved to backend')
+//    console.log(req.body)
+   var temp = [];
+   userArray.forEach(eachUser => {
+	 const user = new Admin({
+		username: eachUser.username,
+		firstName: eachUser.firstName,
+		lastName: eachUser.lastName,
+		email: eachUser.email,
+		partener: eachUser.partener,
+		type: eachUser.type,
+		pass: eachUser.pass,
+		avatar: eachUser.avatar,
+		regDate: eachUser.regDate,
+	 })
+	 temp.push(user)
+   })
+   console.log('Temp array');
+   console.log(temp);
+   console.log('Array recieved to backend');
+ 
+   temp.forEach(tempObj => {
+	 tempObj.save()
+	 .then(obj => 
+		console.log(obj)
+		)
+	 .catch((err) => console.log("Could not saved admins", err));
+		
+   })
+ 
+   res.status(201).json({
+	 message : "users added successfully"
+   })})
+
+
+   
 module.exports = router;

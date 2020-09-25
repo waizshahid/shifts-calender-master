@@ -11,6 +11,9 @@ const createShift = new mongoose.Schema({
     required: true,
     ref: 'shifts'
   },
+  offApprovalStatus: {
+    type: String,
+  },
   swapable:{
     type: String,
     required: true,

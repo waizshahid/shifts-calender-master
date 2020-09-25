@@ -50,7 +50,7 @@ router.delete("/deleteAllShifts", (req, res) => {
 router.post("/createUsersFromExcel",(req,res)=> {
    const shiftsArray = req.body;
   // console.log('Array recieved to backend')
-  console.log(req.body)
+  //console.log(req.body)
   let temp = [];
   shiftsArray.forEach(eachShift => {
     const shift = new createShift({
@@ -63,6 +63,22 @@ router.post("/createUsersFromExcel",(req,res)=> {
     })
     temp.push(shift)
   })
+  console.log('Temp array');
+  console.log(temp);
+  console.log('Array recieved to backend');
+
+  temp.forEach(tempObj => {
+    tempObj.save().then(obj=>console.log(obj));
+  })
+
+  res.status(201).json({
+    message : "users added successfully"
+  })
+
+
+
+
+  
 })
 
 
@@ -199,7 +215,8 @@ router.post("/createShift", (req, res) => {
     end: req.body.end,
     shiftTypeId: req.body.shiftTypeId,
     swapable: req.body.swapable,
-    comment: req.body.comment
+    comment: req.body.comment,
+    offApprovalStatus: req.body.offApprovalStatus
   });
 
   console.log("Shift created as: "+newShift)
@@ -281,7 +298,7 @@ router.get("/specificDateOffEvents/:date" , (req,res) => {
             swapable: shift.swapable,
             shifname: shift.shiftTypeId.shiftname,
             comment: shift.comment,
-            status: 'Approved'
+            status: shift.offApprovalStatus
           }
         }
         
@@ -329,26 +346,29 @@ router.get("/AllOffEvents" , (req,res) => {
 })
 
 router.get("/currentShifts", (req, res) => {
+  console.log('shifts')
   createShift.find()
-  .populate('userId')
-  .populate('shiftTypeId')
+  // .populate('userId')
+  // .populate('shiftTypeId')
   .exec()
   .then(shifts => {
+
     // userId, start, end, title, color
     res.status(200).json({
-      shifts : shifts.map(shift => {
-        return {
-          _id : shift._id,
-          start : shift.start,
-          priority : shift.shiftTypeId.priority,
-          //shiftTypeId: shift.shiftTypeId,
-          end : shift.end,
-          title : shift.shiftTypeId.shiftname + ":"+ " " +shift.userId.firstName.charAt(0) +" " +shift.userId.lastName,
-          color : shift.shiftTypeId.color,
-          swapable: shift.swapable,
-          comment: shift.comment
-        }
-      })
+      shifts : shifts
+      // shifts : shifts.map(shift => {
+      //   return {
+      //     _id : shift._id,
+      //     start : shift.start,
+      //     priority : shift.shiftTypeId.priority,
+      //     //shiftTypeId: shift.shiftTypeId,
+      //     end : shift.end,
+      //     title : shift.shiftTypeId.shiftname + ":"+ " " +shift.userId.firstName.charAt(0) +" " +shift.userId.lastName,
+      //     color : shift.shiftTypeId.color,
+      //     swapable: shift.swapable,
+      //     comment: shift.comment
+      //   }
+      // })
     })
   })
   .catch(err=> {
@@ -398,7 +418,6 @@ router.get("/currentUserShifts/:id", (req, res) => {
 //     res.send(shfts);
 //   });
 // });
-
 
 
 router.get("/currentUserOffShifts/:id", async(req, res) => {

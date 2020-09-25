@@ -10,10 +10,12 @@ const ShiftsCalendar = () => {
   const [visible, setVisible] = useState(false);
   const [commentVisible, setcommentVisible] = useState(false);
   const [data, setData] = useState([]);
+  const [length, setLength] = useState([]);
   const [assign, setAssign] = useState("");
   const [shiftType, setShiftType] = useState("");
   const [start, setStart] = useState("");
   const [end, setEnd] = useState("");
+  const [approval, setApproval] = useState("");
   const [comment, setComment] = useState("");
   const showModal = () => {
     setVisible(true);
@@ -49,6 +51,17 @@ const ShiftsCalendar = () => {
 
   const handleOk = (e) => {
     setVisible(false);
+    var count = 0;
+    let offApprovalStat;
+    let tempArr = []
+   
+    axios.get("http://localhost:4000/api/shift/specificDateOffEvents/"+start)
+    .then((res) => {
+      setLength(res.data.shifts);
+    });
+
+    console.log('Length of the array made')
+    console.log(length.length)
     const userId = assign;
     let shiftTypeId = shiftType;
     var swapable = "true";
@@ -71,6 +84,7 @@ const ShiftsCalendar = () => {
         comment: comment,
         start: start,
         end: end,
+        offApprovalStatus: 'approval',
         shiftTypeId: shiftTypeId,
         swapable: swapable
       },

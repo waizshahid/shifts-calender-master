@@ -134,8 +134,7 @@ class uploadfile extends Component {
   Process = () => {
     console.log('Final Array')
     console.log(this.state.finalArray);
-    axios
-    .post("http://localhost:4000/api/shift/createUsersFromExcel",this.state.finalArray)
+    axios.post("http://localhost:4000/api/shift/createUsersFromExcel",this.state.finalArray)
     .then((res) => {
       console.log('Array sent to backend')
       console.log(res)

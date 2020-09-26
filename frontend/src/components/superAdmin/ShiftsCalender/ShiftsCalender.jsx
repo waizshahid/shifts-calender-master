@@ -134,8 +134,8 @@ const ShiftsCalender = () => {
   }
   useEffect(() => {
     console.log('Use Effect checking')
-    // setEventAtRender()
-    // setDataAndUser()
+    setEventAtRender()
+    setDataAndUser()
   }, [stop]);
   
   

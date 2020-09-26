@@ -49,45 +49,53 @@ const ShiftsCalendar = () => {
     setEnd(e.target.value);
   };
 
+  const getAndSetOffStatus = (res) => {
+        setOff(res.data.shifts)
+        console.log(off)
+        const userId = assign;
+        let shiftTypeId = shiftType;
+        var swapable = "true";
+        for (let i = 0; i < data.length; i++) {
+          if (shiftType === data[i].shiftname) {
+            shiftTypeId = data[i]._id;
+            break;
+          }
+        }
+        
+        const options = {
+          url: "http://localhost:4000/api/shift/createShift",
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json;charset=UTF-8",
+          },
+          data: {
+            userId: currentId,
+            comment: comment,
+            start: start,
+            end: end,
+            offApprovalStatus: 'approval',
+            shiftTypeId: shiftTypeId,
+            swapable: swapable
+          },
+        };
+        axios(options).then((res) => {
+          alert("Shift Created Successfully");
+        });
+  }
+  
   const handleOk = (e) => {
     setVisible(false);
-    let counter;
-    axios.get("http://localhost:4000/api/shift/specificDateOffEvents/"+start).then((res) => {
-       counter = res.data.shifts.length;
-        console.log(counter);
-      });
-      console.log(counter);
-
-    const userId = assign;
-    let shiftTypeId = shiftType;
-    var swapable = "true";
-    for (let i = 0; i < data.length; i++) {
-      if (shiftType === data[i].shiftname) {
-        shiftTypeId = data[i]._id;
-        break;
-      }
-    }
+  
+    axios.get("http://localhost:4000/api/shift/specificDateOffEvents/"+start)
+    .then((res) => {
+        getAndSetOffStatus(res);
+        console.log(res.data.shifts)
+    })
+    .catch((err) => {
+      console.log('Failed to get and set current date off events from database');
+    })
     
-    const options = {
-      url: "http://localhost:4000/api/shift/createShift",
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json;charset=UTF-8",
-      },
-      data: {
-        userId: currentId,
-        comment: comment,
-        start: start,
-        end: end,
-        offApprovalStatus: 'approval',
-        shiftTypeId: shiftTypeId,
-        swapable: swapable
-      },
-    };
-    axios(options).then((res) => {
-      alert("Shift Created Successfully");
-    });
   };
   const handleCancel = (e) => {
     setVisible(false);

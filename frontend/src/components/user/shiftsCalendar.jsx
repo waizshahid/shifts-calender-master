@@ -69,10 +69,17 @@ const ShiftsCalendar = () => {
         break;
       }
     }
-    console.log('off.length')
-    console.log(off.length)
-   
-    if(off.length < 8){
+    console.log('off.length: '+off.length)
+    
+   let countStatus = 0;
+    for(let i = 0 ; i < off.length ; i++){
+      if(off[i].status === 'Approved'){
+        countStatus++;
+      }
+    }
+
+    console.log('countStatus: '+countStatus)
+    if(off.length < 8 || countStatus < 8){
       offAprovalStat = "Approved"  
     }else{
       offAprovalStat = "Unapproved"  

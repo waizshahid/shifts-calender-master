@@ -45,7 +45,7 @@ export default class uploadUsersSheet extends Component {
 					lastName: row[1],
 					email: row[2],
 					type: row[4],
-					pass: "12345",
+					pass: "123456",
 					avatar: '',
 					regDate: date,
                 }

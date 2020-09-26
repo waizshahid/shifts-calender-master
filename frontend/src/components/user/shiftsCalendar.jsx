@@ -49,39 +49,49 @@ const ShiftsCalendar = () => {
     setEnd(e.target.value);
   };
 
+  useEffect(() => {
+    AfterSetOff()
+  }, [off]);
+
   const getAndSetOffStatus = (res) => {
         setOff(res.data.shifts)
-        console.log(off)
-        const userId = assign;
-        let shiftTypeId = shiftType;
-        var swapable = "true";
-        for (let i = 0; i < data.length; i++) {
-          if (shiftType === data[i].shiftname) {
-            shiftTypeId = data[i]._id;
-            break;
-          }
-        }
-        
-        const options = {
-          url: "http://localhost:4000/api/shift/createShift",
-          method: "POST",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json;charset=UTF-8",
-          },
-          data: {
-            userId: currentId,
-            comment: comment,
-            start: start,
-            end: end,
-            offApprovalStatus: 'approval',
-            shiftTypeId: shiftTypeId,
-            swapable: swapable
-          },
-        };
-        axios(options).then((res) => {
-          alert("Shift Created Successfully");
-        });
+        console
+       
+  }
+  
+
+  const AfterSetOff = () => {
+    console.log(off)
+    const userId = assign;
+    let shiftTypeId = shiftType;
+    var swapable = "true";
+    for (let i = 0; i < data.length; i++) {
+      if (shiftType === data[i].shiftname) {
+        shiftTypeId = data[i]._id;
+        break;
+      }
+    }
+    
+    const options = {
+      url: "http://localhost:4000/api/shift/createShift",
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json;charset=UTF-8",
+      },
+      data: {
+        userId: currentId,
+        comment: comment,
+        start: start,
+        end: end,
+        offApprovalStatus: 'approval',
+        shiftTypeId: shiftTypeId,
+        swapable: swapable
+      },
+    };
+    axios(options).then((res) => {
+      alert("Shift Created Successfully");
+    });
   }
   
   const handleOk = (e) => {

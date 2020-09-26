@@ -287,7 +287,9 @@ router.get("/specificDateOffEvents/:date" , (req,res) => {
   .populate('shiftTypeId')
   .exec()
   .then(shifts => {
+    console.log(shifts)
     res.status(200).json({
+      
       shifts : shifts.map(shift => {
         if(shift.shiftTypeId.shiftname === 'Off'){
           return {

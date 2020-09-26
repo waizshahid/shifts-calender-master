@@ -55,23 +55,29 @@ const ShiftsCalendar = () => {
 
   const getAndSetOffStatus = (res) => {
         setOff(res.data.shifts)
-        console
-       
   }
   
 
   const AfterSetOff = () => {
-    console.log(off)
     const userId = assign;
     let shiftTypeId = shiftType;
     var swapable = "true";
+    let offAprovalStat = "";
     for (let i = 0; i < data.length; i++) {
       if (shiftType === data[i].shiftname) {
         shiftTypeId = data[i]._id;
         break;
       }
     }
-    
+    console.log('off.length')
+    console.log(off.length)
+   
+    if(off.length < 8){
+      offAprovalStat = "Approved"  
+    }else{
+      offAprovalStat = "Unapproved"  
+    }
+
     const options = {
       url: "http://localhost:4000/api/shift/createShift",
       method: "POST",
@@ -84,7 +90,7 @@ const ShiftsCalendar = () => {
         comment: comment,
         start: start,
         end: end,
-        offApprovalStatus: 'approval',
+        offApprovalStatus: offAprovalStat,
         shiftTypeId: shiftTypeId,
         swapable: swapable
       },
@@ -167,7 +173,6 @@ const ShiftsCalendar = () => {
       for(let i = 0; i < res.data.length ; i++){
           if(res.data[i].editable === "true"){
                 temp.push(res.data[i]);
-                console.log(res.data[i])
               }
       }
       

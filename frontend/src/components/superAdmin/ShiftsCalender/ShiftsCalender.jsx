@@ -25,7 +25,7 @@ const ShiftsCalender = () => {
   const [start, setStart] = useState("");
   const [end, setEnd] = useState("");
   const [users, setUsers] = useState([]);
-  
+  const [stop, setStop] = useState(0);
   const showModal = () => {
     setVisible(true);
   };
@@ -105,16 +105,7 @@ const ShiftsCalender = () => {
     }
   }
 
-  useEffect(() => {
-    axios.get("http://localhost:4000/api/shift/currentShifts").then((res) => {
-    
-      setEvents(res.data.shifts);
-      console.log("DATA Gotten:",res.data.shifts); //[0].userId._id
-      // for(var i=0; i <  res.data.length ; i++){
-      //   console.log("User names for the shifts are:"+res.data[i].userId.firstName+res.data[i].userId.lastName)
-      // }    
-
-    });
+  const setDataAndUser = () => {
     const options = {
       url: "http://localhost:4000/api/shift/getshifts",
       method: "GET",
@@ -132,7 +123,20 @@ const ShiftsCalender = () => {
     axios.get("http://localhost:4000/api/user/getusers").then((res) => {
       setUsers(res.data);
     });
-  }, [visible]);
+  }
+  const setEventAtRender = () => {
+    axios.get("http://localhost:4000/api/shift/currentShifts").then((res) => {
+    
+      setEvents(res.data.shifts);
+      console.log("DATA Gotten:",res.data.shifts);
+    
+    });
+  }
+  useEffect(() => {
+    console.log('Use Effect checking')
+    // setEventAtRender()
+    // setDataAndUser()
+  }, [stop]);
   
   
   return (

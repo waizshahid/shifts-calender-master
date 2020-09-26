@@ -49,8 +49,6 @@ router.delete("/deleteAllShifts", (req, res) => {
 
 router.post("/createShiftsFromExcel",(req,res)=> {
    const shiftsArray = req.body;
-  // console.log('Array recieved to backend')
-  //console.log(req.body)
   let temp = [];
   shiftsArray.forEach(eachShift => {
     const shift = new createShift({
@@ -102,7 +100,7 @@ router.get("/deleteEventsBetweenTwoDates/:start/:end", async(req, res, next) => 
   
 
   console.log('Array of Shift')
-  console.log(array)
+  // console.log(array)
 
   await array.forEach( eachEvent => {
     createShift.remove({
@@ -276,7 +274,63 @@ router.get('/restrict-swap/:id/:swapable',(req,res)=>{
  }) 
 });
 
+router.get("/updateApprovalStatustoFalse/:id", (req,res) => {
+  const shiftId = req.params.id;
+  console.log('Shift IIIIIID'+shiftId)
+  createShift.findOne({
+    _id : shiftId
+  })
+  .exec()
+  .then(shift=> {
+    shift.offApprovalStatus = 'Unapproved';
+    shift.save()
+    .then(shiftObj => {
+      res.status(201).json({
+        message : "shift status changed successfully",
+        shift : shiftObj
+      })
+    })
+    .catch(err=> {
+      res.status(500).json({
+        error : err
+      })
+    })
+  })
+  .catch(err=> {
+    res.status(500).json({
+      error : err
+    })
+  })
+})
 
+router.get("/updateApprovalStatustoTrue/:id", (req,res) => {
+  const shiftId = req.params.id;
+  console.log('Shift ID'+shiftId)
+  createShift.findOne({
+    _id : shiftId
+  })
+  .exec()
+  .then(shift=> {
+    shift.offApprovalStatus = 'Approved';
+    shift.save()
+    .then(shiftObj => {
+      res.status(201).json({
+        message : "shift status changed successfully",
+        shift : shiftObj
+      })
+    })
+    .catch(err=> {
+      res.status(500).json({
+        error : err
+      })
+    })
+  })
+  .catch(err=> {
+    res.status(500).json({
+      error : err
+    })
+  })
+})
 
 router.get("/specificDateOffEvents/:date" , (req,res) => {
   const dataCheck = req.params.date;
@@ -287,9 +341,7 @@ router.get("/specificDateOffEvents/:date" , (req,res) => {
   .populate('shiftTypeId')
   .exec()
   .then(shifts => {
-    console.log(shifts)
     res.status(200).json({
-      
       shifts : shifts.map(shift => {
         if(shift.shiftTypeId.shiftname === 'Off'){
           return {
@@ -336,7 +388,8 @@ router.get("/AllOffEvents" , (req,res) => {
             color : shift.shiftTypeId.color,
             swapable: shift.swapable,
             shifname: shift.shiftTypeId.shiftname,
-            comment: shift.comment
+            comment: shift.comment,
+            offApprovalStatus: shift.offApprovalStatus
           }
         }
         
@@ -357,23 +410,23 @@ router.get("/currentShifts", (req, res) => {
   .populate('shiftTypeId')
   .exec()
   .then(shifts => {
+    
+console.log(shifts);
 
     // userId, start, end, title, color
     res.status(200).json({
-      shifts : shifts
-      // shifts : shifts.map(shift => {
-      //   return {
-      //     _id : shift._id,
-      //     start : shift.start,
-      //     priority : shift.shiftTypeId.priority,
-      //     //shiftTypeId: shift.shiftTypeId,
-      //     end : shift.end,
-      //     title : shift.shiftTypeId.shiftname + ":"+ " " +shift.userId.firstName.charAt(0) +" " +shift.userId.lastName,
-      //     color : shift.shiftTypeId.color,
-      //     swapable: shift.swapable,
-      //     comment: shift.comment
-      //   }
-      // })
+      shifts : shifts.map(shift => {
+        return {
+          _id : shift._id,
+          start : shift.start,
+          priority : shift.shiftTypeId.priority,
+          end : shift.end,
+          title : shift.shiftTypeId.shiftname + ":"+ " " +shift.userId.firstName.charAt(0) +" " +shift.userId.lastName,
+          color : shift.shiftTypeId.color,
+          swapable: shift.swapable,
+          comment: shift.comment
+        }
+      })
     })
   })
   .catch(err=> {

@@ -92,7 +92,7 @@ const OffShifts = () => {
     
     return (
         <div className="container pt-5">
-            <h4 className="text-center">Change swap permission</h4>
+            <h4 className="text-center">OFF Shifts</h4>
 			<br />
 			<br />
             <Table dataSource={result} columns={columns} />;{/* Register New User */}

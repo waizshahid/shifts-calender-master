@@ -21,10 +21,8 @@ const OffShiftsRequest = () => {
     }	
 	const getRequiredValues = (data) => {
         let temp = [];
-        var count = 8;
-		for (var i = 0; i < data.length; i++) {
-			if(data[i] !== null){
-                if(i < count && data[i].status === 'Approved'){
+        for (var i = 0; i < data.length; i++) {
+			   if(data[i].status === 'Approved'){
                     temp.push({
                         key: data[i]._id,
                         username: data[i].title,
@@ -39,11 +37,16 @@ const OffShiftsRequest = () => {
 							className="fa fa-toggle-on"
 							id={data[i]._id}
 							onClick={(e) => {
-                                console.log('Status: '+e.target.status)
-                                // data[i].status = 'Unapproved'
-                                // count--;
-                                console.log('Count after off'+count)
-							}}
+                            //    console.log('Status Changing Id: '+e.target.id)
+                                axios.get("http://localhost:4000/api/shift/updateApprovalStatustoFalse/"+e.target.id)
+                                .then((res) => {
+                                    console.log('Shift status changed to unapproved')
+                                    window.location.reload();
+                                })
+                                .catch((err) => {
+                                    console.log('Error updating shift status')
+                                })
+                            }}
 							style={{color: "grey", fontSize: "30px", cursor: "pointer" }}
 					    ></i>
                             </div>
@@ -64,11 +67,14 @@ const OffShiftsRequest = () => {
                                     className="fa fa-toggle-off"
                                     id={data[i]._id}
                                     onClick={(e) => {
-                                        data[i].status = 'Approved'
-                                        // count++;
-                                        console.log('Count after on'+count)
-                                        
-                                        
+                                        axios.get("http://localhost:4000/api/shift/updateApprovalStatustoTrue/"+e.target.id)
+                                        .then((res) => {
+                                            console.log('Shift status changed to Approved')
+                                            window.location.reload();
+                                        })
+                                        .catch((err) => {
+                                            console.log('Error updating shift status')
+                                        })
                                     }}
                                     style={{color: "red", fontSize: "30px", cursor: "pointer" }}
                                 ></i>   
@@ -76,8 +82,7 @@ const OffShiftsRequest = () => {
                         )
                     });
                 }
-            }
-		}
+        }
 		return temp;
     };
 
@@ -92,6 +97,7 @@ const OffShiftsRequest = () => {
                     end: data[i].end,
                     shifttype: data[i].shifname,
                     color: <div style={{ backgroundColor: data[i].color, width: "30px", height: "20px" }}></div>,
+                    status: data[i].offApprovalStatus
                 });
             }
 		}

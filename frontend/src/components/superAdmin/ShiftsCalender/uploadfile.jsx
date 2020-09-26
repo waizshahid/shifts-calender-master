@@ -132,7 +132,6 @@ class uploadfile extends Component {
 
 
   Process = () => {
-    this.deletePreviousData();
     axios.post("http://localhost:4000/api/shift/createShiftsFromExcel",this.state.finalArray)
     .then((res) => {
       console.log('Array sent to backend'+res)

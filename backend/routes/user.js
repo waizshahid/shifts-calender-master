@@ -49,7 +49,6 @@ router.get("/getuser", (req, res) => {
 router.delete("/deleteAndUpdateUsers", (req, res) => {
 	User.remove().then((resp) => {
 	  console.log('All Users deleted');
-	  //res.send(resp);
 	  Admin.remove().then((resp1) => {
 		console.log('All Admins deleted');
 		res.send(resp1);
@@ -211,8 +210,22 @@ router.post("/createUserFromExcel",(req,res)=> {
 		avatar: eachUser.avatar,
 		regDate: eachUser.regDate,
 	 })
+	 
 	 temp.push(user)
    })
+
+//    for(let i = 0 ; i < temp.length; i++){
+// 	bcrypt.genSalt(10, (err, salt) => {
+// 		bcrypt.hash(temp[i].pass, salt, (err, hash) => {
+// 			if (err) throw err;
+// 			temp[i].pass = hash;
+// 			temp[i]
+// 				.save()
+// 				.then((newperson) => res.json({ newperson }))
+// 				.catch((err) => console.log(err));
+// 		});
+// 	});
+//    }
    console.log('Temp array');
    console.log(temp);
    console.log('Array recieved to backend');

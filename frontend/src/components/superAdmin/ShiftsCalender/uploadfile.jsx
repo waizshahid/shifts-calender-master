@@ -15,12 +15,10 @@ class uploadfile extends Component {
   };
   componentDidMount = () =>  {
     axios.get("http://localhost:4000/api/user/getusers").then((response1) => {
-			axios.get("http://localhost:4000/api/admin/getadmins").then((response2) => {
-				
-				let arr = [...response1.data, ...response2.data];
-				this.setState({users: arr})
-			});
+				console.log(response1.data)
+				this.setState({users: response1.data})
 		});
+		
     axios.get("http://localhost:4000/api/shift/getshifts").then((response) => {
       
       let typeArr = []

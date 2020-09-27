@@ -71,7 +71,7 @@ const ShiftsCalendar = () => {
       }
     }
     console.log('off.length: '+off.length)
-    
+    let offAprovalStat;
    let countStatus = 0;
     for(let i = 0 ; i < off.length ; i++){
       if(off[i].status === 'Approved'){

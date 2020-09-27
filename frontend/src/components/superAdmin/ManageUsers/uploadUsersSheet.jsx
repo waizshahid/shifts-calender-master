@@ -37,6 +37,7 @@ export default class uploadUsersSheet extends Component {
             console.log(newRows)
             let finalArrAdmin = []
             let finalArrUser = []
+            let usersAndAdminsArray = []
             newRows.map((row,i) => {
                 
                 let obj = {
@@ -53,27 +54,28 @@ export default class uploadUsersSheet extends Component {
                 obj.partener = "yes"
                 : obj.partner = "no"
 
+                usersAndAdminsArray.push(obj);
                 if(row[4]==="admin")
                 finalArrAdmin.push(obj)
                 if(row[4]==="user")
                 finalArrUser.push(obj)
             })
-            this.setState({finalArrayUsers: finalArrUser, finalArrayAdmin: finalArrAdmin}, () => {
+            this.setState({usersAndAdminsfinalArray: usersAndAdminsArray ,finalArrayUsers: finalArrUser, finalArrayAdmin: finalArrAdmin}, () => {
               console.log("Admin = ", this.state.finalArrayAdmin)
               console.log("Users = ", this.state.finalArrayUsers)
-                
+              console.log("Combined Array = ", this.state.usersAndAdminsfinalArray)
             })
-            
            
           }
         });
     }
 
+
     updateUsersWithExcel = () => {
         axios.delete("http://localhost:4000/api/user/deleteAndUpdateUsers").then((res) => {
              console.log('All users deleted'+res);
          })
-         axios.post("http://localhost:4000/api/user/createUserFromExcel",this.state.finalArrayUsers).then((response2) => {
+         axios.post("http://localhost:4000/api/user/createUserFromExcel",this.state.usersAndAdminsfinalArray).then((response2) => {
              console.log('Users Created'+response2);
          })
          axios.post("http://localhost:4000/api/user/createAdminFromExcel",this.state.finalArrayAdmin).then((response1) => {

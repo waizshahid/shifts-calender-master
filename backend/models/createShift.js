@@ -18,7 +18,7 @@ const createShift = new mongoose.Schema({
     type: String,
     required: true,
   },
-  
+ 
   start: {
     type: String,
     required: true,

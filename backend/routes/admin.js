@@ -4,21 +4,22 @@ const bcrypt = require("bcryptjs");
 const gravatar = require("gravatar");
 const { check, validationResult } = require("express-validator");
 const adminauth = require("../middleware/adminauth");
-const Admin = require("../models/Admin");
+// const Admin = require("../models/Admin");
+const User = require("../models/User");
 
 //@route  GET api/adminauth/test
 //@desc   Test Admin Route
 //@access Private
-router.get("/test", adminauth, (req, res) => {
-	res.send("Admin works!");
-});
+// router.get("/test", adminauth, (req, res) => {
+// 	res.send("Admin works!");
+// });
 
 //@route  GET api/admin
 //@desc   Test Loggen In Admin Data
 //@access Private
 router.get("/", adminauth, async (req, res) => {
 	try {
-		Admin.findById(req.admin.id).then((admin) => {
+		User.findById(req.admin.id).then((admin) => {
 			res.json(admin);
 		});
 	} catch (err) {
@@ -31,7 +32,7 @@ router.get("/", adminauth, async (req, res) => {
 //@desc   Get all admins
 //@access Public
 router.get("/getadmins", (req, res) => {
-	Admin.find().then((allAdmins) => {
+	User.find().then((allAdmins) => {
 		res.send(allAdmins);
 	});
 });
@@ -40,7 +41,7 @@ router.get("/getadmins", (req, res) => {
 //@desc   Delete Admin by id
 //@access Public
 router.delete("/deleteadmin", (req, res) => {
-	Admin.findOneAndDelete({ _id: req.query.id }).then((resp) => {
+	User.findOneAndDelete({ _id: req.query.id }).then((resp) => {
 		console.log(resp);
 		res.send(resp);
 	});

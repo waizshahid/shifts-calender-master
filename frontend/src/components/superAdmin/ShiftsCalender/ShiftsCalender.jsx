@@ -83,6 +83,7 @@ const ShiftsCalender = () => {
     };
     axios(options).then((res) => {
       alert("Shift Created Successfully");
+      window.location.reload();
     });
   };
   const handleCancel = (e) => {

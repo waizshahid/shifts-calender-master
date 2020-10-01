@@ -25,100 +25,9 @@ const ShiftsCalender = () => {
   const [start, setStart] = useState("");
   const [end, setEnd] = useState("");
   const [users, setUsers] = useState([]);
-  
+  const [stop, setStop] = useState(0);
 
-  const custEvents = [
-    {
-      end: "2020-09-10",
-      start: "2020-09-10",
-      title: "Something",
-    },
-    {
-      end: "2020-09-30",
-      start: "2020-09-10",
-      title: "Something",
-      color: "#1db847", // override!
-    },
-    {
-      end: "2020-09-30",
-      start: "2020-09-10",
-      title: "Something",
-      color: "#b8b31d", // override!
-    },
-    {
-      end: "2020-09-10",
-      start: "2020-09-10",
-      title: "Something",
-      color: "#b81d1d", // override!
-    },
-    {
-      end: "2020-09-30",
-      start: "2020-09-10",
-      title: "Something",
-      color: "#b81db3", // override!
-    },
-    {
-      end: "2020-09-10",
-      start: "2020-09-30",
-      title: "Something",
-    },
-    {
-      end: "2020-09-20",
-      start: "2020-09-10",
-      title: "Something",
-    },
-    {
-      end: "2020-09-20",
-      start: "2020-09-10",
-      title: "Something",
-      color: "#1db847", // override!
-    },
-    {
-      end: "2020-09-10",
-      start: "2020-09-10",
-      title: "Something",
-      color: "#b81d1d", // override!
-    },
-    {
-      end: "2020-09-10",
-      start: "2020-09-10",
-      title: "Something",
-    },
-    {
-      end: "2020-09-10",
-      start: "2020-09-10",
-      title: "Something",
-    },
-    {
-      end: "2020-09-10",
-      start: "2020-09-10",
-      title: "Something",
-      color: "#b8b31d", // override!
-    },
-    {
-      end: "2020-09-10",
-      start: "2020-09-10",
-      title: "Something",
-    },
-    {
-      end: "2020-09-10",
-      start: "2020-09-10",
-      title: "Something",
-      color: "#b81d1d", // override!
-    },
-    {
-      end: "2020-09-10",
-      start: "2020-09-10",
-      title: "Something",
-      color: "#b81db3", // override!
-    },
-    {
-      end: "2020-09-10",
-      start: "2020-09-10",
-      title: "Something",
-    },
-  ];
-
+ 
   const showModal = () => {
     setVisible(true);
   };
@@ -186,6 +95,7 @@ const ShiftsCalender = () => {
     };
     axios(options).then((res) => {
       alert("Shift Created Successfully");
+      window.location.reload();
     });
   };
   const handleCancel = (e) => {
@@ -204,13 +114,7 @@ const ShiftsCalender = () => {
     }
   }
 
- 
-  useEffect(() => {
-    axios.get("http://localhost:4000/api/shift/currentShifts").then((res) => {
-      console.log('Admin data gotten is:')  
-      console.log(res.data.shifts);
-      setEvents(res.data.shifts);
-    });
+  const setDataAndUser = () => {
     const options = {
       url: "http://localhost:4000/api/shift/getshifts",
       method: "GET",
@@ -220,13 +124,29 @@ const ShiftsCalender = () => {
       },
     };
     axios(options).then((res) => {
+      console.log('Shift Ids:');
+      console.log(res.data);
       setData(res.data);
     });
 
     axios.get("http://localhost:4000/api/user/getusers").then((res) => {
       setUsers(res.data);
     });
-  }, []);
+  }
+  const setEventAtRender = () => {
+    axios.get("http://localhost:4000/api/shift/currentShifts").then((res) => {
+    
+      setEvents(res.data.shifts);
+      console.log("DATA Gotten:",res.data.shifts);
+    
+    });
+  }
+  useEffect(() => {
+    console.log('Use Effect checking')
+    setEventAtRender()
+    setDataAndUser()
+    
+  }, [stop]);
 
   const cutomEvent = () => {
     return (

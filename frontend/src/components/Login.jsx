@@ -10,78 +10,58 @@ import "../css/Login.css";
 
 const Login = (props) => {
 	const [error, setError] = React.useState(" ");
-
-	const onFinish = (values) => {
-		const { email, pass } = values;
-		setError(" ");
-
-		//if person is a SuperAdmin i-e- SuperAdmin radio is selected
-		// if (person === "0") {
+	
+	const submitLogin = (person,email,pass) => {
 		axios
 			.post("http://localhost:4000/api/superadminauth/login", {
 				email,
 				pass,
+				person
 			})
 			.then((res) => {
 				window.localStorage.clear();
 				console.log("hhh", res.data);
 				// const stdid = jwt_decode(res.data.token).student.StdID;
 				if (res.data.type === "superadmin") {
-					console.log("ssss");
+					console.log(res.data);
 					localStorage.setItem("superadmintoken", res.data.token);
 					props.history.push("/superadmin/shifts-calender");
 				}
 
 				if (res.data.type === "admin") {
+					console.log(res.data);
 					localStorage.setItem("admintoken", res.data.token);
 					props.history.push("/admin/shifts-calender");
 				}
 
 				if (res.data.type === "user") {
+					console.log(res.data);
 					localStorage.setItem("usertoken", res.data.token);
 					props.history.push("/user/shifts-calender");
 				}
 			})
+				.catch((err) => {
+					setError(err);
+				});
+	}
+
+	const onFinish = (values) => {
+		const { email, pass} = values;
+		setError(" ");
+		
+
+		axios.get("http://localhost:4000/api/superadminauth/getType/"+email)
+			.then((response) => {
+				submitLogin(response.data.type,email,pass)
+			})
 			.catch((err) => {
-				setError(err);
-			});
+				console.log(err);
+			})
+		
+		
 
-		// } else {
-		// 	if (person === "1") {
-		// 		//when admin is logged in
-		// 		axios
-		// 			.post("http://localhost:4000/api/adminauth/login", {
-		// 				email,
-		// 				pass,
-		// 			})
-		// 			.then((res) => {
-		// 				window.localStorage.clear();
-		// 				localStorage.setItem("admintoken", res.data.token);
-
-		// 				props.history.push("/admin");
-		// 			})
-		// 			.catch((err) => {
-		// 				setError(err.response.data.errors[0]);
-		// 			});
-		// 	} else {
-		// 		//when User is logged in
-		// 		axios
-		// 			.post("http://localhost:4000/api/userauth/login", {
-		// 				email,
-		// 				pass,
-		// 			})
-		// 			.then((res) => {
-		// 				window.localStorage.clear();
-		// 				localStorage.setItem("usertoken", res.data.token);
-
-		// 				props.history.push("/user");
-		// 			})
-		// 			.catch((err) => {
-		// 				setError(err.response.data.errors[0]);
-		// 			});
-		// 	}
-		// }
-	};
+		
+	}
 
 	return (
 		<div className="outer d-flex align-items-center justify-content-center">
@@ -125,6 +105,7 @@ const Login = (props) => {
 					/>
 				</Form.Item>
 
+				
 				{/* <Form.Item
 					name="person"
 					rules={[

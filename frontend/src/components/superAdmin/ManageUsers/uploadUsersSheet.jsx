@@ -52,7 +52,7 @@ export default class uploadUsersSheet extends Component {
                 }
                 row[5] === "partner"? 
                 obj.partener = "yes"
-                : obj.partner = "no"
+                : obj.partener = "no"
 
                 usersAndAdminsArray.push(obj);
                 if(row[4]==="admin")
@@ -72,15 +72,15 @@ export default class uploadUsersSheet extends Component {
 
 
     updateUsersWithExcel = () => {
-        axios.delete("http://localhost:4000/api/user/deleteAndUpdateUsers").then((res) => {
-             console.log('All users deleted'+res);
-         })
+        // axios.delete("http://localhost:4000/api/user/deleteAndUpdateUsers").then((res) => {
+        //      console.log('All users deleted'+res);
+        //  })
          axios.post("http://localhost:4000/api/user/createUserFromExcel",this.state.usersAndAdminsfinalArray).then((response2) => {
-             console.log('Users Created'+response2);
+             console.log(response2.data);
          })
-         axios.post("http://localhost:4000/api/user/createAdminFromExcel",this.state.finalArrayAdmin).then((response1) => {
-            console.log('Admins Created'+response1);
-        })
+        //  axios.post("http://localhost:4000/api/user/createAdminFromExcel",this.state.finalArrayAdmin).then((response1) => {
+        //     console.log('Admins Created'+response1);
+        // })
         
     }
     render() {

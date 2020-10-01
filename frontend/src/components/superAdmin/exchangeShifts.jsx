@@ -27,7 +27,6 @@ const ExchangeShifts = () => {
                 startdate: data[i].start,
                 enddate: data[i].end,
                 swapable: data[i].swapable,
-                comment: data[i].comment
 
 			});
 		}
@@ -52,11 +51,31 @@ const ExchangeShifts = () => {
       });
 
     const handleOk = (e) => {
+
         console.log('ID 1 HAI: '+id1);
         console.log('ID 2 HAI: '+id2);
-        axios.get("http://localhost:4000/api/shift/swapShift/"+id1+'/'+id2).
-        then((res) => {
-            console.log(res.data);
+        let userId1 = id1.substring(id1.indexOf(":") + 1)
+        let userId2 = id2.substring(id2.indexOf(":") + 1)
+        let shiftId1 = id1.substring(0, id1.indexOf(':'));
+        let shiftId2 = id2.substring(0, id2.indexOf(':'));
+        const message = "Your shift has been swapped. Click for details"
+            
+        console.log('UserID 1 HAI: '+userId1);
+        console.log('USERID 2 HAI: '+userId2);
+        console.log('ShiftID 1 HAI: '+shiftId1);
+        console.log('ShiftID 2 HAI: '+shiftId2);
+        axios.get("http://localhost:4000/api/shift/swapShift/"+shiftId1+'/'+shiftId2)
+        .then((res) => {
+            // console.log(res.data);
+            axios.post("http://localhost:4000/api/user/userNotification",{
+                userId1,userId2,shiftId1,shiftId2,message
+            })
+            .then((res) => {
+					console.log(res.data);
+				})
+				.catch((err) => {
+					console.log(err.response);
+				});
           });
           window.location.reload();
     }
@@ -64,27 +83,38 @@ const ExchangeShifts = () => {
 		{
 			title: "Shift title",
 			dataIndex: "title",
-			key: "title",
+            key: "title",
+            sorter: {
+                compare: (a, b) => a.title - b.title,
+                multiple: 4,
+            },
         },
         {
 			title: "Start Date",
 			dataIndex: "startdate",
-			key: "startdate",
+            key: "startdate",
+            sorter: {
+                compare: (a, b) => a.startdate - b.startdate,
+                multiple: 4,
+            },
         },
         {
 			title: "End Date",
 			dataIndex: "enddate",
-			key: "enddate",
+            key: "enddate",
+            sorter: {
+                compare: (a, b) => a.enddate - b.enddate,
+                multiple: 4,
+            },
         },
         {
 			title: "Swapable",
 			dataIndex: "swapable",
-			key: "swapable",
-        },
-        {
-			title: "Comments",
-			dataIndex: "comment",
-			key: "comment",
+            key: "swapable",
+            sorter: {
+                compare: (a, b) => a.swapable - b.swapable,
+                multiple: 4,
+            },
         }
     ];
     
@@ -118,7 +148,7 @@ const ExchangeShifts = () => {
                             Select Shift 1
                         </option>
                         {data.map((dat) => (
-                            <option value={dat._id} key={dat._id}>
+                            <option value={dat._id+':'+dat.userId} key={dat._id}>
                             {dat.title}
                         </option>
                         ))}
@@ -133,7 +163,7 @@ const ExchangeShifts = () => {
                             Select Shift 2
                         </option>
                         {data.map((dat) => (
-                            <option value={dat._id} key={dat._id}>
+                            <option value={dat._id+':'+dat.userId} key={dat._id}>
                             {dat.title}
                         </option>
                         ))}

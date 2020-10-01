@@ -1,11 +1,13 @@
 const express = require("express");
 const router = express.Router();
-const bcrypt = require("bcryptjs");
+const bcrypt = require("bcrypt");
 const gravatar = require("gravatar");
 const userauth = require("../middleware/userauth");
 const { check, validationResult } = require("express-validator");
 const User = require("../models/User");
+const Notification = require("../models/Notifications");
 const Admin = require("../models/Admin");
+const saltRounds = 10;
 
 //@route  GET api/user/test
 //@desc   Test User Route
@@ -31,8 +33,21 @@ router.get("/", userauth, async (req, res) => {
 //@route  GET api/user/getusers
 //@desc   Get all users
 //@access Public
+// router.get("/getusers", (req, res) => {
+// 	User.find().then((allUsers) => {
+// 		res.status(200).json({
+// 			count:allUsers.length,
+// 			users : allUsers
+// 		});
+// 	});
+// });
 router.get("/getusers", (req, res) => {
 	User.find().then((allUsers) => {
+		res.send(allUsers);
+	});
+});
+router.get("/getNotifcations", (req, res) => {
+	Notification.find().then((allUsers) => {
 		res.send(allUsers);
 	});
 });
@@ -44,16 +59,70 @@ router.get("/getuser", (req, res) => {
 	});
 });
 
+router.get("/getCurrentUserNotificationsTo/:id", (req,res) => {
+	const currentUserId = req.params.id;
+	Notification.find({
+		to : currentUserId
+		})
+	.then((notifcations)=> {
+		res.send(notifcations)
+	})
+	.catch((err)=> {
+		console.log(err);
+	})
+})
+router.get("/getCurrentUserNotificationsFrom/:id", (req,res) => {
+	const currentUserId = req.params.id;
+	Notification.find({
+		from : currentUserId
+		})
+	.then((notifcations)=> {
+		res.send(notifcations)
+	})
+	.catch((err)=> {
+		console.log(err);
+	})
+})
 
+router.delete("/deleteAllNotifications", (req, res) => {
+	Notification.remove().then((resp) => {
+	  console.log(resp);
+	  res.send(resp);
+	})
+	.catch((err)=> {
+		console.log(err)
+	})
+  });
+
+router.post("/userNotification", (req, res) => {
+    console.log(req.body);
+  if (req.body === null) res.status(400).send("Bad Request");
+  let newNotification = new Notification({
+    shiftTo:  req.body.shiftId1,
+    shiftFrom:req.body.shiftId2,
+    to:       req.body.userId1,
+    from:     req.body.userId2,
+    message:  req.body.message,
+  });
+
+  console.log("Notification created as: "+newNotification)
+  newNotification
+    .save()
+    .then((newShift) => res.send(newShift))
+    .catch((err) => console.log(err));
+});
 
 router.delete("/deleteAndUpdateUsers", (req, res) => {
-	User.remove().then((resp) => {
-	  console.log('All Users deleted');
-	  Admin.remove().then((resp1) => {
-		console.log('All Admins deleted');
-		res.send(resp1);
-	  });
-	});
+	User.remove()
+	.then((resp) => {
+	  console.log('All Users and Admins deleted');
+	  res.send(resp)
+	})
+	.catch((err) => 
+		{
+			console.log('User delete failed: '+err)
+		}
+	)
 	
 
 	  
@@ -193,90 +262,63 @@ router.put(
 	}
 );
 
-router.post("/createUserFromExcel",(req,res)=> {
+router.post("/createUserFromExcel",async(req,res) => {
+	var hasheduserArray = [];
 	const userArray = req.body;
-   // console.log('Array recieved to backend')
-   //console.log(req.body)
-   let temp = [];
-   userArray.forEach(eachUser => {
-	 const user = new User({
-		username: eachUser.username,
-		firstName: eachUser.firstName,
-		lastName: eachUser.lastName,
-		email: eachUser.email,
-		partener: eachUser.partener,
-		type: eachUser.type,
-		pass: eachUser.pass,
-		avatar: eachUser.avatar,
-		regDate: eachUser.regDate,
-	 })
-	 
-	 temp.push(user)
-   })
+	console.log(userArray)
+	var hashArray = [];
+   	// console.log(userArray)
+	// console.log('Array recieved to backend')
 
-//    for(let i = 0 ; i < temp.length; i++){
-// 	bcrypt.genSalt(10, (err, salt) => {
-// 		bcrypt.hash(temp[i].pass, salt, (err, hash) => {
-// 			if (err) throw err;
-// 			temp[i].pass = hash;
-// 			temp[i]
-// 				.save()
-// 				.then((newperson) => res.json({ newperson }))
-// 				.catch((err) => console.log(err));
-// 		});
-// 	});
-//    }
-   console.log('Temp array');
-   console.log(temp);
-   console.log('Array recieved to backend');
- 
-   temp.forEach(tempObj => {
-	 tempObj.save()
-	 .then(obj => 
-		console.log(obj)
-		)
-	 .catch((err) => console.log("Could not saved admins", err));
-   })
- 
-   res.status(201).json({
-	 message : "users added successfully"
-   })})
+	for(const user of userArray){
+	
+	await bcrypt.hash(user.pass, saltRounds, function(err,hash){
+		if(err){
+			return res.status(500).json({
+				error: err
+			})
+		}else{
+			user.pass = hash;
+			hashArray.push(user)
+			if(hashArray.length == userArray.length){
+				// console.log("hashArray");
+				// console.log(hashArray);
+				hashArray.forEach(tempObj => {
+					var user = new User({
+						username : tempObj.username,
+						firstName : tempObj.firstName,
+						lastName : tempObj.lastName,
+						email:tempObj.email,
+						type:tempObj.type,
+						pass:tempObj.pass,
+						avatar:tempObj.avatar,
+						regDate:tempObj.regDate,
+						partener:tempObj.partener
+					});
+					hasheduserArray.push(user);
 
-   router.post("/createAdminFromExcel",(req,res)=> {
-	const userArray = req.body;
-//    console.log('Admins recieved to backend')
-//    console.log(req.body)
-   var temp = [];
-   userArray.forEach(eachUser => {
-	 const user = new Admin({
-		username: eachUser.username,
-		firstName: eachUser.firstName,
-		lastName: eachUser.lastName,
-		email: eachUser.email,
-		partener: eachUser.partener,
-		type: eachUser.type,
-		pass: eachUser.pass,
-		avatar: eachUser.avatar,
-		regDate: eachUser.regDate,
-	 })
-	 temp.push(user)
-   })
-   console.log('Temp array');
-   console.log(temp);
-   console.log('Array recieved to backend');
- 
-   temp.forEach(tempObj => {
-	 tempObj.save()
-	 .then(obj => 
-		console.log(obj)
-		)
-	 .catch((err) => console.log("Could not saved admins", err));
-		
-   })
- 
-   res.status(201).json({
-	 message : "users added successfully"
-   })})
+				});
+
+				if(userArray.length == hasheduserArray.length){
+					// console.log(hasheduserArray)
+					var i = 0;
+					hasheduserArray.forEach(user=>{
+						user.save();
+						i++;
+						if(i==hasheduserArray.length){
+							res.status(201).json({message:"users added successfully"})
+						}
+					})
+					
+				}
+			}	
+		}
+	})
+
+
+	}
+
+})
 
 
    

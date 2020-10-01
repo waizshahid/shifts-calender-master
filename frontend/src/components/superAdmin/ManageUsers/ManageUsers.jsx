@@ -55,13 +55,10 @@ const ManageUsers = () => {
 
 	useEffect(() => {
 		axios.get("http://localhost:4000/api/user/getusers").then((response1) => {
-			axios.get("http://localhost:4000/api/admin/getadmins").then((response2) => {
+			
 				console.log("res1 = ", response1);
-				console.log("res2 = ", response2);
-				let arr = [...getRequiredValues(response1.data), ...getRequiredValues(response2.data)];
-				setResult(arr);
+				setResult(response1.data);
 			});
-		});
 
 		// axios.get("http://localhost:4000/api/admin/getadmins").then((response) => {
 		// 	setResult(result.concat(getRequiredValues(response.data)));

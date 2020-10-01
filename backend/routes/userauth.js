@@ -35,56 +35,54 @@ router.post(
 
 		try {
 			//check if Admin exists
-			if (req.body.person === "admin") {
-				console.log("IN Admin");
-				Admin.findOne({ email: req.body.email }).then((person) => {
-					if (person) {
-						return res.status(400).json({ email: "Email already exists!" });
-					} else {
-						const avatar = gravatar.url(req.body.email, {
-							s: "200", //mm
-							r: "pg", //Rating
-							d: "mm", //Default
-						});
+			// if (req.body.person === "admin") {
+			// 	console.log("IN Admin");
+			// 	Admin.findOne({ email: req.body.email }).then((person) => {
+			// 		if (person) {
+			// 			return res.status(400).json({ email: "Email already exists!" });
+			// 		} else {
+			// 			const avatar = gravatar.url(req.body.email, {
+			// 				s: "200", //mm
+			// 				r: "pg", //Rating
+			// 				d: "mm", //Default
+			// 			});
 
-						let date_ob = new Date();
-						// current date
-						// adjust 0 before single digit date
-						let date = ("0" + date_ob.getDate()).slice(-2);
-						// current month
-						let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
-						// current year
-						let year = date_ob.getFullYear();
+			// 			let date_ob = new Date();
+			// 			// current date
+			// 			// adjust 0 before single digit date
+			// 			let date = ("0" + date_ob.getDate()).slice(-2);
+			// 			// current month
+			// 			let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
+			// 			// current year
+			// 			let year = date_ob.getFullYear();
 
-						let newPerson = new Admin({
-							username: req.body.username,
-							firstName: req.body.firstName,
-							lastName: req.body.lastName,
-							email: req.body.email,
-							partener: req.body.partener,
-							type: req.body.person,
-							pass: req.body.pass,
-							avatar,
-							regDate: year + "-" + month + "-" + date,
-						});
+			// 			let newPerson = new Admin({
+			// 				username: req.body.username,
+			// 				firstName: req.body.firstName,
+			// 				lastName: req.body.lastName,
+			// 				email: req.body.email,
+			// 				partener: req.body.partener,
+			// 				type: req.body.person,
+			// 				pass: req.body.pass,
+			// 				avatar,
+			// 				regDate: year + "-" + month + "-" + date,
+			// 			});
 
-						bcrypt.genSalt(10, (err, salt) => {
-							bcrypt.hash(newPerson.pass, salt, (err, hash) => {
-								if (err) throw err;
-								newPerson.pass = hash;
-								newPerson
-									.save()
-									.then((newperson) => res.json({ newperson }))
-									.catch((err) => console.log(err));
-							});
-						});
-					}
-				});
-			}
+			// 			bcrypt.genSalt(10, (err, salt) => {
+			// 				bcrypt.hash(newPerson.pass, salt, (err, hash) => {
+			// 					if (err) throw err;
+			// 					newPerson.pass = hash;
+			// 					newPerson
+			// 						.save()
+			// 						.then((newperson) => res.json({ newperson }))
+			// 						.catch((err) => console.log(err));
+			// 				});
+			// 			});
+			// 		}
+			// 	});
+			// }
 
 			//check if user exists
-			if (req.body.person === "user") {
-				console.log("IN User");
 				User.findOne({ email: req.body.email }).then((person) => {
 					if (person) {
 						return res.status(400).json({ email: "Email already exists!" });
@@ -128,7 +126,6 @@ router.post(
 						});
 					}
 				});
-			}
 		} catch (err) {
 			console.error(err.message);
 			res.status(500).send("Server error");

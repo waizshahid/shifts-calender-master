@@ -27,7 +27,7 @@ import {
 const { Header, Content, Footer, Sider } = Layout;
 const openNotification = () => {
 	const args = {
-	  message: 'Swap Requests',
+	  message: 'Notifications',
 	  description:
 	  {} + 'wants to swap his shift with you',
 	  duration: 0,

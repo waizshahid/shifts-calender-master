@@ -7,6 +7,7 @@ const { check, validationResult } = require("express-validator");
 const Shift = require("../models/Shift");
 const createShift = require("../models/createShift");
 const User = require("../models/User");
+const Notifications = require("../models/Notifications");
 var nodemailer = require("nodemailer");
 
 var bodyParser = require('body-parser');
@@ -411,7 +412,7 @@ router.get("/currentShifts", (req, res) => {
   .exec()
   .then(shifts => {
     
-console.log(shifts);
+// console.log(shifts);
 
     // userId, start, end, title, color
     res.status(200).json({
@@ -424,6 +425,7 @@ console.log(shifts);
           title : shift.shiftTypeId.shiftname + ":"+ " " +shift.userId.firstName.charAt(0) +" " +shift.userId.lastName,
           color : shift.shiftTypeId.color,
           swapable: shift.swapable,
+          userId: shift.userId._id,
           comment: shift.comment
         }
       })
@@ -660,6 +662,7 @@ router.post(
     }
   }
 );
+
 
 module.exports = router;
 

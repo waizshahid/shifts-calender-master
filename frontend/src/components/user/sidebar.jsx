@@ -6,33 +6,88 @@ import OffShift from './OffShifts'
 import ShiftsCalendar from "../user/shiftsCalendar";
 import UserShiftCrud from "./userShiftCrud"
 import RestricSwapping from './restrictSwappingUser'
-import { Layout, Menu, Avatar, notification } from "antd";
+import { Layout, Menu, Avatar, notification, Dropdown, Button,Badge  } from "antd";
+import axios from 'axios'
 import {
   UserOutlined,
   LogoutOutlined,
   MenuOutlined,
   CalendarOutlined,
   SwapOutlined,
-
+  BellFilled
 } from "@ant-design/icons";
 import OffShifts from "./OffShifts";
+import jwt_decode from 'jwt-decode'
 
 const { Header, Content, Footer, Sider } = Layout;
-const openNotification = () => {
-  const args = {
-    message: 'Swap Requests',
-    description:
-    {} + 'wants to swap his shift with you',
-    duration: 0,
-  };
-  notification.open(args);
-};
+    
+
 const Side = ({ user }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [dsplayMessage, setMessage] = React.useState([]);
+  const [shifts, setShifts] = React.useState([]);
+  const token = localStorage.usertoken
+  const decoded = jwt_decode(token)
+  const currentId = decoded.id
 
   useEffect(() => {
-    //   console.log(superAdmin);
+    console.log('Current User Login'+currentId)
+    axios.get("http://localhost:4000/api/user/getCurrentUserNotificationsTo/"+currentId).then((res1) => {
+      axios.get("http://localhost:4000/api/user/getCurrentUserNotificationsFrom/"+currentId).then((res2) => {
+        let array = [...res1.data,...res2.data];
+        setMessage(array)
+      })})
+      .catch((err) => {
+        console.log(err)
+      })
+
   }, []);
+
+
+  const showShiftModal = (message) => {
+    console.log(dsplayMessage[message.key])
+    // let shiftId1 = dsplayMessage[index].shiftTo
+  };
+  // const swappedShifts = (to,from) => {
+  //   console.log(to)
+  //   console.log(from)
+  //   // axios.get("http://localhost:4000/api/user/getShiftTo/"+currentId).then((res1) => {
+  //   //   axios.get("http://localhost:4000/api/user/getShiftFrom/"+currentId).then((res2) => {
+  //   //     let array = [...res1.data,...res2.data];
+  //   //     setShifts(array)
+  //   //   })})
+  //   //   .catch((err) => {
+  //   //     console.log(err)
+  //   //   })
+  // }
+  const menu = (
+    <Menu onClick={showShiftModal}>
+      <b style={{
+        backgroundColor:'rosybrown',
+        color: 'white',
+        padding: '15px 15px',
+        display: 'block',
+      }}>Notification</b>
+      
+
+          {
+            dsplayMessage.forEach
+          }
+          {dsplayMessage.map((message,index) => (
+              <Menu.Item key = {index}>
+              <div style={{
+              }} 
+              >
+                <a className="notificationStyle">
+                  {message.message}
+                </a>
+              </div>
+              </Menu.Item>
+      
+          ))}
+
+    </Menu>
+  );
 
   const onSetSidebarOpen = (open) => {
     setSidebarOpen(open);
@@ -82,7 +137,17 @@ const Side = ({ user }) => {
           
 
           <div>
-            <span onClick={openNotification}><i class="fa fa-bell"></i></span>  
+            <span>
+              <Dropdown overlay={menu} placement="bottomCenter">
+                <Badge dot>
+                  <BellFilled style = {{
+                    color: 'white',
+                     cursor: 'pointer'
+                  }} />
+                </Badge>  
+              </Dropdown>
+                
+            </span>  
             <Link to="/superadmin/profile">
               <span className="ml-2">
                 <Avatar

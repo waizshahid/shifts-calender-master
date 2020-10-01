@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 
 
-const { Option } = Select;
+// const { Option } = Select;
 
 const Register = ({ setVisible, setEditVisible, isEdit, id }) => {
 	const [error, setError] = React.useState(" ");

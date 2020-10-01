@@ -12,3 +12,10 @@
   height: 100vh;
   background-color: white;
 }
+
+.notificationStyle{
+  border-bottom: 1px solid whitesmoke;
+  padding: 5px 5px;
+  color: rgb(63, 58, 58);
+  margin-bottom: 3px;
+}

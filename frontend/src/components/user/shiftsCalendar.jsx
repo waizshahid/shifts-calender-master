@@ -105,6 +105,7 @@ const ShiftsCalendar = () => {
     };
     axios(options).then((res) => {
       alert("Shift Created Successfully");
+      window.location.reload();
     });
   }
   

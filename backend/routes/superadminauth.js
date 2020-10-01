@@ -85,6 +85,55 @@ router.post(
 //@desc   Login Super Admin / Get JWT Token
 //@access Public
 
+router.get("/getType/:email", (req,res) => {
+  const getEmail = req.params.email;  
+  console.log('Email Gotten'+getEmail)
+  SuperAdmin.findOne({
+    email: getEmail
+  })
+  .then(newperson => { 
+    
+    if(newperson){
+      console.log("1");
+
+    console.log(newperson);
+      res.status(200).json({
+        user : newperson
+      })
+    }
+    else{
+    User.findOne({
+      email: getEmail
+    })
+    .then((newperson) => { 
+      console.log("2")
+      if(newperson)
+      {
+        console.log(newperson)
+      res.send(newperson)
+    }
+    else{
+      res.status(404).json({
+        message : "no user found"
+      })
+    }
+    })
+      .catch( (err) => {
+          console.log(err);
+      })
+    }
+  })
+    .catch(err=> {
+      res.status(500).json({
+        error : err
+      })
+    }
+       
+    );
+    
+  
+})
+
 router.post(
   "/login",
   [
@@ -93,14 +142,14 @@ router.post(
   ],
   async (req, res) => {
     let arr = {};
-    console.log(req.body);
+    console.log(req.body.person);
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
 
     const { email, pass } = req.body;
-
+    const type = req.body.person;
     try {
       //check for super admin
       SuperAdmin.findOne({ email }).then((person1) => {
@@ -117,33 +166,64 @@ router.post(
                     errors: [{ msg: "Invalid Username or Password" }],
                   });
                 } else {
-                  bcrypt.compare(pass, person3.pass).then((isMatch) => {
-                    if (isMatch) {
-                      const payload = {
-                        id: person3.id,
-                        name: person3.name,
-                        email: person3.email,
-                        avatar: person3.avatar,
-                      };
-                      //Sign Token
-                      jwt.sign(
-                        payload,
-                        config.get("jwtSecret"),
-                        (err, token) => {
-                          // if (err) throw err;
-                          if (token) {
-                            arr.type = "user";
-                            arr.token = token;
-                            return res.send(arr);
+                  if(type === 'user'){
+                    bcrypt.compare(pass, person3.pass).then((isMatch) => {
+                      if (isMatch) {
+                        const payload = {
+                          id: person3.id,
+                          name: person3.name,
+                          email: person3.email,
+                          avatar: person3.avatar,
+                        };
+                        //Sign Token
+                        jwt.sign(
+                          payload,
+                          config.get("jwtSecret"),
+                          (err, token) => {
+                            // if (err) throw err;
+                            if (token) {
+                              arr.type = "user";
+                              arr.token = token;
+                              return res.send(arr);
+                            }
                           }
-                        }
-                      );
-                    } else {
-                      return res.status(400).json({
-                        errors: [{ msg: "Invalid Username or Password" }],
-                      });
-                    }
-                  });
+                        );
+                      } else {
+                        return res.status(400).json({
+                          errors: [{ msg: "Invalid Username or Password" }],
+                        });
+                      }
+                    });
+                  }else if(type === 'admin'){
+                    bcrypt.compare(pass, person3.pass).then((isMatch) => {
+                      if (isMatch) {
+                        const payload = {
+                          id: person3.id,
+                          name: person3.name,
+                          email: person3.email,
+                          avatar: person3.avatar,
+                        };
+                        //Sign Token
+                        jwt.sign(
+                          payload,
+                          config.get("jwtSecret"),
+                          (err, token) => {
+                            // if (err) throw err;
+                            if (token) {
+                              arr.type = "admin";
+                              arr.token = token;
+                              return res.send(arr);
+                            }
+                          }
+                        );
+                      } else {
+                        return res.status(400).json({
+                          errors: [{ msg: "Invalid Username or Password" }],
+                        });
+                      }
+                    });
+                  }
+                  
                 }
               });
             } else {

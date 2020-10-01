@@ -1,16 +1,27 @@
 const mongoose = require("mongoose");
 
 const notificationSchema = new mongoose.Schema({
-	
-	to: {
-		type: String,
+	shiftTo:{
+		type: mongoose.Schema.Types.ObjectId,
 		required: true,
+		ref: 'shiftAssigned'
+	},
+	shiftFrom:{
+		type: mongoose.Schema.Types.ObjectId,
+		required: true,
+		ref: 'shiftAssigned'
+	},	
+	to: {
+		type: mongoose.Schema.Types.ObjectId,
+		required: true,
+		ref: 'users'
     },
     from: {
-		type: String,
+		type: mongoose.Schema.Types.ObjectId,
 		required: true,
+		ref: 'users'
     },
-    notification: {
+    message: {
 		type: String,
 		required: true,
 	}

@@ -10,9 +10,10 @@ const RequestShifts = () => {
 		for (var i = 0; i < data.length; i++) {
 			temp.push({
                 key: data[i]._id,
+                name: data[i].shifname,
                 title: data[i].title,
                 startdate: data[i].start,
-                enddate: data[i].end,
+                comment: data[i].comment,
                 action: (
                     // res.data.shifts[i].requestApproval
 					<div>
@@ -32,7 +33,7 @@ const RequestShifts = () => {
                                     console.log(err);
                                 })
 							}}
-							style={{ fontSize: "20px", cursor: "pointer", color: "lightgrey" }}
+							style={{ fontSize: "20px", cursor: "pointer", color: "grey" }}
 						></i>
                             </div>
                         :   <div>
@@ -49,7 +50,7 @@ const RequestShifts = () => {
                                             console.log(err);
                                         })
                                     }}
-                                    style={{ fontSize: "20px", cursor: "pointer", color: "grey" }}
+                                    style={{ fontSize: "20px", cursor: "pointer", color: "lightgrey" }}
                                 ></i>
                         </div>
                         }
@@ -76,9 +77,9 @@ const RequestShifts = () => {
     
     const columns = [
         {
-			title: "Current Id",
-			dataIndex: "key",
-            key: "key",
+			title: "Shift Name",
+			dataIndex: "name",
+            key: "name",
             
         },
         {
@@ -100,13 +101,10 @@ const RequestShifts = () => {
             },
         },
         {
-			title: "End Date",
-			dataIndex: "enddate",
-            key: "enddate",
-            sorter: {
-                compare: (a, b) => a.enddate - b.enddate,
-                multiple: 4,
-            },
+			title: "Description",
+			dataIndex: "comment",
+            key: "comment"
+           
         },
         {
 			title: "Action",

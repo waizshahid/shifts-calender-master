@@ -14,6 +14,9 @@ const createShift = new mongoose.Schema({
   offApprovalStatus: {
     type: String,
   },
+  requestApprovalStatus: {
+      type: String,
+  },
   swapable:{
     type: String,
     required: true,

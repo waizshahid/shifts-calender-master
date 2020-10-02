@@ -21,19 +21,19 @@ const ShiftsCalendar = () => {
     setVisible(true);
   };
 
-  const showComment = () => {
-    setcommentVisible(true);
-  };
   
   const handelAssign = (e) => {
     e.preventDefault();
     setAssign(e.target.value);
   };
   const handelShift = (e) => {
-    setShiftType(e.target.value);
-    console.log(e.target.value);
-    if(e.target.value === 'Request'){
-      showComment();
+    setShiftType(e.target.value.substring(0,e.target.value.indexOf(":")));
+    console.log(e.target.value.substring(0,e.target.value.indexOf(":")));
+    console.log(e.target.value.substring(e.target.value.indexOf(":") + 1))
+    {
+      e.target.value.substring(e.target.value.indexOf(":") + 1) == 'Request' ?
+      setcommentVisible(true):setcommentVisible(false)
+
     }
   };
 
@@ -54,6 +54,7 @@ const ShiftsCalendar = () => {
   }, [off]);
 
   const getAndSetOffStatus = (res) => {
+    console.log(res.data.shifts)
         setOff(res.data.shifts)
        
   }
@@ -98,6 +99,7 @@ const ShiftsCalendar = () => {
         comment: comment,
         start: start,
         end: end,
+        requestApprovalStatus: 'unapproved',
         offApprovalStatus: 'approval',
         shiftTypeId: shiftTypeId,
         swapable: swapable
@@ -133,6 +135,12 @@ const ShiftsCalendar = () => {
   const handelSelect = (e) => {
     if (e.target.value === "Default") {
       axios.get("http://localhost:4000/api/shift/currentShifts").then((res) => {
+        // let temp1 = []
+        // let temp2 = []
+        // for(let i =0 ; i<res.data.shifts.length; i++){
+
+        // }
+        // console.log(res.data.shifts)
         setEvents(res.data.shifts);
       });
     }
@@ -167,7 +175,23 @@ const ShiftsCalendar = () => {
 
   useEffect(() => {
     axios.get("http://localhost:4000/api/shift/currentShifts").then((res) => {
-      setEvents(res.data.shifts);
+      let temp1 = []
+      let temp2 = []
+      let temp = []
+      for(let i = 0 ; i < res.data.shifts.length ; i++){
+        if(res.data.shifts[i].shiftname === 'Request'){
+          if(res.data.shifts[i].requestApprovalStatus === 'approved'){
+              temp1.push(res.data.shifts[i])
+          }
+        }
+        else{
+          temp2.push(res.data.shifts[i])
+        }
+      }
+
+      temp = [...temp1,...temp2]
+      console.log(temp)  
+    setEvents(temp);
     });
     const options = {
       url: "http://localhost:4000/api/shift/getshifts",
@@ -234,7 +258,7 @@ const ShiftsCalendar = () => {
             No shift right now
           </option>
           {data.map((sh) => (
-            <option value={sh._id} key={sh._id}>
+            <option value={sh._id+':'+sh.shiftname} key={sh._id}>
               {sh.shiftname}
             </option>
           ))}

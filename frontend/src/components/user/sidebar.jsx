@@ -4,12 +4,14 @@ import Sidebar from "react-sidebar";
 import Logout from "../superAdmin/Logout/Logout";
 import OffShift from './OffShifts'
 import ShiftsCalendar from "../user/shiftsCalendar";
+import UserExchangeShift from './userExchangeShifts'
 import UserShiftCrud from "./userShiftCrud"
 import RestricSwapping from './restrictSwappingUser'
-import { Layout, Menu, Avatar, notification, Dropdown, Button,Badge  } from "antd";
+import { Layout, Menu,Modal, Avatar, Dropdown,Badge,Row, Col,Card, Tag,Button  } from "antd";
 import axios from 'axios'
 import {
   UserOutlined,
+  UserSwitchOutlined,
   LogoutOutlined,
   MenuOutlined,
   CalendarOutlined,
@@ -24,42 +26,82 @@ const { Header, Content, Footer, Sider } = Layout;
 
 const Side = ({ user }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [dsplayMessage, setMessage] = React.useState([]);
-  const [shifts, setShifts] = React.useState([]);
+  const [dsplayMessage, setMessage] = useState([]);
+  const [shifts, setShifts] = useState([]);
   const token = localStorage.usertoken
   const decoded = jwt_decode(token)
   const currentId = decoded.id
+  const [visible, setVisible] = useState(false);
+  const [visible2, set2Visible] = useState(false);
+  const [index, setIndex] = useState();
+  const swapShift = () => {
+    console.log(index)
+    exchangeAndDelete()
+    set2Visible(false)
+  }
+
+  const exchangeAndDelete = () => {
+    console.log(index)
+    const id = dsplayMessage[index]._id
+    const shiftId1 = dsplayMessage[index].shiftFrom
+    const shiftId2 = dsplayMessage[index].shiftTo
+    console.log(id)
+    console.log(shiftId2)
+    console.log(shiftId1)
+
+  axios.get("http://localhost:4000/api/shift/swapShift/"+shiftId1+'/'+shiftId2)
+    .then((res) => {
+      axios.delete("http://localhost:4000/api/user/deleteCurrentNotification/"+id)
+      .then((res) => {
+          console.log(res.data);
+        })
+      .catch((err) =>{
+        console.log(err)
+      })
+      console.log(res)
+    })
+    .catch((err)=>{
+      console.log(err)
+    })
+  }
 
   useEffect(() => {
-    console.log('Current User Login'+currentId)
+      getNotifications()
+  }, [shifts]);
+
+  const getNotifications = () => {
     axios.get("http://localhost:4000/api/user/getCurrentUserNotificationsTo/"+currentId).then((res1) => {
       axios.get("http://localhost:4000/api/user/getCurrentUserNotificationsFrom/"+currentId).then((res2) => {
-        let array = [...res1.data,...res2.data];
-        setMessage(array)
+      let array = [...res1.data,...res2.data];
+      // console.log(array)  
+      setMessage(array)
       })})
       .catch((err) => {
         console.log(err)
       })
-
-  }, []);
-
-
+  }
   const showShiftModal = (message) => {
-    console.log(dsplayMessage[message.key])
-    // let shiftId1 = dsplayMessage[index].shiftTo
+   console.log(message.key)
+   settingIndex(message.key)
+   {dsplayMessage[message.key].requesterType == 'User' ?
+   set2Visible(true):setVisible(true)
+   } 
+   
+    axios.get("http://localhost:4000/api/user/getShiftTo/"+dsplayMessage[message.key].shiftTo).then((res1) => {
+      axios.get("http://localhost:4000/api/user/getShiftFrom/"+dsplayMessage[message.key].shiftFrom).then((res2) => {
+         let shiftArray = [res1.data.shifts[0] ,res2.data.shifts[0]]
+        //  console.log(res1.data.shifts)
+          // console.log(shiftArray)
+          setShifts(shiftArray)
+      })})
+      .catch((err) => {
+        console.log(err)
+      })
   };
-  // const swappedShifts = (to,from) => {
-  //   console.log(to)
-  //   console.log(from)
-  //   // axios.get("http://localhost:4000/api/user/getShiftTo/"+currentId).then((res1) => {
-  //   //   axios.get("http://localhost:4000/api/user/getShiftFrom/"+currentId).then((res2) => {
-  //   //     let array = [...res1.data,...res2.data];
-  //   //     setShifts(array)
-  //   //   })})
-  //   //   .catch((err) => {
-  //   //     console.log(err)
-  //   //   })
-  // }
+  const settingIndex = (key) => {
+    console.log(key)
+    setIndex(key)
+  }
   const menu = (
     <Menu onClick={showShiftModal}>
       <b style={{
@@ -68,19 +110,24 @@ const Side = ({ user }) => {
         padding: '15px 15px',
         display: 'block',
       }}>Notification</b>
-      
 
-          {
-            dsplayMessage.forEach
-          }
           {dsplayMessage.map((message,index) => (
               <Menu.Item key = {index}>
               <div style={{
               }} 
               >
-                <a className="notificationStyle">
-                  {message.message}
-                </a>
+                  {
+                    message.from == currentId ?
+                    <div>
+                      <Tag color="success">{message.requesterType}</Tag> {message.messageFrom}
+                    </div> :
+                    
+                    <div>
+                      <Tag color="green">{message.requesterType}</Tag> {message.message}
+                    </div> 
+                  }
+                  
+                  
               </div>
               </Menu.Item>
       
@@ -92,6 +139,8 @@ const Side = ({ user }) => {
   const onSetSidebarOpen = (open) => {
     setSidebarOpen(open);
   };
+
+  
   return (
     <div>
       <Sidebar
@@ -109,8 +158,11 @@ const Side = ({ user }) => {
                 <Menu.Item key="3" icon={<SwapOutlined />}>
                   <Link to="/user/user-shifts/my-shifts">All Shifts</Link>
                 </Menu.Item>
-                <Menu.Item key="4">
+                <Menu.Item key="4" icon={<LogoutOutlined />}>
                   <Link to="/user/user-shifts/my-off-shifts">Off Shifts</Link>
+                </Menu.Item>
+                <Menu.Item key="5" icon={<UserSwitchOutlined />}>
+                  <Link to="/user/user-shifts/user-exchange-shifts">Exchange Shifts</Link>
                 </Menu.Item>
                 <Menu.Item key="10" icon={<LogoutOutlined />}>
                   <Link to="/superadmin/logout">Logout</Link>
@@ -134,7 +186,7 @@ const Side = ({ user }) => {
             onClick={() => onSetSidebarOpen(true)}
           />
           <a className="navbar-brand">ShiftsCalender</a>
-          
+
 
           <div>
             <span>
@@ -163,7 +215,73 @@ const Side = ({ user }) => {
             </Link>
           </div>
         </nav>
+              <div>
+                <Modal
+                  title="Swapped shifts details"
+                  visible={visible}
+                  maskClosable={true}
+                  onCancel={() => setVisible(false)}
+                  // onOk={handleOk}
+                  >
+                    <Row>
+                      <Col xs={24} sm={24} md={24} lg={24} xl={24}>
+                        {shifts.map((dat,index) => (
+                            <div>
+                              <Card type="inner">
+                        
+                                <b>Shift {index+1}</b><br/><br/>
+                                {'Name:'+' '+dat.title}<br/>
+                                {'Date:'+' '+dat.start}<br/>
+                                {'Shift Name:'+' '+dat.shifname}
 
+                                <br/>
+                                <br/>
+                              </Card>
+                            <br/>
+                            </div>
+                        
+                        ))}
+                      </Col>
+                      
+                    </Row>
+                    
+                </Modal>
+            </div>
+            <div>
+            <Modal
+                  title="Accept or decline Shift"
+                  visible={visible2}
+                  maskClosable={true}
+                  onCancel={() => set2Visible(false)}
+                  // onOk={handleOk}
+                  footer={null}
+                >
+                  <Row>
+                      <Col xs={24} sm={24} md={24} lg={24} xl={24}>
+                        {shifts.map((dat,index) => (
+                            <div>
+                              <Card type="inner">
+                        
+                                <b>Shift {index+1}</b><br/><br/>
+                                {'Name:'+' '+dat.title}<br/>
+                                {'Date:'+' '+dat.start}<br/>
+                                {'Shift Name:'+' '+dat.shifname}
+
+                                <br/>
+                                <br/>
+                              </Card>
+                            <br/>
+                            </div>
+                        
+                        ))}
+                      </Col>
+                      
+                    </Row>
+                    <Row>
+                    <Button onClick={swapShift}>Exchange</Button>
+                    </Row>
+                </Modal>
+            </div>    
         <Switch>
           <Route
             exact
@@ -173,6 +291,7 @@ const Side = ({ user }) => {
           <Route exact path="/user/user-shifts/my-shifts" component={RestricSwapping} />
           <Route exact path="/user/user-shifts" component={UserShiftCrud} />
           <Route exact path="/user/user-shifts/my-off-shifts" component={OffShift} />
+          <Route exact path="/user/user-shifts/user-exchange-shifts" component={UserExchangeShift} />
           <Route exact path="/superadmin/logout" component={Logout} />
         </Switch>
       </Sidebar>

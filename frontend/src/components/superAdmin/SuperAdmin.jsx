@@ -7,12 +7,14 @@ import ExchangeShift from './exchangeShifts'
 import ManageShiftTypes from "./ManageShiftTypes/ManageShiftTypes";
 import OffShift from './OffShiftsRequest'
 import ManageUsers from "./ManageUsers/ManageUsers";
+import RequestShift from './ShiftsCalender/requestShift'
 import Logout from "./Logout/Logout";
 import Upload from './ShiftsCalender/uploadfile'
 import UserSheet from './ManageUsers/uploadUsersSheet'
 import { Layout, Menu, Avatar, notification } from "antd";
 import {
 	FormOutlined,
+	PullRequestOutlined,
 	UserOutlined,
 	LogoutOutlined,
 	UserSwitchOutlined,
@@ -77,7 +79,9 @@ const SuperAdmin = ({ superAdmin }) => {
 								<Menu.Item key="7" icon={<UploadOutlined />}>
 									<Link to="/superadmin/upload">Upload Excel</Link>
 								</Menu.Item>
-								
+								<Menu.Item key="9" icon={<PullRequestOutlined />}>
+									<Link to="/superadmin/manage-requestShifts">Requested Shifts</Link>
+								</Menu.Item>
 								<Menu.Item key="10" icon={<LogoutOutlined />}>
 									<Link to="/superadmin/logout">Logout</Link>
 								</Menu.Item>
@@ -115,6 +119,7 @@ const SuperAdmin = ({ superAdmin }) => {
 					<Route exact path="/superadmin/shifts-calender" component={ShiftsCalender} />
 					<Route exact path="/superadmin/manage-shift-types" component={ManageShiftTypes} />
 					<Route exact path="/superadmin/manage-users" component={ManageUsers} />
+					<Route exact path="/superadmin/manage-requestShifts" component={RequestShift} />
 					<Route exact path="/superadmin/upload" component={Upload} />
 					<Route exact path="/superadmin/off-shifts" component={OffShift} />
 					<Route exact path="/superadmin/exchange-shifts" component={ExchangeShift} />

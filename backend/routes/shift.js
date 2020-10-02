@@ -218,7 +218,8 @@ router.post("/createShift", (req, res) => {
     shiftTypeId: req.body.shiftTypeId,
     swapable: req.body.swapable,
     comment: req.body.comment,
-    offApprovalStatus: req.body.offApprovalStatus
+    offApprovalStatus: req.body.offApprovalStatus,
+    requestApprovalStatus: req.body.requestApprovalStatus
   });
 
   console.log("Shift created as: "+newShift)
@@ -274,6 +275,35 @@ router.get('/restrict-swap/:id/:swapable',(req,res)=>{
    })
  }) 
 });
+
+router.get("/updateRequestApproval/:id", (req,res) => {
+  const shiftId = req.params.id;
+  console.log('Shift ID'+shiftId)
+  createShift.findOne({
+    _id : shiftId
+  })
+  .exec()
+  .then(shift=> {
+    shift.requestApprovalStatus = 'approved';
+    shift.save()
+    .then(shiftObj => {
+      res.status(201).json({
+        message : "shift status changed successfully",
+        shift : shiftObj
+      })
+    })
+    .catch(err=> {
+      res.status(500).json({
+        error : err
+      })
+    })
+  })
+  .catch(err=> {
+    res.status(500).json({
+      error : err
+    })
+  })
+})
 
 router.get("/updateApprovalStatustoFalse/:id", (req,res) => {
   const shiftId = req.params.id;
@@ -333,18 +363,15 @@ router.get("/updateApprovalStatustoTrue/:id", (req,res) => {
   })
 })
 
-router.get("/specificDateOffEvents/:date" , (req,res) => {
-  const dataCheck = req.params.date;
-  createShift.find({
-    start: dataCheck
-  })
+router.get("/RequestEvents" , (req,res) => {
+  createShift.find()
   .populate('userId')
   .populate('shiftTypeId')
   .exec()
   .then(shifts => {
     res.status(200).json({
       shifts : shifts.map(shift => {
-        if(shift.shiftTypeId.shiftname === 'Off'){
+        if(shift.shiftTypeId.shiftname === 'Request'){
           return {
             _id : shift._id,
             start : shift.start,
@@ -356,7 +383,8 @@ router.get("/specificDateOffEvents/:date" , (req,res) => {
             swapable: shift.swapable,
             shifname: shift.shiftTypeId.shiftname,
             comment: shift.comment,
-            status: shift.offApprovalStatus
+            status: shift.offApprovalStatus,
+            requestApproval: shift.requestApprovalStatus
           }
         }
         
@@ -370,6 +398,77 @@ router.get("/specificDateOffEvents/:date" , (req,res) => {
 })
 })
 
+router.get("/specificDateShifts/:date/:id", (req,res) => {
+      createShift.find({
+          start: req.params.date,
+          userId: req.params.id
+      })
+      .populate('userId')
+      .populate('shiftTypeId')
+      .exec()
+      .then(shifts => {
+        res.status(200).json({
+          shifts : shifts.map(shift => {
+              return {
+                _id : shift._id,
+                start : shift.start,
+                priority : shift.shiftTypeId.priority,
+                //shiftTypeId: shift.shiftTypeId,
+                end : shift.end,
+                title : shift.userId.firstName+" " +shift.userId.lastName,
+                color : shift.shiftTypeId.color,
+                swapable: shift.swapable,
+                shifname: shift.shiftTypeId.shiftname,
+                comment: shift.comment,
+                status: shift.offApprovalStatus,
+                userId: shift.userId._id
+              }
+            
+            })
+          })
+        })
+        .catch(err=> {
+          res.status(500).json({
+            error : err
+          })
+    })
+    })
+
+router.get("/specifictargetDateShifts/:date/:id", (req,res) => {
+  createShift.find({
+      start: req.params.date,
+      userId: { $nin: req.params.id }
+  })
+  .populate('userId')
+      .populate('shiftTypeId')
+      .exec()
+      .then(shifts => {
+        res.status(200).json({
+          shifts : shifts.map(shift => {
+              return {
+                _id : shift._id,
+                start : shift.start,
+                priority : shift.shiftTypeId.priority,
+                //shiftTypeId: shift.shiftTypeId,
+                end : shift.end,
+                title : shift.userId.firstName+" " +shift.userId.lastName,
+                color : shift.shiftTypeId.color,
+                swapable: shift.swapable,
+                shifname: shift.shiftTypeId.shiftname,
+                comment: shift.comment,
+                status: shift.offApprovalStatus,
+                userId: shift.userId._id
+              }
+            
+            })
+          })
+        })
+        .catch(err=> {
+          res.status(500).json({
+            error : err
+          })
+    })
+    })
 router.get("/AllOffEvents" , (req,res) => {
   createShift.find()
   .populate('userId')
@@ -422,6 +521,8 @@ router.get("/currentShifts", (req, res) => {
           start : shift.start,
           priority : shift.shiftTypeId.priority,
           end : shift.end,
+          shiftname: shift.shiftTypeId.shiftname,
+          requestApprovalStatus: shift.requestApprovalStatus,
           title : shift.shiftTypeId.shiftname + ":"+ " " +shift.userId.firstName.charAt(0) +" " +shift.userId.lastName,
           color : shift.shiftTypeId.color,
           swapable: shift.swapable,

@@ -5,6 +5,7 @@ const gravatar = require("gravatar");
 const userauth = require("../middleware/userauth");
 const { check, validationResult } = require("express-validator");
 const User = require("../models/User");
+const createShift = require("../models/createShift");
 const Notification = require("../models/Notifications");
 const Admin = require("../models/Admin");
 const saltRounds = 10;
@@ -60,9 +61,9 @@ router.get("/getuser", (req, res) => {
 });
 
 router.get("/getCurrentUserNotificationsTo/:id", (req,res) => {
-	const currentUserId = req.params.id;
+	const Id = req.params.id;
 	Notification.find({
-		to : currentUserId
+		to : Id
 		})
 	.then((notifcations)=> {
 		res.send(notifcations)
@@ -72,9 +73,9 @@ router.get("/getCurrentUserNotificationsTo/:id", (req,res) => {
 	})
 })
 router.get("/getCurrentUserNotificationsFrom/:id", (req,res) => {
-	const currentUserId = req.params.id;
+	const Id = req.params.id;
 	Notification.find({
-		from : currentUserId
+		from : Id
 		})
 	.then((notifcations)=> {
 		res.send(notifcations)
@@ -94,15 +95,108 @@ router.delete("/deleteAllNotifications", (req, res) => {
 	})
   });
 
+  router.delete("/deleteCurrentNotification/:id", (req, res) => {
+	Notification.findByIdAndDelete({ _id: req.params.id }).then((resp) => {
+	  console.log(resp);
+	  res.send(resp);
+	});
+  });
+
+  router.get('/getShiftTo/:id', (req,res)=> {
+	//   Notification.find({
+	// 	  _id: req.params.id
+	//   })
+	  createShift.find({
+		_id: req.params.id
+	})
+	.populate('userId')
+		.populate('shiftTypeId')
+		.exec()
+		.then(shifts => {
+			res.status(200).json({
+			shifts : shifts.map(shift => {
+				return {
+					_id : shift._id,
+					start : shift.start,
+					priority : shift.shiftTypeId.priority,
+					//shiftTypeId: shift.shiftTypeId,
+					end : shift.end,
+					title : shift.userId.firstName+" " +shift.userId.lastName,
+					color : shift.shiftTypeId.color,
+					swapable: shift.swapable,
+					shifname: shift.shiftTypeId.shiftname,
+					comment: shift.comment,
+					status: shift.offApprovalStatus
+				}
+				
+				})
+			})
+			})
+    .catch(err=> {
+      res.status(500).json({
+        error : err
+      })
+})
+})
+
+  router.get('/getShiftFrom/:id', (req,res)=> {
+	createShift.find({
+		_id: req.params.id
+	})
+	.populate('userId')
+		.populate('shiftTypeId')
+		.exec()
+		.then(shifts => {
+			res.status(200).json({
+			shifts : shifts.map(shift => {
+				return {
+					_id : shift._id,
+					start : shift.start,
+					priority : shift.shiftTypeId.priority,
+					//shiftTypeId: shift.shiftTypeId,
+					end : shift.end,
+					title : shift.userId.firstName+" " +shift.userId.lastName,
+					color : shift.shiftTypeId.color,
+					swapable: shift.swapable,
+					shifname: shift.shiftTypeId.shiftname,
+					comment: shift.comment,
+					status: shift.offApprovalStatus
+				}
+				
+				})
+			})
+			})
+    .catch(err=> {
+      res.status(500).json({
+        error : err
+      })
+})
+})
+  router.get('/AllNotifications',(req,res)=>{
+	  Notification.find()
+	  .then((resp)=>{
+		//   console.log(res)
+		  res.send(resp)
+	  })
+	  .catch((err) => {
+		  res.send(err)
+	  })
+  })
+
 router.post("/userNotification", (req, res) => {
     console.log(req.body);
   if (req.body === null) res.status(400).send("Bad Request");
   let newNotification = new Notification({
-    shiftTo:  req.body.shiftId1,
-    shiftFrom:req.body.shiftId2,
-    to:       req.body.userId1,
-    from:     req.body.userId2,
-    message:  req.body.message,
+    shiftFrom:  req.body.shiftId1,
+    shiftTo:req.body.shiftId2,
+	currentUserId: req.body.currentUserId,
+	from:       req.body.userId1,
+    to:     req.body.userId2,
+	message:  req.body.message,
+	regDate:  req.body.date,
+	requesterType: req.body.requester,
+	messageFrom: req.body.messageFrom,
+	requestStatus:req.body.requestStatus
   });
 
   console.log("Notification created as: "+newNotification)

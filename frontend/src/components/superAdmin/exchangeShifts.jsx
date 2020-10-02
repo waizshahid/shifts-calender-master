@@ -58,6 +58,7 @@ const ExchangeShifts = () => {
         let userId2 = id2.substring(id2.indexOf(":") + 1)
         let shiftId1 = id1.substring(0, id1.indexOf(':'));
         let shiftId2 = id2.substring(0, id2.indexOf(':'));
+        let date = new Date();
         const message = "Your shift has been swapped. Click for details"
             
         console.log('UserID 1 HAI: '+userId1);
@@ -68,7 +69,7 @@ const ExchangeShifts = () => {
         .then((res) => {
             // console.log(res.data);
             axios.post("http://localhost:4000/api/user/userNotification",{
-                userId1,userId2,shiftId1,shiftId2,message
+                userId1,userId2,shiftId1,shiftId2,message,date
             })
             .then((res) => {
 					console.log(res.data);
@@ -76,11 +77,20 @@ const ExchangeShifts = () => {
 				.catch((err) => {
 					console.log(err.response);
 				});
-          });
-          window.location.reload();
+          })
+          .catch((err) => {
+              console.log(err)
+          })
+        //   window.location.reload();
     }
     const columns = [
-		{
+        {
+			title: "Current Id",
+			dataIndex: "key",
+            key: "key",
+            
+        },
+        {
 			title: "Shift title",
 			dataIndex: "title",
             key: "title",

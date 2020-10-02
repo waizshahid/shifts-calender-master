@@ -83,7 +83,7 @@ const ShiftsCalender = () => {
     };
     axios(options).then((res) => {
       alert("Shift Created Successfully");
-      window.location.reload();
+      // window.location.reload();
     });
   };
   const handleCancel = (e) => {
@@ -127,10 +127,23 @@ const ShiftsCalender = () => {
   }
   const setEventAtRender = () => {
     axios.get("http://localhost:4000/api/shift/currentShifts").then((res) => {
-    
-      setEvents(res.data.shifts);
-      console.log("DATA Gotten:",res.data.shifts);
-    
+      let temp1 = []
+      let temp2 = []
+      let temp = []
+      for(let i = 0 ; i < res.data.shifts.length ; i++){
+        if(res.data.shifts[i].shiftname === 'Request'){
+          if(res.data.shifts[i].requestApprovalStatus === 'approved'){
+              temp1.push(res.data.shifts[i])
+          }
+        }
+        else{
+          temp2.push(res.data.shifts[i])
+        }
+      }
+
+      temp = [...temp1,...temp2]
+      console.log(temp)  
+    setEvents(temp);
     });
   }
   useEffect(() => {

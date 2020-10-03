@@ -7,6 +7,7 @@ import { Modal } from "antd";
 import jwt_decode from 'jwt-decode'
 const ShiftsCalendar = () => {
   const [events, setEvents] = useState([]);
+  const [oneEvent, setOneEvent] = useState();
   const [visible, setVisible] = useState(false);
   const [commentVisible, setcommentVisible] = useState(false);
   const [data, setData] = useState([]);
@@ -215,6 +216,18 @@ const ShiftsCalendar = () => {
 
   }, [visible]);
   
+  const settingEvent = (event) => {
+    setOneEvent(event)
+  }
+  const handleEventClick = ({ event, el }) => {
+  // this.toggle();
+    settingEvent(event._def.extendedProps)
+    if(oneEvent !== 'undefined'){
+      console.log(oneEvent)
+    }else{
+      console.log('Add the shift again')
+    }
+};
   return (
     <div className="m-sm-4 m-2">
         <div className="container">
@@ -238,6 +251,7 @@ const ShiftsCalendar = () => {
           plugins={[dayGridPlugin, interactionPlugin]}
           events={events}
           dateClick={showModal}
+          eventClick={handleEventClick}
           eventOrder="priority"
           weekNumberCalculation = 'ISO'
         />

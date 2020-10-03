@@ -222,11 +222,8 @@ const ShiftsCalendar = () => {
   const handleEventClick = ({ event, el }) => {
   // this.toggle();
     settingEvent(event._def.extendedProps)
-    if(oneEvent !== 'undefined'){
       console.log(oneEvent)
-    }else{
-      console.log('Add the shift again')
-    }
+    
 };
   return (
     <div className="m-sm-4 m-2">

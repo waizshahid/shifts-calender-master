@@ -131,7 +131,12 @@ const ShiftsCalender = () => {
     });
   }
   const handleEventClick = ({ event, el }) => {
-    alert('Request comment: '+event._def.extendedProps.comment)
+    if(event._def.extendedProps.shiftname === 'Request'){
+      alert('Request comment: '+event._def.extendedProps.comment)
+    }else{
+      alert('Please Choose a request event')
+    }
+    
 };
   function eventRender(info){
     var tooltip = new Tooltip(info.el, {

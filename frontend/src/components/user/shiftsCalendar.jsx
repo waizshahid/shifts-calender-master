@@ -262,7 +262,12 @@ const ShiftsCalendar = () => {
     setOneEvent(event)
   }
   const handleEventClick = ({ event, el }) => {
+    if(event._def.extendedProps.shiftname !== 'Request'){
       settingEvent(event._def.extendedProps)
+    }else{
+      alert("The selected event is not exchangeable")
+    }
+    
   };
 
   const passNotification = () => {

@@ -9,6 +9,9 @@ const notificationSchema = new mongoose.Schema({
 		required: true,
 		ref: 'shiftAssigned'
 	},
+	adminresponse: {
+		type:String,  
+	},
 	shiftFrom:{
 		type: mongoose.Schema.Types.ObjectId,
 		required: true,
@@ -34,6 +37,7 @@ const notificationSchema = new mongoose.Schema({
 	},
 	requesterType: {
 		type: String,
+		required: true
 	},
 	messageFrom: {
 		type: String

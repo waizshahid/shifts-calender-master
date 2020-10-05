@@ -39,6 +39,7 @@ const Register = ({ setVisible, setEditVisible, isEdit, id }) => {
 				})
 				.then((res) => {
 					setEditVisible(false);
+					window.location.reload();
 					console.log(res.data);
 				})
 				.catch((err) => {
@@ -121,7 +122,6 @@ const Register = ({ setVisible, setEditVisible, isEdit, id }) => {
 							name="editable"
 							>
 							<Switch
-								//onChange={handleToggler}
 								checkedChildren="Enabled Editable By User"
 								unCheckedChildren="Disabled Editable By User"
 								size="large"

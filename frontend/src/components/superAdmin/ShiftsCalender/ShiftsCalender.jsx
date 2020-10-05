@@ -4,10 +4,10 @@ import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { Modal } from "antd";
 import FullCalendar from "@fullcalendar/react";
+import Tooltip from "tooltip.js";
 import interactionPlugin from "@fullcalendar/interaction"; // needed for dayClick
 import dayGridPlugin from "@fullcalendar/daygrid";
 import axios from "axios";
-
 moment.locale("ko", {
   week: {
     dow: 1,
@@ -15,7 +15,7 @@ moment.locale("ko", {
   },
 });
 const localizer = momentLocalizer(moment);
-
+let date = "";
 const ShiftsCalender = () => {
   const [visible, setVisible] = useState(false);
   const [data, setData] = useState([]);
@@ -26,7 +26,8 @@ const ShiftsCalender = () => {
   const [end, setEnd] = useState("");
   const [users, setUsers] = useState([]);
   const [stop, setStop] = useState(0);
-  const showModal = () => {
+  const showModal = (e) => {
+    date = e.dateStr
     setVisible(true);
   };
   const handelAssign = (e) => {
@@ -47,25 +48,8 @@ const ShiftsCalender = () => {
   const handleOk = (e) => {
     setVisible(false);
     const userId = assign;
-    // const title = shiftType;
-    // let priority = "";
-    // let color = "";
     let shiftTypeId = shiftType;
     var swapable = "true";
-    
-
-    // for (let i = 0; i < data.length; i++) {
-    //   if (shiftType === data[i].shiftname) {
-    //     color = data[i].color;
-    //     break;
-    //   }
-    // }
-    // for (let i = 0; i < data.length; i++) {
-    //   if (shiftType === data[i].shiftname) {
-    //     priority = data[i].priority;
-    //     break;
-    //   }
-    // }
     const options = {
       url: "http://localhost:4000/api/shift/createShift",
       method: "POST",
@@ -75,15 +59,15 @@ const ShiftsCalender = () => {
       },
       data: {
         userId: userId,
-        start: start,
+        start: date,
         shiftTypeId: shiftTypeId,
-        end: end,
+        end: date,
         swapable: swapable,
       },
     };
     axios(options).then((res) => {
       alert("Shift Created Successfully");
-      // window.location.reload();
+       window.location.reload();
     });
   };
   const handleCancel = (e) => {
@@ -146,6 +130,15 @@ const ShiftsCalender = () => {
     setEvents(temp);
     });
   }
+  function eventRender(info){
+    var tooltip = new Tooltip(info.el, {
+      title: info.event.extendedProps.title,
+      placement: 'top',
+      trigger: 'hover',
+      container: 'body'
+    });
+  }
+
   useEffect(() => {
     console.log('Use Effect checking')
     setEventAtRender()
@@ -179,8 +172,7 @@ const ShiftsCalender = () => {
         dateClick={showModal}
         weekNumberCalculation= 'ISO'
         eventOrder="priority"
-
-        // eventClick={handelModal}
+        eventRender={eventRender}
         events={events}
         
       />
@@ -221,19 +213,7 @@ const ShiftsCalender = () => {
             </option>
           ))}
         </select>
-        <input
-          type="date"
-          className="form-control m-2 bg-light shadow-sm"
-          placeholder="Start Date"
-          onChange={handelDate}
-        />
-        <input
-          type="date"
-          className="form-control m-2 bg-light shadow-sm"
-          placeholder="End Date"
-          onChange={handelEndDate}
-          defaultValue={start}
-        />
+        
       </Modal>
     </div>
   );

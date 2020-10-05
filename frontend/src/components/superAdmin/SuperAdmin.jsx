@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import axios from 'axios'
 import { Link, Switch, Route } from "react-router-dom";
 import Sidebar from "react-sidebar";
 import Profile from "./Profile/Profile";
@@ -11,12 +12,13 @@ import RequestShift from './ShiftsCalender/requestShift'
 import Logout from "./Logout/Logout";
 import Upload from './ShiftsCalender/uploadfile'
 import UserSheet from './ManageUsers/uploadUsersSheet'
-import { Layout, Menu, Avatar, notification } from "antd";
+import { Layout, Menu, Avatar, notification,Modal,Row,Col,Card,Tag, Dropdown,Badge } from "antd";
 import {
 	FormOutlined,
 	PullRequestOutlined,
 	UserOutlined,
 	LogoutOutlined,
+	BellFilled,
 	UserSwitchOutlined,
 	MenuOutlined,
 	CalendarOutlined,
@@ -27,28 +29,122 @@ import {
 } from "@ant-design/icons";
 
 const { Header, Content, Footer, Sider } = Layout;
-const openNotification = () => {
-	const args = {
-	  message: 'Notifications',
-	  description:
-	  {} + 'wants to swap his shift with you',
-	  duration: 0,
-	};
-	notification.open(args);
-  };
+
 const SuperAdmin = ({ superAdmin }) => {
 	const [sidebarOpen, setSidebarOpen] = useState(false);
+	const [visible, setVisible] = useState(false);
+	const [index, setIndex] = useState();
+	const [shifts,setShifts] = useState([]);
+	const [dsplayMessage, setMessage] = useState([]);
 
+	const showShiftModal = (message) => {
+		console.log(message.key)
+		settingIndex(message.key)
+		
+		axios.get("http://localhost:4000/api/user/getNotifcations")
+		.then((res) => {
+			let temp = []
+			for(let i = 0 ; i < res.data.length ; i++){
+				if(res.data[i].currentId !== undefined)
+				{
+					temp.push(res.data[i])
+				}
+			}
+			   setShifts(temp)
+		   })
+		   .catch((err) => {
+			 console.log(err)
+		   })
+	   };
+
+	const menu = (
+		<Menu onClick={showShiftModal}>
+		  <b style={{
+			backgroundColor:'rosybrown',
+			color: 'white',
+			padding: '15px 15px',
+			display: 'block',
+		  }}>Notification</b>
+	
+			  {dsplayMessage.map((message,index) => (
+				  <Menu.Item key = {index}>
+				  <div style={{
+				  }} 
+				  >
+							<div>
+							  {message.adminresponse}
+							  <Tag color="default">{message.regDate}</Tag>
+							</div>
+							
+						</div> 
+				  </Menu.Item>
+		  
+			  ))}
+	
+		</Menu>
+	  );
 	useEffect(() => {
 		console.log(superAdmin);
 	}, []);
 
+	useEffect(() => {
+		getNotifications()
+	}, [shifts]);
+
+	const getNotifications = () => {
+		axios.get("http://localhost:4000/api/user/getNotifcations")
+		.then((res1) => {
+		  setMessage(res1.data)
+		  })
+		  .catch((err) => {
+			console.log(err)
+		  })
+	  }
+
+	  const settingIndex = (key) => {
+		console.log(key)
+		setIndex(key)
+	  }
+
 	const onSetSidebarOpen = (open) => {
 		setSidebarOpen(open);
 	};
+	
 
 	return (
 		<div>
+			<div>
+                <Modal
+                  title="Swapped shifts details"
+                  visible={visible}
+                  maskClosable={true}
+                  onCancel={() => setVisible(false)}
+                  // onOk={handleOk}
+                  >
+                    <Row>
+                      <Col xs={24} sm={24} md={24} lg={24} xl={24}>
+                        {shifts.map((dat,index) => (
+                            <div>
+                              <Card type="inner">
+                        
+                                <b>Shift {index+1}</b><br/><br/>
+                                {'Name:'+' '+dat.title}<br/>
+                                {'Date:'+' '+dat.start}<br/>
+                                {'Shift Name:'+' '+dat.shifname}
+
+                                <br/>
+                                <br/>
+                              </Card>
+                            <br/>
+                            </div>
+                        
+                        ))}
+                      </Col>
+                      
+                    </Row>
+                    
+                </Modal>
+            </div>
 			<Sidebar
 				sidebar={
 					<div style={{ backgroundColor: "black" }}>
@@ -102,7 +198,17 @@ const SuperAdmin = ({ superAdmin }) => {
 					/>
 					<a className="navbar-brand">ShiftsCalender</a>
 					<div>
-					<span onClick={openNotification}><i class="fa fa-bell"></i></span>
+					<span>
+					<Dropdown overlay={menu} placement="bottomCenter">
+						<Badge dot>
+						<BellFilled style = {{
+							color: 'white',
+							cursor: 'pointer'
+						}} />
+						</Badge>  
+					</Dropdown>
+						
+					</span>
 						<Link to="/superadmin/profile">
 							<span className="ml-2">
 								<Avatar style={{ backgroundColor: "#001529", verticalAlign: "middle" }} size="large">
@@ -114,6 +220,38 @@ const SuperAdmin = ({ superAdmin }) => {
 					</div>
 				</nav>
 
+				<div>
+                <Modal
+                  title="Swapped shifts details"
+                  visible={visible}
+                  maskClosable={true}
+                  onCancel={() => setVisible(false)}
+                  // onOk={handleOk}
+                  >
+                    <Row>
+                      <Col xs={24} sm={24} md={24} lg={24} xl={24}>
+                        {shifts.map((dat,index) => (
+                            <div>
+                              <Card type="inner">
+                        
+                                <b>Shift {index+1}</b><br/><br/>
+                                {'Name:'+' '+dat.title}<br/>
+                                {'Date:'+' '+dat.start}<br/>
+                                {'Shift Name:'+' '+dat.shifname}
+
+                                <br/>
+                                <br/>
+                              </Card>
+                            <br/>
+                            </div>
+                        
+                        ))}
+                      </Col>
+                      
+                    </Row>
+                    
+                </Modal>
+            </div>
 				<Switch>
 					<Route exact path="/superadmin/profile" component={Profile} />
 					<Route exact path="/superadmin/shifts-calender" component={ShiftsCalender} />

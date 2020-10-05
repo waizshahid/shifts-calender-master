@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
-import MaterialTable from "material-table";
 import axios from "axios";
-// import { EditTwoTone, DeleteTwoTone } from "@ant-design/icons";
-import { Modal, Table, Popconfirm } from "antd";
+import { Modal, Table} from "antd";
 
 import Register from "./Register";
 

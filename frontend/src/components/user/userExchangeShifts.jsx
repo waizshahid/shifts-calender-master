@@ -92,6 +92,7 @@ const ExchangeShifts = () => {
         const currentUserId = currentId;
         const messageFrom = "Your request has been sent. Wait for the Response"
         const requestStatus = "true"
+        const adminresponse = "Two of the shifts has been swapped by the users"
         console.log('UserID 1 HAI: '+userId1);
         console.log('USERID 2 HAI: '+userId2);
         console.log('ShiftID 1 HAI: '+shiftId1);
@@ -100,10 +101,11 @@ const ExchangeShifts = () => {
         // .then((res) => {
         //     // console.log(res.data);
             axios.post("http://localhost:4000/api/user/userNotification",{
-                currentUserId,userId1,userId2,shiftId1,shiftId2,message,messageFrom,date,requester,requestStatus
+                adminresponse,currentUserId,userId1,userId2,shiftId1,shiftId2,message,messageFrom,date,requester,requestStatus
             })
             .then((res) => {
-					console.log(res.data);
+                    console.log(res.data);
+                    setVisible(false)
 				})
 				.catch((err) => {
 					console.log(err.response);

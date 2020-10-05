@@ -6,32 +6,32 @@ import Profile from "./Profile/Profile";
 import ShiftsCalender from "./ShiftsCalender/ShiftsCalender";
 import ManageUsers from "./ManageUsers/ManageUsers";
 import Logout from "./Logout/Logout";
+import axios from 'axios'
+import jwt_decode from 'jwt-decode'
 
-import { Layout, Menu, Avatar, notification } from "antd";
+import { Layout, Menu, Avatar, Tag, Card, Dropdown, Badge } from "antd";
 import {
-	FormOutlined,
+	BellFilled,
 	UserOutlined,
 	LogoutOutlined,
 	SwapOutlined,
 	MenuOutlined,
 	CalendarOutlined,
-	UserAddOutlined,
 	UsergroupAddOutlined,
 } from "@ant-design/icons";
 
 const { Header, Content, Footer, Sider } = Layout;
-const openNotification = () => {
-	const args = {
-	  message: 'Swap Requests',
-	  description:
-	  {} + 'wants to swap his shift with you',
-	  duration: 0,
-	};
-	notification.open(args);
-  };
+
 const Admin = ({ admin }) => {
 	const [sidebarOpen, setSidebarOpen] = useState(false);
-
+	const [dsplayMessage, setMessage] = useState([]);
+	const token = localStorage.admintoken
+	const decoded = jwt_decode(token)
+	const currentId = decoded.id
+	const [shifts, setShifts] = useState([]);
+	const [index, setIndex] = useState();
+	const [visible, setVisible] = useState(false);
+  	const [visible2, set2Visible] = useState(false);
 	useEffect(() => {
 		console.log(admin);
 	}, []);
@@ -39,7 +39,90 @@ const Admin = ({ admin }) => {
 	const onSetSidebarOpen = (open) => {
 		setSidebarOpen(open);
 	};
-
+	useEffect(() => {
+		getNotifications()
+	}, [shifts]);
+  
+	const getNotifications = () => {
+	  axios.get("http://localhost:4000/api/user/getCurrentUserNotificationsTo/"+currentId).then((res1) => {
+		axios.get("http://localhost:4000/api/user/getCurrentUserNotificationsFrom/"+currentId).then((res2) => {
+		let array = [...res1.data,...res2.data];
+		// console.log(array)  
+		setMessage(array)
+		})})
+		.catch((err) => {
+		  console.log(err)
+		})
+	}
+	const showShiftModal = (message) => {
+		console.log(message.key)
+		settingIndex(message.key)
+		
+		{dsplayMessage[message.key].requesterType == 'User' ?
+		set2Visible(true):setVisible(true)
+		} 
+		
+		 axios.get("http://localhost:4000/api/user/getShiftTo/"+dsplayMessage[message.key].shiftTo).then((res1) => {
+		   axios.get("http://localhost:4000/api/user/getShiftFrom/"+dsplayMessage[message.key].shiftFrom).then((res2) => {
+			  let shiftArray = [res1.data.shifts[0] ,res2.data.shifts[0]]
+			 //  console.log(res1.data.shifts)
+			   // console.log(shiftArray)
+			   setShifts(shiftArray)
+		   })})
+		   .catch((err) => {
+			 console.log(err)
+		   })
+	   };
+	   const settingIndex = (key) => {
+		 console.log(key)
+		 setIndex(key)
+	   }
+	const menu = (
+		<Menu onClick={showShiftModal}>
+		  <b style={{
+			backgroundColor:'rosybrown',
+			color: 'white',
+			padding: '15px 15px',
+			display: 'block',
+		  }}>Notification</b>
+	
+			  {dsplayMessage.map((message,index) => (
+				  <Menu.Item key = {index}>
+				  <div style={{
+				  }} 
+				  >
+					  {
+						message.requesterType === 'Default' ?
+						<div>
+						  <Tag color="success">{message.requesterType}</Tag> {message.message}
+						  <Tag color="default">{message.regDate}</Tag>
+						</div> :
+						
+						<div>
+						  {
+							message.from === currentId ?
+							<div>
+							  <Tag color="green">{message.requesterType}</Tag> {message.message}
+							  <Tag color="default">{message.regDate}</Tag>
+							</div>
+							  :
+							<div>
+							  <Tag color="green">{message.requesterType}</Tag> {message.messageFrom}
+							  <Tag color="default">{message.regDate}</Tag>
+							</div>
+						  }
+	
+						</div> 
+					  }
+					  
+					  
+				  </div>
+				  </Menu.Item>
+		  
+			  ))}
+	
+		</Menu>
+	  );
 	return (
 		<div>
 			<Sidebar
@@ -80,7 +163,17 @@ const Admin = ({ admin }) => {
 					/>
 					<a className="navbar-brand">ShiftsCalender</a>
 					<div>
-					<span onClick={openNotification}><i class="fa fa-bell"></i></span>
+					<span>
+              <Dropdown overlay={menu} placement="bottomCenter">
+                <Badge dot>
+                  <BellFilled style = {{
+                    color: 'white',
+                     cursor: 'pointer'
+                  }} />
+                </Badge>  
+              </Dropdown>
+                
+            </span>  
 						<Link to="/admin/profile">
 							<span className="ml-2">
 								<Avatar style={{ backgroundColor: "#001529", verticalAlign: "middle" }} size="large">

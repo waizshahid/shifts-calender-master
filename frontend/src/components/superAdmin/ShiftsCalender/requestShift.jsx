@@ -18,7 +18,7 @@ const RequestShifts = () => {
                     // res.data.shifts[i].requestApproval
 					<div>
 						{
-                            data[i].requestApproval === 'unapproval' ?
+                            data[i].requestApproval === 'unapproved' ?
                             <div>
                                 <i
 							className="fa fa-toggle-off"
@@ -33,7 +33,7 @@ const RequestShifts = () => {
                                     console.log(err);
                                 })
 							}}
-							style={{ fontSize: "20px", cursor: "pointer", color: "grey" }}
+							style={{ fontSize: "20px", cursor: "pointer", color: "lightgrey" }}
 						></i>
                             </div>
                         :   <div>
@@ -50,7 +50,7 @@ const RequestShifts = () => {
                                             console.log(err);
                                         })
                                     }}
-                                    style={{ fontSize: "20px", cursor: "pointer", color: "lightgrey" }}
+                                    style={{ fontSize: "20px", cursor: "pointer", color: "grey" }}
                                 ></i>
                         </div>
                         }

@@ -1,11 +1,6 @@
 import React, { useState, useEffect } from "react";
-import MaterialTable from "material-table";
 import axios from "axios";
-// import { EditTwoTone, DeleteTwoTone } from "@ant-design/icons";
 import { Modal, Table, Button } from "antd";
-import { PlusCircleFilled } from '@ant-design/icons';
-
-
 import Register from "./Register";
 
 const ManageShiftTypes = () => {
@@ -63,6 +58,7 @@ const ManageShiftTypes = () => {
 			.delete("http://localhost:4000/api/shift/deleteshift", { params: { id: targetShift } })
 			.then((response) => {
 				console.log(response.data);
+				window.location.reload();
 			});
 		setDelVisible(false);
 	};
@@ -106,11 +102,8 @@ const ManageShiftTypes = () => {
 					fontSize: '25px',
 					padding: '10px 10px 50px 10px'
 				}}
-				onClick={() => setVisible(true)} icon={ <PlusCircleFilled style={{
-					fontSize: '20px',
-					
-				}}/> }>
-				Create Shift Type	
+				onClick={() => setVisible(true)}>
+				Create Shift Type +
 			</Button>
 			
 			<br />

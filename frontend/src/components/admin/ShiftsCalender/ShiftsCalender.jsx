@@ -2,12 +2,13 @@ import React, { useState, useEffect } from "react";
 import { Calendar, momentLocalizer, Views } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import { Modal } from "antd";
+import { Modal, DatePicker, Select, Card } from "antd";
 import CustomeEvents from "./components/customEvents/CustomeEvents";
 import FullCalendar from "@fullcalendar/react";
 import interactionPlugin from "@fullcalendar/interaction"; // needed for dayClick
 import dayGridPlugin from "@fullcalendar/daygrid";
 import axios from "axios";
+import jwt_decode from 'jwt-decode'
 moment.locale("ko", {
   week: {
     dow: 1,
@@ -15,10 +16,13 @@ moment.locale("ko", {
   },
 });
 const localizer = momentLocalizer(moment);
+const { Option } = Select;
+let date = ""
 
 const ShiftsCalender = () => {
   const [visible, setVisible] = useState(false);
   const [data, setData] = useState([]);
+  const [oneEvent, setOneEvent] = useState({});
   const [events, setEvents] = useState([]);
   const [assign, setAssign] = useState("");
   const [shiftType, setShiftType] = useState("");
@@ -26,11 +30,20 @@ const ShiftsCalender = () => {
   const [end, setEnd] = useState("");
   const [users, setUsers] = useState([]);
   const [stop, setStop] = useState(0);
-
+  const [exchangeVisible, setexchangeVisible] = useState(false);
+  const [id2, setTargetId] = useState("");
+  const token = localStorage.admintoken
+  const decoded = jwt_decode(token)
+  const [login,setLoginUserShift] = useState([]);
+  const currentId = decoded.id
  
-  const showModal = () => {
+  const showModal = (e) => {
+    date = e.dateStr
     setVisible(true);
   };
+  const handelFrom = (e) => {
+    setTargetId(e);
+};
   const handelAssign = (e) => {
     e.preventDefault();
     setAssign(e.target.value);
@@ -85,9 +98,9 @@ const ShiftsCalender = () => {
       },
       data: {
         
-        start: start,
+        start: date,
         userId: userId,
-        end: end,
+        end: date,
         shiftTypeId: shiftTypeId,
         swapable: swapable,
 
@@ -155,6 +168,39 @@ const ShiftsCalender = () => {
     
     });
   }
+  const handleEventClick = ({ event, el }) => {
+    settingEvent(event._def.extendedProps)
+};
+useEffect(() => {
+  console.log(oneEvent.userId)
+  console.log(oneEvent._id)
+  console.log(currentId)
+  {
+    oneEvent.userId === undefined && oneEvent._id === undefined ?
+    setexchangeVisible(false)
+    :
+    setexchangeVisible(true)
+  }
+  
+},[oneEvent]);
+const settingEvent = (event) => {
+  setOneEvent(event)
+}
+  function onChange(date, dateString) {
+    console.log(dateString);
+    console.log(currentId);
+    axios.get("http://localhost:4000/api/shift/specificDateShifts/"+dateString+"/"+currentId)
+    .then((res) => {
+    var trueSwapableArray = [];
+    for(let i = 0; i < res.data.shifts.length ; i++){
+        if(res.data.shifts[i].swapable === 'true'){
+            trueSwapableArray.push(res.data.shifts[i]);
+        }
+    }
+    console.log(trueSwapableArray)
+    setLoginUserShift(trueSwapableArray);
+  });
+}
   useEffect(() => {
     console.log('Use Effect checking')
     setEventAtRender()
@@ -162,13 +208,32 @@ const ShiftsCalender = () => {
     
   }, [stop]);
 
-  const cutomEvent = () => {
-    return (
-      <div style={{ backgroundColor: "red" }}>
-        <p>{events.title}</p>
-      </div>
-    );
-  };
+  const passNotification = () => {
+    // console.log(oneEvent.userId)
+        const userId1 = oneEvent.userId;
+        const shiftId1 = oneEvent._id;
+        let userId2 = id2.substring(id2.indexOf(":") + 1)
+        let shiftId2 = id2.substring(0, id2.indexOf(':'));
+        let date = new Date().toISOString().slice(0,10);
+        const message = "One of the User wants to swap his shift with you. Click for the details"
+        const requester ="Admin"
+        const currentUserId = currentId;
+        const messageFrom = "Your request has been sent. Wait for the Response"
+        const requestStatus = "true"
+
+        console.log(userId1,userId2,shiftId1,shiftId2)
+
+    axios.post("http://localhost:4000/api/user/userNotification",{
+                currentUserId,userId1,userId2,shiftId1,shiftId2,message,messageFrom,date,requester,requestStatus
+            })
+            .then((res) => {
+                console.log(res.data);
+                window.location.reload()
+            })
+            .catch((err) => {
+              console.log(err.response);
+            });
+  }
   return (
     <div className="m-sm-4 m-2">
         <div className="col-3">
@@ -194,6 +259,7 @@ const ShiftsCalender = () => {
         plugins={[dayGridPlugin, interactionPlugin]}
         weekNumberCalculation = 'ISO'
         dateClick={showModal}
+        eventClick={handleEventClick}
         eventOrder="priority"
         // eventClick={handelModal}
         events={events}
@@ -249,20 +315,30 @@ const ShiftsCalender = () => {
             </option>
           ))}
         </select>
-        <input
-          type="date"
-          className="form-control m-2 bg-light shadow-sm"
-          placeholder="Start Date"
-          onChange={handelDate}
-        />
-        <input
-          type="date"
-          className="form-control m-2 bg-light shadow-sm"
-          placeholder="End Date"
-          onChange={handelEndDate}
-          defaultValue= {start}
-        />
+        
       </Modal>
+      <Modal
+                    title="Update Shifts"
+                    visible={exchangeVisible}
+                    maskClosable={true}
+                    onCancel={() => setexchangeVisible(false)}
+                    onOk={passNotification}
+                    
+                >
+                    <div>
+                    <Card type="inner">
+                    <b>Select Your Shift</b><br/>
+                        <DatePicker placeholder="Select date to shift" style={{ width: 400 }} onChange={onChange}/><br/><br/>
+                        <Select defaultValue="Select your shift" style={{ width: 400 }} onChange={handelFrom}>
+                            {login.map((dat) => (
+                                <Option value={dat._id+':'+dat.userId} key={dat._id}>
+                                    {dat.title+'  '+'('+dat.shifname+')'}
+                                </Option>
+                            ))}
+                            
+                            </Select>
+                    </Card>
+                  </div></Modal>
     </div>
   );
 };

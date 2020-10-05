@@ -109,6 +109,7 @@ router.delete("/deleteAllNotifications", (req, res) => {
 	  createShift.find({
 		_id: req.params.id
 	})
+	.sort({_id:-1})
 	.populate('userId')
 		.populate('shiftTypeId')
 		.exec()
@@ -143,6 +144,7 @@ router.delete("/deleteAllNotifications", (req, res) => {
 	createShift.find({
 		_id: req.params.id
 	})
+	.sort({_id:-1})
 	.populate('userId')
 		.populate('shiftTypeId')
 		.exec()
@@ -174,6 +176,7 @@ router.delete("/deleteAllNotifications", (req, res) => {
 })
   router.get('/AllNotifications',(req,res)=>{
 	  Notification.find()
+	  .sort({_id:-1})
 	  .then((resp)=>{
 		//   console.log(res)
 		  res.send(resp)
@@ -193,6 +196,7 @@ router.post("/userNotification", (req, res) => {
 	from:       req.body.userId1,
     to:     req.body.userId2,
 	message:  req.body.message,
+	adminresponse: req.body.adminresponse,
 	regDate:  req.body.date,
 	requesterType: req.body.requester,
 	messageFrom: req.body.messageFrom,

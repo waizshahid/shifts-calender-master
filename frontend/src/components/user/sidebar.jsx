@@ -9,6 +9,8 @@ import UserShiftCrud from "./userShiftCrud"
 import RestricSwapping from './restrictSwappingUser'
 import { Layout, Menu,Modal, Avatar, Dropdown,Badge,Row, Col,Card, Tag,Button  } from "antd";
 import axios from 'axios'
+import jwt_decode from 'jwt-decode'
+
 import {
   UserOutlined,
   UserSwitchOutlined,
@@ -19,7 +21,6 @@ import {
   BellFilled
 } from "@ant-design/icons";
 import OffShifts from "./OffShifts";
-import jwt_decode from 'jwt-decode'
 
 const { Header, Content, Footer, Sider } = Layout;
     
@@ -54,6 +55,7 @@ const Side = ({ user }) => {
       axios.delete("http://localhost:4000/api/user/deleteCurrentNotification/"+id)
       .then((res) => {
           console.log(res.data);
+          window.location.reload();
         })
       .catch((err) =>{
         console.log(err)
@@ -83,6 +85,7 @@ const Side = ({ user }) => {
   const showShiftModal = (message) => {
    console.log(message.key)
    settingIndex(message.key)
+   
    {dsplayMessage[message.key].requesterType == 'User' ?
    set2Visible(true):setVisible(true)
    } 
@@ -117,13 +120,26 @@ const Side = ({ user }) => {
               }} 
               >
                   {
-                    message.from == currentId ?
+                    message.requesterType === 'Default' ?
                     <div>
-                      <Tag color="success">{message.requesterType}</Tag> {message.messageFrom}
+                      <Tag color="success">{message.requesterType}</Tag> {message.message}
+                      <Tag color="default">{message.regDate}</Tag>
                     </div> :
                     
                     <div>
-                      <Tag color="green">{message.requesterType}</Tag> {message.message}
+                      {
+                        message.from === currentId ?
+                        <div>
+                          <Tag color="green">{message.requesterType}</Tag> {message.message}
+                          <Tag color="default">{message.regDate}</Tag>
+                        </div>
+                          :
+                        <div>
+                          <Tag color="green">{message.requesterType}</Tag> {message.messageFrom}
+                          <Tag color="default">{message.regDate}</Tag>
+                        </div>
+                      }
+
                     </div> 
                   }
                   

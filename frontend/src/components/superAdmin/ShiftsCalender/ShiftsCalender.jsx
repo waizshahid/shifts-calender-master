@@ -130,6 +130,9 @@ const ShiftsCalender = () => {
     setEvents(temp);
     });
   }
+  const handleEventClick = ({ event, el }) => {
+    alert('Request comment: '+event._def.extendedProps.comment)
+};
   function eventRender(info){
     var tooltip = new Tooltip(info.el, {
       title: info.event.extendedProps.title,
@@ -172,6 +175,7 @@ const ShiftsCalender = () => {
         dateClick={showModal}
         weekNumberCalculation= 'ISO'
         eventOrder="priority"
+        eventClick={handleEventClick}
         eventRender={eventRender}
         events={events}
         

@@ -3,7 +3,7 @@ import FullCalendar from "@fullcalendar/react";
 import interactionPlugin from "@fullcalendar/interaction"; // needed for dayClick
 import dayGridPlugin from "@fullcalendar/daygrid";
 import axios from "axios";
-import { Modal,Card,DatePicker,Select } from "antd";
+import { Modal,Card,Select,Button,Row,Col } from "antd";
 import jwt_decode from 'jwt-decode'
 const { Option } = Select;
 let date = "";
@@ -12,6 +12,7 @@ const ShiftsCalendar = () => {
   const [oneEvent, setOneEvent] = useState({});
   const [visible, setVisible] = useState(false);
   const [exchangeVisible, setexchangeVisible] = useState(false);
+  const [failexchangeVisible, setFailexchangeVisible] = useState(false);
   const [commentVisible, setcommentVisible] = useState(false);
   const [data, setData] = useState([]);
   const [login,setLoginUserShift] = useState([]);
@@ -262,20 +263,20 @@ const ShiftsCalendar = () => {
     setOneEvent(event)
   }
   const handleEventClick = ({ event, el }) => {
-    if(event._def.extendedProps.shiftname !== 'Request'){
+    let date = new Date().toISOString().slice(0,10);
+    if(event.startStr >= date){
       settingEvent(event._def.extendedProps)
     }else{
-      alert("The selected event is not exchangeable")
+      setFailexchangeVisible(true)
     }
     
+    // console.log(event.startStr)
   };
-
-  const passNotification = () => {
-    // console.log(oneEvent.userId)
+    const passNotification = () => {
         const userId1 = oneEvent.userId;
         const shiftId1 = oneEvent._id;
-        let userId2 = id2.substring(id2.indexOf(":") + 1)
-        let shiftId2 = id2.substring(0, id2.indexOf(':'));
+        let userId2 = currentId
+        // let shiftId2 = id2.substring(0, id2.indexOf(':'));
         let date = new Date().toISOString().slice(0,10);
         const message = "One of the User wants to swap his shift with you. Click for the details"
         const requester ="User"
@@ -283,18 +284,31 @@ const ShiftsCalendar = () => {
         const messageFrom = "Your request has been sent. Wait for the Response"
         const requestStatus = "true"
 
-        console.log(userId1,userId2,shiftId1,shiftId2)
+        console.log(userId1,userId2,shiftId1)
 
-    axios.post("http://localhost:4000/api/user/userNotification",{
-                currentUserId,userId1,userId2,shiftId1,shiftId2,message,messageFrom,date,requester,requestStatus
-            })
-            .then((res) => {
-                console.log(res.data);
-                window.location.reload()
-            })
-            .catch((err) => {
-              console.log(err.response);
-            });
+        if(oneEvent.start <= date){
+          setFailexchangeVisible(true);
+        }else{
+            axios.post("http://localhost:4000/api/user/userNotification",{
+              currentUserId,
+              userId1,
+              userId2,
+              shiftId1,
+              message,
+              messageFrom,
+              date,
+              requester,
+              requestStatus
+          })
+          .then((res) => {
+              console.log(res.data);
+              window.location.reload()
+          })
+          .catch((err) => {
+            console.log(err.response);
+          });
+        }
+    
   }
   return (
     <div className="m-sm-4 m-2">
@@ -355,28 +369,37 @@ const ShiftsCalendar = () => {
             
       </Modal>
 
-      <Modal
-                    title="Update Shifts"
+                  <Modal
+                    title="Confirm Request"
                     visible={exchangeVisible}
                     maskClosable={true}
-                    onCancel={() => setexchangeVisible(false)}
-                    onOk={passNotification}
-                    
-                >
+                    footer={[
+                      <Button key="1" onClick={() => setexchangeVisible(false)}>Cancel</Button>,
+                      <Button onClick={passNotification} key="2" type="primary">
+                        Confirm
+                      </Button>
+                    ]}
+                  >
                     <div>
                     <Card type="inner">
-                    <b>Select Your Shift</b><br/>
-                        <DatePicker placeholder="Select date to shift" style={{ width: 400 }} onChange={onChange}/><br/><br/>
-                        <Select defaultValue="Select your shift" style={{ width: 400 }} onChange={handelFrom}>
-                            {login.map((dat) => (
-                                <Option value={dat._id+':'+dat.userId} key={dat._id}>
-                                    {dat.title+'  '+'('+dat.shifname+')'}
-                                </Option>
-                            ))}
-                            
-                            </Select>
+                        Please confirm to send swap request
                     </Card>
                   </div></Modal>
+                  <Modal
+                    title="Swapped Request Failed"
+                    visible={failexchangeVisible}
+                    maskClosable={true}
+                    footer={[
+                      <Button type="primary" key="1" onClick={() => setFailexchangeVisible(false)}>Cancel</Button>,
+                    ]}
+                  >
+                    <div>
+                    <Card type="inner">
+                      Please Choose events greater than today date
+                    </Card>
+                  </div>
+                
+                  </Modal>
     </div>
   );
 };

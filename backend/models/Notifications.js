@@ -4,11 +4,6 @@ const notificationSchema = new mongoose.Schema({
 	currentUserId: {
 		type: String
 	},
-	shiftTo:{
-		type: mongoose.Schema.Types.ObjectId,
-		required: true,
-		ref: 'shiftAssigned'
-	},
 	adminresponse: {
 		type:String,  
 	},

@@ -33,6 +33,7 @@ const Side = ({ user }) => {
   const decoded = jwt_decode(token)
   const currentId = decoded.id
   const [visible, setVisible] = useState(false);
+  const [sentVisible, setsentVisible] = useState(false)
   const [visible2, set2Visible] = useState(false);
   const [index, setIndex] = useState();
   const swapShift = () => {
@@ -43,14 +44,15 @@ const Side = ({ user }) => {
 
   const exchangeAndDelete = () => {
     console.log(index)
+    console.log(dsplayMessage[index])
     const id = dsplayMessage[index]._id
     const shiftId1 = dsplayMessage[index].shiftFrom
-    const shiftId2 = dsplayMessage[index].shiftTo
-    console.log(id)
-    console.log(shiftId2)
-    console.log(shiftId1)
+    const userToExchange = dsplayMessage[index].to
 
-  axios.get("http://localhost:4000/api/shift/swapShift/"+shiftId1+'/'+shiftId2)
+    console.log(id)
+    console.log(userToExchange)
+
+  axios.get("http://localhost:4000/api/shift/swapShiftUser/"+shiftId1+'/'+userToExchange)
     .then((res) => {
       axios.delete("http://localhost:4000/api/user/deleteCurrentNotification/"+id)
       .then((res) => {
@@ -66,7 +68,19 @@ const Side = ({ user }) => {
       console.log(err)
     })
   }
-
+  
+  const deleteNotification = () => {
+    const notificationId =  dsplayMessage[index]._id  
+    console.log(dsplayMessage[index]._id)
+      axios.delete("http://localhost:4000/api/user/deleteCurrentNotification/"+notificationId)
+      .then((res) => {
+          console.log(res.data);
+          window.location.reload();
+        })
+      .catch((err) =>{
+        console.log(err)
+      })
+  }
   useEffect(() => {
       getNotifications()
   }, [shifts]);
@@ -75,6 +89,7 @@ const Side = ({ user }) => {
     axios.get("http://localhost:4000/api/user/getCurrentUserNotificationsTo/"+currentId).then((res1) => {
       axios.get("http://localhost:4000/api/user/getCurrentUserNotificationsFrom/"+currentId).then((res2) => {
       let array = [...res1.data,...res2.data];
+      // console.log(currentId)
       // console.log(array)  
       setMessage(array)
       })})
@@ -89,13 +104,21 @@ const Side = ({ user }) => {
    {dsplayMessage[message.key].requesterType == 'User' ?
    set2Visible(true):setVisible(true)
    } 
-   
-    axios.get("http://localhost:4000/api/user/getShiftTo/"+dsplayMessage[message.key].shiftTo).then((res1) => {
+   console.log(currentId)
+console.log(dsplayMessage[message.key].shiftFrom)
+    axios.get("http://localhost:4000/api/user/getShiftTo/"+dsplayMessage[message.key].to).then((res1) => {
       axios.get("http://localhost:4000/api/user/getShiftFrom/"+dsplayMessage[message.key].shiftFrom).then((res2) => {
-         let shiftArray = [res1.data.shifts[0] ,res2.data.shifts[0]]
+         let shiftArray = [res1.data[0] ,res2.data.shifts[0]]
         //  console.log(res1.data.shifts)
-          // console.log(shiftArray)
-          setShifts(shiftArray)
+        let temp = []
+        for(let i = 0 ; i < shiftArray.length ; i++){
+          if(shiftArray[i] != undefined)
+          {
+            temp.push(shiftArray[i])
+          }
+        }  
+        console.log(temp)
+           setShifts(temp)
       })})
       .catch((err) => {
         console.log(err)
@@ -241,21 +264,35 @@ const Side = ({ user }) => {
                   >
                     <Row>
                       <Col xs={24} sm={24} md={24} lg={24} xl={24}>
-                        {shifts.map((dat,index) => (
-                            <div>
-                              <Card type="inner">
-                        
-                                <b>Shift {index+1}</b><br/><br/>
-                                {'Name:'+' '+dat.title}<br/>
-                                {'Date:'+' '+dat.start}<br/>
-                                {'Shift Name:'+' '+dat.shifname}
+                      {shifts.map((dat,index) => (
+                          <div>
+                              {
+                                  index === 0 ?
+                                  <Card type="inner">
+                              
+                                  <div>
+                                    <b>Assigned Doctor Details</b><br/>
+                                      {'Name:'+' '+dat.firstName+' '+dat.lastName}<br/>
+                                      {'Email:'+' '+dat.email}<br/>
+ 
+                                  </div>
+                                  </Card>
+                                  :
+                                  <div>
+                                    <br/>
+                                    <Card type="inner">
+                              
+                              <div>
+                                  <b>Shift Details</b><br/>
+                                  {'Date:'+' '+dat.start}<br/>
+                                  {'Shift Name:'+' '+dat.shifname}
 
-                                <br/>
-                                <br/>
+                              </div>
                               </Card>
-                            <br/>
-                            </div>
-                        
+                                    </div>
+                                  
+                            }
+                          </div>
                         ))}
                       </Col>
                       
@@ -274,28 +311,104 @@ const Side = ({ user }) => {
                 >
                   <Row>
                       <Col xs={24} sm={24} md={24} lg={24} xl={24}>
-                        {shifts.map((dat,index) => (
-                            <div>
-                              <Card type="inner">
-                        
-                                <b>Shift {index+1}</b><br/><br/>
-                                {'Name:'+' '+dat.title}<br/>
-                                {'Date:'+' '+dat.start}<br/>
-                                {'Shift Name:'+' '+dat.shifname}
+                      {shifts.map((dat,index) => (
+                          <div>
+                              {
+                                  index === 0 ?
+                                  <Card type="inner">
+                              
+                                  <div>
+                                    <b>Requester Details</b><br/>
+                                      {'Name:'+' '+dat.firstName+' '+dat.lastName}<br/>
+                                      {'Email:'+' '+dat.email}<br/>
+ 
+                                  </div>
+                                  </Card>
+                                  :
+                                  <div>
+                              <br/>
+                                    <Card type="inner">
+                              
+                              <div>
+                                <b>Shift Details</b><br/>
+                                  {'Current Doctor:'+' '+dat.title}<br/>
+                                  {'Date:'+' '+dat.start}<br/>
+                                  {'Shift Name:'+' '+dat.shifname}
 
-                                <br/>
-                                <br/>
+                              </div>
                               </Card>
-                            <br/>
-                            </div>
-                        
+                              
+                                  </div>
+                            }
+                          </div>
                         ))}
+                        
                       </Col>
                       
                     </Row>
+                            <br/>
                     <Row>
-                    <Button onClick={swapShift}>Exchange</Button>
+                    <Col lg={16} xs={16} xl={16} sm={16}></Col>
+                    <Col lg={4} xs={4} xl={4} sm={4}>
+                      <Button type="primary" onClick={deleteNotification}>Ignore</Button>
+                    </Col>
+                      <Col lg={4} xs={4} xl={4} sm={4}><Button type="primary" onClick={swapShift}>Exchange</Button>
+                        </Col>
                     </Row>
+                </Modal>
+
+                <Modal
+                  title="Sent shift details"
+                  visible={sentVisible}
+                  maskClosable={true}
+                  footer={[
+                    <Button onClick={() => setsentVisible(false)} key="2" type="primary">
+                      Cancel
+                    </Button>
+                  ]}
+                  // onCancel={() => setsentVisible(false)}
+                  // // onOk={handleOk}
+                  // footer={null}
+                >
+                  <Row>
+                      <Col xs={24} sm={24} md={24} lg={24} xl={24}>
+                      {shifts.map((dat,index) => (
+                          <div>
+                              {
+                                  index === 0 ?
+                                  <Card type="inner">
+                              
+                                  <div>
+                                    <b>Requester Details</b><br/>
+                                      {'Name:'+' '+dat.firstName+' '+dat.lastName}<br/>
+                                      {'Email:'+' '+dat.email}<br/>
+ 
+                                  </div>
+                                  </Card>
+                                  :
+                                  <div>
+                              <br/>
+                                    <Card type="inner">
+                              
+                              <div>
+                                <b>Shift Details</b><br/>
+                                  {'Current Doctor:'+' '+dat.title}<br/>
+                                  {'Date:'+' '+dat.start}<br/>
+                                  {'Shift Name:'+' '+dat.shifname}
+
+                              </div>
+                              </Card>
+                              
+                                  </div>
+                            }
+                          </div>
+                        ))}
+                        
+                      </Col>
+                      
+                    </Row>
+                            <br/>
+                    
                 </Modal>
             </div>    
         <Switch>

@@ -103,41 +103,54 @@ router.delete("/deleteAllNotifications", (req, res) => {
   });
 
   router.get('/getShiftTo/:id', (req,res)=> {
+	const userId = req.params.id
+	User.find({
+		_id : userId
+	})
+	.then((resp) => {
+		res.send(resp)
+	})
+	.catch((err) => {
+		console.log(err)
+	})
+
 	//   Notification.find({
 	// 	  _id: req.params.id
 	//   })
-	  createShift.find({
-		_id: req.params.id
-	})
-	.sort({_id:-1})
-	.populate('userId')
-		.populate('shiftTypeId')
-		.exec()
-		.then(shifts => {
-			res.status(200).json({
-			shifts : shifts.map(shift => {
-				return {
-					_id : shift._id,
-					start : shift.start,
-					priority : shift.shiftTypeId.priority,
-					//shiftTypeId: shift.shiftTypeId,
-					end : shift.end,
-					title : shift.userId.firstName+" " +shift.userId.lastName,
-					color : shift.shiftTypeId.color,
-					swapable: shift.swapable,
-					shifname: shift.shiftTypeId.shiftname,
-					comment: shift.comment,
-					status: shift.offApprovalStatus
-				}
+// 	  createShift.find({
+// 		_id: req.params.id
+// 	})
+// 	.sort({_id:-1})
+// 	.populate('userId')
+// 		.populate('shiftTypeId')
+// 		.exec()
+// 		.then(shifts => {
+// 			res.status(200).json({
+// 			shifts : shifts.map(shift => {
+// 				return {
+// 					_id : shift._id,
+// 					start : shift.start,
+// 					priority : shift.shiftTypeId.priority,
+// 					//shiftTypeId: shift.shiftTypeId,
+// 					end : shift.end,
+// 					title : shift.userId.firstName+" " +shift.userId.lastName,
+// 					color : shift.shiftTypeId.color,
+// 					swapable: shift.swapable,
+// 					shifname: shift.shiftTypeId.shiftname,
+// 					comment: shift.comment,
+// 					status: shift.offApprovalStatus
+// 				}
 				
-				})
-			})
-			})
-    .catch(err=> {
-      res.status(500).json({
-        error : err
-      })
-})
+// 				})
+// 			})
+// 			})
+//     .catch(err=> {
+//       res.status(500).json({
+//         error : err
+//       })
+// })
+
+
 })
 
   router.get('/getShiftFrom/:id', (req,res)=> {
@@ -191,8 +204,7 @@ router.post("/userNotification", (req, res) => {
   if (req.body === null) res.status(400).send("Bad Request");
   let newNotification = new Notification({
     shiftFrom:  req.body.shiftId1,
-    shiftTo:req.body.shiftId2,
-	currentUserId: req.body.currentUserId,
+    currentUserId: req.body.currentUserId,
 	from:       req.body.userId1,
     to:     req.body.userId2,
 	message:  req.body.message,

@@ -575,6 +575,33 @@ router.get("/specificDateOffEvents/:start" , (req,res) => {
 })
 })
 
+router.get("/swapShiftUser/:shiftId/:userId", (req,res) => {
+  const id = req.params.shiftId;
+  const userId = req.params.userId;
+    createShift.findOne({_id: id})
+    .exec()
+    .then(shift => {
+      shift.userId = userId;
+      shift.save()
+      .then(shiftObj => {
+        res.status(201).json({
+          message : "user swapped successfully",
+          shift : shiftObj
+        })
+      })
+      .catch(err=> {
+        res.status(500).json({
+          error : err
+        })
+      })
+    })
+    .catch(err=> {
+      res.status(500).json({
+        erroe : err
+      })
+    })  
+})
+
 router.get("/currentShifts", (req, res) => {
   console.log('shifts')
   createShift.find()

@@ -16,6 +16,7 @@ const ShiftSchema = new mongoose.Schema({
 	priority: {
 		type: Number,
 		required: true,
+		unique: true
 	}
 	
 });

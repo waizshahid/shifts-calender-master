@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Calendar, momentLocalizer, Views } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import { Modal, DatePicker, Select, Card } from "antd";
+import { Modal, Button, Select, Card } from "antd";
 import CustomeEvents from "./components/customEvents/CustomeEvents";
 import FullCalendar from "@fullcalendar/react";
 import interactionPlugin from "@fullcalendar/interaction"; // needed for dayClick
@@ -212,23 +212,27 @@ const settingEvent = (event) => {
     // console.log(oneEvent.userId)
         const userId1 = oneEvent.userId;
         const shiftId1 = oneEvent._id;
-        let userId2 = id2.substring(id2.indexOf(":") + 1)
-        let shiftId2 = id2.substring(0, id2.indexOf(':'));
+        let userId2 = id2
         let date = new Date().toISOString().slice(0,10);
-        const message = "One of the User wants to swap his shift with you. Click for the details"
+        const message = "Your shift has been swapped. Click for details"
+        const adminresponse = "The requested shifts  has been swapped."   
         const requester ="Admin"
         const currentUserId = currentId;
-        const messageFrom = "Your request has been sent. Wait for the Response"
-        const requestStatus = "true"
-
-        console.log(userId1,userId2,shiftId1,shiftId2)
+        console.log(userId1,userId2,shiftId1)
 
     axios.post("http://localhost:4000/api/user/userNotification",{
-                currentUserId,userId1,userId2,shiftId1,shiftId2,message,messageFrom,date,requester,requestStatus
+                currentUserId,userId1,userId2,shiftId1,message,adminresponse,date,requester
             })
             .then((res) => {
-                console.log(res.data);
+              axios.get("http://localhost:4000/api/shift/swapShiftUser/"+shiftId1+'/'+userId2)
+              .then((res1) => {
+                console.log('Admin Swap Successful')
                 window.location.reload()
+              })
+              .catch((err) => {
+                console.log(err)
+              })
+               
             })
             .catch((err) => {
               console.log(err.response);
@@ -282,8 +286,14 @@ const settingEvent = (event) => {
       <Modal
         title="Create Shift"
         visible={visible}
-        onOk={handleOk}
-        onCancel={handleCancel}
+        // onOk={handleOk}
+        // onCancel={handleCancel}
+        footer={[
+          <Button key="1" onClick={handleCancel}>Cancel</Button>,
+          <Button onClick={handleOk} key="2" type="primary">
+            Create
+          </Button>
+        ]}
       >
         <select
           id="cars"
@@ -318,27 +328,59 @@ const settingEvent = (event) => {
         
       </Modal>
       <Modal
-                    title="Update Shifts"
+                    title="Update Shift"
                     visible={exchangeVisible}
                     maskClosable={true}
-                    onCancel={() => setexchangeVisible(false)}
-                    onOk={passNotification}
-                    
+                    // onCancel={() => setexchangeVisible(false)}
+                    // onOk={passNotification}
+                    footer={[
+                      <Button key="1" onClick={() => setexchangeVisible(false)}>Cancel</Button>,
+                      <Button onClick={passNotification} key="2" type="primary">
+                        Update
+                      </Button>
+                    ]}
                 >
                     <div>
                     <Card type="inner">
-                    <b>Select Your Shift</b><br/>
-                        <DatePicker placeholder="Select date to shift" style={{ width: 400 }} onChange={onChange}/><br/><br/>
-                        <Select defaultValue="Select your shift" style={{ width: 400 }} onChange={handelFrom}>
-                            {login.map((dat) => (
-                                <Option value={dat._id+':'+dat.userId} key={dat._id}>
-                                    {dat.title+'  '+'('+dat.shifname+')'}
+                    <b>Select user for this shift</b><br/>
+                        <Select defaultValue="Select Any User" style={{ width: 400 }} onChange={handelFrom}>
+                            {users.map((dat) => (
+                                <Option value={dat._id} key={dat._id}>
+                                    {dat.firstName+' '+dat.lastName}
                                 </Option>
                             ))}
                             
                             </Select>
+                            <br/><br/>
+                      <b>Shift Name: </b>
+                      {oneEvent.shiftname}<br/><br/>
+                      {
+                        oneEvent.comment == undefined ?
+                        <div>
+                          
+                        </div>
+                        :
+                        <div>
+                          <b>Comment: </b>
+                        {oneEvent.comment}
+                        </div>
+                      }
+                      
                     </Card>
                   </div></Modal>
+{/* 
+                  <Modal
+                    title="Confirm Request"
+                    visible={exchangeVisible}
+                    maskClosable={true}
+                    onCancel={() => setexchangeVisible(false)}
+                    onOk={passNotification}
+                  >
+                    <div>
+                    <Card type="inner">
+                        Please confirm to send swap request
+                    </Card>
+                  </div></Modal> */}
     </div>
   );
 };

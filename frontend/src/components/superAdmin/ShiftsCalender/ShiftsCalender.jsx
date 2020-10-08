@@ -4,7 +4,6 @@ import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { Modal, Card } from "antd";
 import FullCalendar from "@fullcalendar/react";
-import Tooltip from "tooltip.js";
 import interactionPlugin from "@fullcalendar/interaction"; // needed for dayClick
 import dayGridPlugin from "@fullcalendar/daygrid";
 import axios from "axios";
@@ -20,6 +19,7 @@ let date = "";
 let currentShift = ""
 let currentUser = ""
 let currentShiftName = ""
+let currentComment = ""
 const ShiftsCalender = () => {
   const [visible, setVisible] = useState(false);
   const [updateVisible, setupdateVisible] = useState(false);
@@ -154,6 +154,7 @@ const ShiftsCalender = () => {
     currentShift = event._def.extendedProps._id
     currentUser = event._def.extendedProps.userId 
     currentShiftName = event._def.extendedProps.shiftname
+    currentComment = event._def.extendedProps.comment
     setupdateVisible(true)
   };
 
@@ -300,7 +301,18 @@ const updateShift = (e) => {
               ))}
             </select>
             <br/><br/>
-            <b>Shift Name: </b>{currentShiftName}
+            <b>Shift Name: </b>{currentShiftName}<br/><br/>
+                      {
+                        currentComment == undefined ?
+                        <div>
+                          
+                        </div>
+                        :
+                        <div>
+                          <b>Comment: </b>
+                        {currentComment}
+                        </div>
+                      }
           </Card>
                    </Modal>
     </div>

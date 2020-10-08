@@ -58,6 +58,8 @@ router.post(
             username: req.body.username,
             email: req.body.email,
             pass: req.body.pass,
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
             avatar,
             regDate: year + "-" + month + "-" + date,
           });

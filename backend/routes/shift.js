@@ -62,13 +62,13 @@ router.post("/createShiftsFromExcel",(req,res)=> {
     temp.push(shift)
   })
   console.log('Temp array');
-  console.log(temp);
+  //console.log(temp);
   console.log('Array of Shifts recieved to backend');
 
   temp.forEach(tempObj => {
     tempObj.save()
     .then(obj => 
-      console.log(obj)
+      console.log(".then ran")
       )
      .catch((err) => console.log("Could not saved shifts from excel", err));
   })

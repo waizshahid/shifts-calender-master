@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Modal, Table} from "antd";
+import { Modal, Table, Button } from "antd";
+import UploadUserExcel from './uploadUsersSheet'
 
 import Register from "./Register";
 
@@ -130,9 +131,25 @@ const ManageUsers = () => {
 
 	return (
 		<div className="container pt-5">
-			<button className="btn btn-outline-primary" onClick={() => setVisible(true)}>
-				+ Add New User
-			</button>
+			<div className="row">
+				<div className="col-6">
+					
+					<Button type="default" onClick={() => setVisible(true)}>
+					<div className="row">
+						<div className="col-1">
+						<i class="fa fa-user-plus" aria-hidden="true"></i>
+						</div>
+						<div className="col-8">
+							Upload New User      
+						</div>
+					</div>
+					</Button>
+				</div>	
+				<div className="col-6">
+					<UploadUserExcel/>	
+				</div>	
+			</div>
+			
 			<br />
 			<br />
 			<Table dataSource={result} columns={columns} />;{/* Register New User */}

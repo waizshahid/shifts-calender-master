@@ -12,6 +12,7 @@ const AdminRoute = ({ component: Component, render, ...rest }) => {
 		axios
 			.get("http://localhost:4000/api/admin")
 			.then((res) => {
+				console.log(res.data)
 				setAdmin(res.data);
 				setIsAdmin(true);
 				setLoading(false);

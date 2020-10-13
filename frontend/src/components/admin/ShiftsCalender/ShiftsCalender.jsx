@@ -18,7 +18,7 @@ moment.locale("ko", {
 const localizer = momentLocalizer(moment);
 const { Option } = Select;
 let date = ""
-
+let title= ""
 const ShiftsCalender = () => {
   const [visible, setVisible] = useState(false);
   const [data, setData] = useState([]);
@@ -169,10 +169,11 @@ const ShiftsCalender = () => {
     });
   }
   const handleEventClick = ({ event, el }) => {
+    title = event.title
     settingEvent(event._def.extendedProps)
 };
 useEffect(() => {
-  console.log(oneEvent.userId)
+  console.log(oneEvent)
   console.log(oneEvent._id)
   console.log(currentId)
   {
@@ -327,11 +328,11 @@ const settingEvent = (event) => {
         </select>
         
       </Modal>
-      <Modal
+                <Modal
                     title="Update Shift"
                     visible={exchangeVisible}
                     maskClosable={true}
-                    // onCancel={() => setexchangeVisible(false)}
+                     onCancel={() => setexchangeVisible(false)}
                     // onOk={passNotification}
                     footer={[
                       <Button key="1" onClick={() => setexchangeVisible(false)}>Cancel</Button>,
@@ -352,7 +353,7 @@ const settingEvent = (event) => {
                             
                             </Select>
                             <br/><br/>
-                      <b>Shift Name: </b>
+                      Shift Name:
                       {oneEvent.shiftname}<br/><br/>
                       {
                         oneEvent.comment == undefined ?
@@ -361,8 +362,8 @@ const settingEvent = (event) => {
                         </div>
                         :
                         <div>
-                          <b>Comment: </b>
-                        {oneEvent.comment}
+                         
+                        {title+' '+oneEvent.comment}
                         </div>
                       }
                       

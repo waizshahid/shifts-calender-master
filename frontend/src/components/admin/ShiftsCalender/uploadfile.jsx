@@ -169,7 +169,7 @@ class uploadfile extends Component {
         .catch((err) => console.log("err", err));
    }
    handleCancel = e => {
-    this.props.history.push(`/superadmin/shifts-calender`)
+    this.props.history.push(`/admin/shifts-calender`)
             
   };
   handleFailCancel = e => {

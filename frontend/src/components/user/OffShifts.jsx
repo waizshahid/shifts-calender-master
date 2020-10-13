@@ -7,6 +7,7 @@ import { Switch } from "antd";
 const OffShifts = () => { 
 	const [result, setResult] = useState();
 	 const [visible, setVisible] = useState(false);
+	 const [delvisible, setDelVisible] = useState(false);
 	const getRequiredTrueValues = (data) => {
 		let temp = [];
 		for (var i = 0; i < data.length; i++) {
@@ -16,7 +17,7 @@ const OffShifts = () => {
                 startdate: data[i].start,
                 enddate: data[i].end,
                 color: <div style={{ backgroundColor: data[i].color, width: "30px", height: "20px" }}></div>,
-			    
+			    status: data[i].offApprovalStatus,
 			});
 		}
 		return temp;
@@ -31,7 +32,23 @@ const OffShifts = () => {
                 startdate: data[i].start,
                 enddate: data[i].end,
                 color: <div style={{ backgroundColor: data[i].color, width: "30px", height: "20px" }}></div>,
-			    
+				status: data[i].offApprovalStatus,
+				action: (
+					<div>
+						<i
+							className="fa fa-trash-o"
+							id={data[i]._id}
+							onClick={(e) => {
+								axios
+								.delete("http://localhost:4000/api/shift/deleteMyshift/"+e.target.id)
+								.then((response) => {
+									window.location.reload()
+								});
+							}}
+							style={{ fontSize: "18px", cursor: "pointer", color: "red" }}
+						></i>
+					</div>
+				)
 			});
 		}
 		return temp;
@@ -46,17 +63,16 @@ const OffShifts = () => {
 		axios
         .get("http://localhost:4000/api/shift/currentUserShifts/"+currentId)
         .then((res) => {
-			var trueVal = [];
-			var falseVal = [];
+			
+			var off = [];
 			for(let i = 0 ; i < res.data.length ; i++){
-				if(res.data[i].swapable === 'true'){
-					trueVal.push(res.data[i]);
-				}else{
-					falseVal.push(res.data[i]);
+				if(res.data[i].shiftname === 'Off'){
+					off.push(res.data[i]);
+					console.log(res.data[i])
 				}
 			}
-			var appendArray = getRequiredFalseValues(falseVal).concat(getRequiredTrueValues(trueVal)); 
-			 setResult(appendArray);
+			  
+			 setResult(getRequiredFalseValues(off));
         });
 	}, [visible]);
 
@@ -87,6 +103,11 @@ const OffShifts = () => {
 			title: "Status",
 			dataIndex: "status",
 			key: "status",
+		},
+        {
+			title: "Action",
+			dataIndex: "action",
+			key: "action",
 		}
     ];
     

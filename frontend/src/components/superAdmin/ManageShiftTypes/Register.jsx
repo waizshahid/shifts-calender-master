@@ -1,7 +1,7 @@
 import React from "react";
 import "antd/dist/antd.css";
 import "../../../css/Register.css";
-import { Form, Input, Button, Select, Row, Col, Switch } from "antd";
+import { Form, Input, Button, Modal, Row, Col, Switch } from "antd";
 import { Link } from "react-router-dom";
 import axios from "axios";
 
@@ -10,6 +10,7 @@ import axios from "axios";
 
 const Register = ({ setVisible, setEditVisible, isEdit, id }) => {
 	const [error, setError] = React.useState(" ");
+	const [failVisible, setFailVisible] = React.useState(false);
 	const [fields, setFields] = React.useState([
 		{
 		  name: ["editable"],
@@ -44,7 +45,7 @@ const Register = ({ setVisible, setEditVisible, isEdit, id }) => {
 				})
 				.catch((err) => {
 					console.log(err.response);
-					setError(err.response.data);
+					failVisible(true)
 				});
 		} else {
 			axios
@@ -146,6 +147,19 @@ const Register = ({ setVisible, setEditVisible, isEdit, id }) => {
 					</Col>
 				</Row>
 			</Form>
+			<div>
+			<Modal
+                  title="Shift create failed"
+                  visible={failVisible}
+                  footer={[
+                    <Button key="1" onClick={() => failVisible(false)}>Cancel</Button>,
+                    
+                  ]}
+                >
+                  <p>Error creating the shift type</p>
+                  
+                </Modal>
+			</div>
 		</div>
 	);
 	

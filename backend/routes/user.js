@@ -96,7 +96,8 @@ router.delete("/deleteAllNotifications", (req, res) => {
   });
 
   router.delete("/deleteCurrentNotification/:id", (req, res) => {
-	Notification.findByIdAndDelete({ _id: req.params.id }).then((resp) => {
+	Notification.findByIdAndDelete({ _id: req.params.id })
+	.then((resp) => {
 	  console.log(resp);
 	  res.send(resp);
 	});
@@ -187,6 +188,43 @@ router.delete("/deleteAllNotifications", (req, res) => {
       })
 })
 })
+
+router.get("/getSpecificNotification/:id", (req, res) => {
+	Notification.findOne({
+		_id: req.params.id
+	})
+	.populate("to")
+	.populate("from")
+	.populate("shiftFrom")
+	.exec()
+	.then((notification) => {
+		res.send(notification)
+	})
+    .catch(err=> {
+      res.status(500).json({
+        error : err
+      })
+})
+
+});
+
+
+// router.get('/getSuperNotifcations/:id', (req,res)=> {
+// 	console.log(req.params.id)
+// 	Notification.findOne({
+// 		_id: req.params.id
+// 	})
+// 	.then((res)=>{
+// 		res.send(res)
+// 	})
+//     .catch(err=> {
+//       res.status(500).json({
+//         error : err
+//       })
+// })
+// })
+
+
   router.get('/AllNotifications',(req,res)=>{
 	  Notification.find()
 	  .sort({_id:-1})

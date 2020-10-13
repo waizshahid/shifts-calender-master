@@ -38,7 +38,7 @@ const ManageShiftTypes = () => {
 								setDelVisible(true);
 								setTargetShift(e.target.id);
 							}}
-							style={{ fontSize: "18px", cursor: "pointer", color: "red" }}
+							style={{ fontSize: "18px", cursor: "pointer"}}
 						></i>
 					</div>
 				),
@@ -97,14 +97,20 @@ const ManageShiftTypes = () => {
 
 	return (
 		<div className="container pt-5">
-			<Button type="primary"
-				style={{
-					fontSize: '25px',
-					padding: '10px 10px 50px 10px'
-				}}
+			
+				
+				<Button type="primary"
+				
 				onClick={() => setVisible(true)}>
-				Create Shift Type +
+				<div className="row">
+					<div className="col-1">
+					<i class="fa fa-plus-circle"></i>
+					</div>
+				
+				<div className="col-8">Create Shift Type</div>
+				</div>
 			</Button>
+		
 			
 			<br />
 			<br />

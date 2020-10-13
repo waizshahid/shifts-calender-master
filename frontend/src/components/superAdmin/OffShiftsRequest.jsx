@@ -97,7 +97,49 @@ const OffShiftsRequest = () => {
                     end: data[i].end,
                     shifttype: data[i].shifname,
                     color: <div style={{ backgroundColor: data[i].color, width: "30px", height: "20px" }}></div>,
-                    status: data[i].offApprovalStatus
+                    status: 
+                    (
+                      <div>
+                            {
+                                data[i].offApprovalStatus === 'Approved'
+                            ?
+                            <div>
+                                <i
+                                className="fa fa-toggle-on"
+                                id={data[i]._id}
+                                onClick={(e) => {
+                                //    console.log('Status Changing Id: '+e.target.id)
+                                    axios.get("http://localhost:4000/api/shift/updateApprovalStatustoFalse/"+e.target.id)
+                                    .then((res) => {
+                                        console.log('Shift status changed to unapproved')
+                                        window.location.reload();
+                                    })
+                                    .catch((err) => {
+                                        console.log('Error updating shift status')
+                                    })
+                                }}
+                                style={{ fontSize: "20px", cursor: "pointer", color: "grey" }}
+                            ></i>
+                            </div>    
+                            :
+                            <i
+                                    className="fa fa-toggle-off"
+                                    id={data[i]._id}
+                                    onClick={(e) => {
+                                        axios.get("http://localhost:4000/api/shift/updateApprovalStatustoTrue/"+e.target.id)
+                                        .then((res) => {
+                                            console.log('Shift status changed to Approved')
+                                            window.location.reload();
+                                        })
+                                        .catch((err) => {
+                                            console.log('Error updating shift status')
+                                        })
+                                    }}
+                                    style={{ fontSize: "20px", cursor: "pointer", color: "lightgrey" }}
+                                ></i>
+                            }
+                      </div>
+                    )
                 });
             }
 		}
@@ -139,7 +181,7 @@ const OffShiftsRequest = () => {
 			key: "color",
         },
         {
-			title: "Approval",
+			title: "Off Shift",
 			dataIndex: "status",
 			key: "status",
 		},
@@ -148,14 +190,7 @@ const OffShiftsRequest = () => {
 
 	return (
 		<div className="container pt-5">
-            <Space direction="vertical">
-                <DatePicker placeholder="Select off shifts" onChange={onChange}/>
-            </Space><Button type="primary" icon={ <EyeFilled/> } onClick={onClickAll}> View All</Button>
-            
-            <br/>
-            <br/>
-            
-			<Table dataSource={result} columns={columns} />;
+            <Table dataSource={result} columns={columns} />;
 		</div>
 	);
 };

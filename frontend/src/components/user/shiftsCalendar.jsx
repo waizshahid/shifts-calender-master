@@ -7,13 +7,15 @@ import { Modal,Card,Select,Button,Row,Col } from "antd";
 import jwt_decode from 'jwt-decode'
 const { Option } = Select;
 let date = "";
+let shiftNameUser = "";
 const ShiftsCalendar = () => {
   const [events, setEvents] = useState([]);
   const [oneEvent, setOneEvent] = useState({});
   const [visible, setVisible] = useState(false);
   const [exchangeVisible, setexchangeVisible] = useState(false);
   const [failexchangeVisible, setFailexchangeVisible] = useState(false);
-  const [commentVisible, setcommentVisible] = useState(false);
+  const [commentVisible, setcommentVisible] = useState("");
+  const [dateVisible, setDateVisible] = useState(false);
   const [data, setData] = useState([]);
   const [login,setLoginUserShift] = useState([]);
   const [off, setOff] = useState([]);
@@ -29,7 +31,16 @@ const ShiftsCalendar = () => {
   const currentId = decoded.id
   const showModal = (e) => {
     date = e.dateStr
-    setVisible(true);
+    let dateCurrent = new Date().toISOString().slice(0,10);
+    console.log(date)
+    console.log(dateCurrent)
+    if(date === dateCurrent){
+        setVisible(true)
+      
+    }else{
+      setDateVisible(true)
+    }
+    
   };
   const handelFrom = (e) => {
     setTargetId(e);
@@ -39,8 +50,26 @@ const ShiftsCalendar = () => {
     e.preventDefault();
     setAssign(e.target.value);
   };
+  useEffect((e) => {
+    setShiftType(shiftNameUser);
+  }, [commentVisible]);
+  function setRequestEvent(e){
+    shiftNameUser = e.target.value.substring(0,e.target.value.indexOf(":"))
+    setcommentVisible("true")
+  }
+
+  function setOffEvent(e){
+    shiftNameUser = e.target.value.substring(0,e.target.value.indexOf(":"))
+    setcommentVisible("false")
+  }
   const handelShift = (e) => {
-    setShiftType(e.target.value.substring(0,e.target.value.indexOf(":")));
+    if(e.target.value.substring(e.target.value.indexOf(":") + 1) === 'Request'){
+        setRequestEvent(e)
+    }else{
+        setOffEvent(e)
+    }
+
+    // setShiftType(e.target.value.substring(0,e.target.value.indexOf(":")));
     // console.log(e.target.value.substring(0,e.target.value.indexOf(":")));
     // console.log(e.target.value.substring(e.target.value.indexOf(":") + 1))
     // {
@@ -66,9 +95,9 @@ const ShiftsCalendar = () => {
     AfterSetOff()
   }, [off]);
 
-  const getAndSetOffStatus = (res) => {
-    console.log(res.data.shifts)
-        setOff(res.data.shifts)
+  const getAndSetOffStatus = (data) => {
+    console.log(data)
+        setOff(data)
        
   }
   
@@ -98,7 +127,7 @@ const ShiftsCalendar = () => {
     }
 
     console.log('countStatus: '+countStatus)
-    if(off.length < 8 || countStatus < 8){
+    if(off.length < 8){   // || countStatus < 8
       offAprovalStat = "Approved"  
     }else{
       offAprovalStat = "Unapproved"  
@@ -116,8 +145,8 @@ const ShiftsCalendar = () => {
         comment: comment,
         start: date,
         end: date,
-        requestApprovalStatus: 'unapproved',
-        offApprovalStatus: 'approval',
+        requestApprovalStatus: 'Unapproved',
+        offApprovalStatus: offAprovalStat,
         shiftTypeId: shiftTypeId,
         swapable: swapable
       },
@@ -134,12 +163,19 @@ const ShiftsCalendar = () => {
   
   const handleOk = (e) => {
     setVisible(false);
-  
-    axios.get("http://localhost:4000/api/shift/specificDateOffEvents/"+date)
+  let tempArray = []
+    axios.get("http://localhost:4000/api/shift/currentShifts")
     .then((res) => {
-        getAndSetOffStatus(res);
-        console.log(res.length)
-        console.log(res.data.shifts)
+      
+      console.log(res.data.shifts)
+      for(let i = 0 ; i < res.data.shifts.length ; i++){
+        if(res.data.shifts[i].shiftname === "Off"){
+            tempArray.push(res.data.shifts[i])
+        }
+      }
+      getAndSetOffStatus(tempArray);
+        console.log(tempArray.length)
+        console.log(tempArray)
     })
     .catch((err) => {
       console.log('Failed to get and set current date off events from database');
@@ -195,14 +231,33 @@ const ShiftsCalendar = () => {
     axios.get("http://localhost:4000/api/shift/currentShifts").then((res) => {
       let temp1 = []
       let temp2 = []
+      let count = 0;
+      console.log(off.length)
       let temp = []
       for(let i = 0 ; i < res.data.shifts.length ; i++){
-        if(res.data.shifts[i].shiftname === 'Request'){
-          if(res.data.shifts[i].requestApprovalStatus === 'approved'){
+        if(res.data.shifts[i].shiftname === 'Request' || res.data.shifts[i].shiftname === 'Off'){
+          if(res.data.shifts[i].shiftname === 'Request'){
+            if(res.data.shifts[i].requestApprovalStatus === 'approved'){
               temp1.push(res.data.shifts[i])
+            }
+          }else if(res.data.shifts[i].shiftname === 'Off'){
+            count++;
+            console.log(count)
+            if(res.data.shifts[i].offApprovalStatus === 'Approved'){
+              temp1.push(res.data.shifts[i])
+            }else if(res.data.shifts[i].offApprovalStatus === 'Unapproved' && count <= 8){
+              res.data.shifts[i].offApprovalStatus = 'Approved'
+              temp1.push(res.data.shifts[i])
+            }else if(res.data.shifts[i].offApprovalStatus === 'Unapproved' && count >= 8){
+
+            }
           }
-        }
-        else{
+          
+        // }else if(res.data.shifts[i].shiftname === 'Off'){
+        //   if(res.data.shifts[i].offApprovalStatus === 'Approved'){
+        //     temp3.push(res.data.shifts[i])
+        //   }
+        }else{
           temp2.push(res.data.shifts[i])
         }
       }
@@ -263,8 +318,8 @@ const ShiftsCalendar = () => {
     setOneEvent(event)
   }
   const handleEventClick = ({ event, el }) => {
-    let date = new Date().toISOString().slice(0,10);
-    if(event.startStr >= date){
+    date = new Date().toISOString().slice(0,10);
+    if(event.startStr === date){
       settingEvent(event._def.extendedProps)
     }else{
       setFailexchangeVisible(true)
@@ -311,10 +366,10 @@ const ShiftsCalendar = () => {
     
   }
   return (
-    <div className="m-sm-4 m-2">
+    <div>
         <div className="container">
-          <div className="row">
-            <select
+           <div className="row">
+           <select
               id="cars"
               name="cars"
               className="custom-select bg-light m-2 shadow-sm float-right w-25"
@@ -326,7 +381,7 @@ const ShiftsCalendar = () => {
               <option value="Shifts Offered">Shifts Offered </option>
             </select>
           </div>
-        </div>
+           </div>
         <br/>
         <FullCalendar
           defaultView="dayGridMonth"
@@ -359,13 +414,21 @@ const ShiftsCalendar = () => {
             </option>
           ))}
         </select>
-          <input
+        {
+          commentVisible === 'true'
+          ?
+          <div>
+            <input
             type="text"
             className="form-control m-2 bg-light shadow-sm"
             placeholder="Comments for requested shift type"
             onChange={handleComment}
-            visible = {commentVisible}
           />
+          </div>
+          :
+          <div></div>
+        }
+          
             
       </Modal>
 
@@ -373,6 +436,7 @@ const ShiftsCalendar = () => {
                     title="Confirm Request"
                     visible={exchangeVisible}
                     maskClosable={true}
+                    onCancel={() => setexchangeVisible(false)}
                     footer={[
                       <Button key="1" onClick={() => setexchangeVisible(false)}>Cancel</Button>,
                       <Button onClick={passNotification} key="2" type="primary">
@@ -386,8 +450,24 @@ const ShiftsCalendar = () => {
                     </Card>
                   </div></Modal>
                   <Modal
+                    title="Choose current date"
+                    visible={dateVisible}
+                    maskClosable={true}
+                    onCancel={() => setDateVisible(false)}
+                    footer={[
+                      <Button key="1" type="primary" onClick={() => setDateVisible(false)}>Ok</Button>,
+                      
+                    ]}
+                  >
+                    <div>
+                    <Card type="inner">
+                        Please click on current date to create event
+                    </Card>
+                  </div></Modal>
+                  <Modal
                     title="Swapped Request Failed"
                     visible={failexchangeVisible}
+                    onCancel={() => setFailexchangeVisible(false)}
                     maskClosable={true}
                     footer={[
                       <Button type="primary" key="1" onClick={() => setFailexchangeVisible(false)}>Cancel</Button>,
@@ -395,7 +475,7 @@ const ShiftsCalendar = () => {
                   >
                     <div>
                     <Card type="inner">
-                      Please Choose events greater than today date
+                      You can choose current date events only
                     </Card>
                   </div>
                 

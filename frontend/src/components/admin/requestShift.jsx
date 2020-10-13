@@ -119,7 +119,7 @@ const RequestShifts = () => {
     return (
         <div className="container">
             <h2 className="text-center">
-                Super Admin Request Shifts
+               Admin Request Shifts
             </h2>
             <br/>
             <br/>

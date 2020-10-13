@@ -12,59 +12,82 @@ import RequestShift from './ShiftsCalender/requestShift'
 import Logout from "./Logout/Logout";
 import Upload from './ShiftsCalender/uploadfile'
 import UserSheet from './ManageUsers/uploadUsersSheet'
-import { Layout, Menu, Avatar, notification,Modal,Row,Col,Card,Tag, Dropdown,Badge } from "antd";
+import jwt_decode from 'jwt-decode'
+import { Layout, Menu, Avatar, Modal,Row,Col,Card,Tag, Dropdown,Badge } from "antd";
 import {
 	FormOutlined,
 	PullRequestOutlined,
 	UserOutlined,
 	LogoutOutlined,
 	BellFilled,
-	UserSwitchOutlined,
 	MenuOutlined,
 	CalendarOutlined,
 	MinusCircleOutlined,
-	UserAddOutlined,
-	UploadOutlined,
+	FileExcelOutlined,
 	UsergroupAddOutlined,
 } from "@ant-design/icons";
 
 const { Header, Content, Footer, Sider } = Layout;
-
+let notificationId=""
 const SuperAdmin = ({ superAdmin }) => {
 	const [sidebarOpen, setSidebarOpen] = useState(false);
 	const [visible, setVisible] = useState(false);
 	const [index, setIndex] = useState();
-	const [shifts,setShifts] = useState([]);
+	const [shifts,setShifts] = useState({});
 	const [dsplayMessage, setMessage] = useState([]);
-
+	const token = localStorage.superadmintoken
+    const decoded = jwt_decode(token)
+    const currentId = decoded.id
 	const showShiftModal = (message) => {
 		console.log(message.key)
-		settingIndex(message.key)
+		// console.log(dsplayMessage[message.key]._id)
+		notificationId = dsplayMessage[message.key]._id;
+		setVisible(true)
+		 };
 		
-		axios.get("http://localhost:4000/api/user/getNotifcations")
-		.then((res) => {
-			let temp = []
-			for(let i = 0 ; i < res.data.length ; i++){
-				if(res.data[i].currentId !== undefined)
-				{
-					temp.push(res.data[i])
-				}
-			}
-			   setShifts(temp)
-		   })
-		   .catch((err) => {
-			 console.log(err)
-		   })
-	   };
-
+		useEffect(()=> {
+			console.log(notificationId)
+			axios.get("http://localhost:4000/api/user/getSpecificNotification/"+notificationId)
+			.then((res) => {
+					console.log(res.data)
+					setShifts(res.data)
+			})
+			.catch((err) => {
+				console.log(err)
+			})
+		},[visible])
+		//     useEffect(()=> {
+		// 		console.log(dsplayMessage)
+		// 		// console.log('User1: '+dsplayMessage.from)
+		// 		// console.log('User2: '+dsplayMessage.to)
+		// 		// console.log(dsplayMessage[index].to)
+		//    },[index])
+		//    useEffect(()=> {
+		// 	console.log(currentId)
+		// 	axios.get("http://localhost:4000/api/user/getSuperNotifcations/"+currentId)
+		// 	.then((res) => {
+		// 		let temp = []
+		// 		console.log(res.data)
+		// 		for(let i = 0 ; i < res.data.length ; i++){
+		// 			if(res.data[i] !== undefined)
+		// 			{
+		// 				temp.push(res.data[i])
+		// 			}
+		// 		}
+		// 		   setShifts(temp)
+		// 	   })
+		// 	   .catch((err) => {
+		// 		 console.log(err)
+		// 	   })
+		//    },[visible])
 	const menu = (
 		<Menu onClick={showShiftModal}>
-		  <b style={{
+		  {/* <b style={{
 			backgroundColor:'rosybrown',
 			color: 'white',
 			padding: '15px 15px',
 			display: 'block',
-		  }}>Notification</b>
+		  }}>Notification</b> */}
 	
 			  {dsplayMessage.map((message,index) => (
 				  <Menu.Item key = {index}>
@@ -72,6 +95,7 @@ const SuperAdmin = ({ superAdmin }) => {
 				  }} 
 				  >
 							<div>
+							<Tag color="success">{message.requesterType}</Tag>
 							  {message.adminresponse}
 							  <Tag color="default">{message.regDate}</Tag>
 							</div>
@@ -94,16 +118,18 @@ const SuperAdmin = ({ superAdmin }) => {
 	const getNotifications = () => {
 		axios.get("http://localhost:4000/api/user/getNotifcations")
 		.then((res1) => {
-		  setMessage(res1.data)
+			let temp = []
+			for(let i = 0 ; i < res1.data.length ; i++){
+				if(res1.data[i].requesterType === 'Default'){
+					temp.push(res1.data[i])
+				}
+			}
+			console.log(temp)
+		  setMessage(temp)
 		  })
 		  .catch((err) => {
 			console.log(err)
 		  })
-	  }
-
-	  const settingIndex = (key) => {
-		console.log(key)
-		setIndex(key)
 	  }
 
 	const onSetSidebarOpen = (open) => {
@@ -122,24 +148,7 @@ const SuperAdmin = ({ superAdmin }) => {
                   // onOk={handleOk}
                   >
                     <Row>
-                      <Col xs={24} sm={24} md={24} lg={24} xl={24}>
-                        {shifts.map((dat,index) => (
-                            <div>
-                              <Card type="inner">
-                        
-                                <b>Shift {index+1}</b><br/><br/>
-                                {'Name:'+' '+dat.title}<br/>
-                                {'Date:'+' '+dat.start}<br/>
-                                {'Shift Name:'+' '+dat.shifname}
-
-                                <br/>
-                                <br/>
-                              </Card>
-                            <br/>
-                            </div>
-                        
-                        ))}
-                      </Col>
+                      {shifts.requesterType}
                       
                     </Row>
                     
@@ -163,17 +172,11 @@ const SuperAdmin = ({ superAdmin }) => {
 								<Menu.Item key="4" icon={<UsergroupAddOutlined />}>
 									<Link to="/superadmin/manage-users">Manage Users</Link>
 								</Menu.Item>
-								<Menu.Item key="8" icon={<UploadOutlined />}>
-									<Link to="/superadmin/users-sheet">Upload User Excel</Link>
-								</Menu.Item>
-								<Menu.Item key="5" icon={<UserSwitchOutlined />}>
-									<Link to="/superadmin/exchange-shifts">Exhange Shifts</Link>
+								<Menu.Item key="5" icon={<FileExcelOutlined />}>
+									<Link to="/superadmin/upload">Upload Shifts Excel</Link>
 								</Menu.Item>
 								<Menu.Item key="6" icon={<MinusCircleOutlined />}>
 									<Link to="/superadmin/off-shifts">Off Shifts</Link>
-								</Menu.Item>
-								<Menu.Item key="7" icon={<UploadOutlined />}>
-									<Link to="/superadmin/upload">Upload Excel</Link>
 								</Menu.Item>
 								<Menu.Item key="9" icon={<PullRequestOutlined />}>
 									<Link to="/superadmin/manage-requestShifts">Requested Shifts</Link>
@@ -213,7 +216,7 @@ const SuperAdmin = ({ superAdmin }) => {
 							<span className="ml-2">
 								<Avatar style={{ backgroundColor: "#001529", verticalAlign: "middle" }} size="large">
 									{console.log(superAdmin)}
-									{superAdmin.username.split(" ")[0].charAt(0).toUpperCase()}
+									{superAdmin.first_name.split(" ")[0].charAt(0).toUpperCase()+superAdmin.last_name.split(" ")[0].charAt(0).toUpperCase()}
 								</Avatar>
 							</span>
 						</Link>
@@ -221,7 +224,7 @@ const SuperAdmin = ({ superAdmin }) => {
 				</nav>
 
 				<div>
-                <Modal
+                {/* <Modal
                   title="Swapped shifts details"
                   visible={visible}
                   maskClosable={true}
@@ -250,7 +253,7 @@ const SuperAdmin = ({ superAdmin }) => {
                       
                     </Row>
                     
-                </Modal>
+                </Modal> */}
             </div>
 				<Switch>
 					<Route exact path="/superadmin/profile" component={Profile} />

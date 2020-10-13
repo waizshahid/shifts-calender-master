@@ -16,18 +16,16 @@ import AdminRoute from "./components/admin/routing/AdminRoute";
 import UserRoute from "./components/user/routing/UserRoute";
 
 function App() {
-	return (
-		<Router>
-			<Switch>
-				<Route exact path="/" component={Login} />
-				{/* <Route path="/register" component={Register} /> */}
-				<SuperAdminRoute path="/superadmin" component={SuperAdmin} />
-				<AdminRoute path="/admin" component={Admin} />
-				<UserRoute path="/user" component={User} />
-				<Route component={PageNotFound} />
-			</Switch>
-		</Router>
-	);
+    return ( 
+        <Router >
+        <Switch >
+        <Route exact path = "/" component = { Login }/> { /* <Route path="/register" component={Register} /> */ } 
+        <SuperAdminRoute path = "/superadmin" component = { SuperAdmin }/> 
+        <AdminRoute path = "/admin" component = { Admin }/> 
+        <UserRoute path = "/user" component = { User }/> 
+        <Route component = { PageNotFound }
+        /> </Switch> </Router>
+    );
 }
 
 export default App;

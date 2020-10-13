@@ -34,6 +34,16 @@ router.delete("/deleteshift", (req, res) => {
   });
 });
 
+router.delete("/deleteMyshift/:id", (req, res) => {
+  createShift.findOneAndDelete({ _id: req.params.id }).then((resp) => {
+    console.log(resp);
+    res.send(resp);
+  })
+  .catch((err) => {
+    console.log(err)
+  })
+});
+
 router.delete("/deleteshiftUser", (req, res) => {
   createShift.findOneAndDelete({ _id: req.query.id }).then((resp) => {
     console.log(resp);
@@ -62,13 +72,13 @@ router.post("/createShiftsFromExcel",(req,res)=> {
     temp.push(shift)
   })
   console.log('Temp array');
-  //console.log(temp);
+  console.log(temp);
   console.log('Array of Shifts recieved to backend');
 
   temp.forEach(tempObj => {
     tempObj.save()
     .then(obj => 
-      console.log(".then ran")
+      console.log(obj)
       )
      .catch((err) => console.log("Could not saved shifts from excel", err));
   })
@@ -615,19 +625,61 @@ router.get("/currentShifts", (req, res) => {
     // userId, start, end, title, color
     res.status(200).json({
       shifts : shifts.map(shift => {
-        return {
-          _id : shift._id,
-          start : shift.start,
-          priority : shift.shiftTypeId.priority,
-          end : shift.end,
-          shiftname: shift.shiftTypeId.shiftname,
-          requestApprovalStatus: shift.requestApprovalStatus,
-          title : shift.shiftTypeId.shiftname + ":"+ " " +shift.userId.firstName.charAt(0) +" " +shift.userId.lastName,
-          color : shift.shiftTypeId.color,
-          swapable: shift.swapable,
-          userId: shift.userId._id,
-          comment: shift.comment
+        if(shift.shiftTypeId.shiftname === 'Request'){
+          // let dottedComment;
+          // if(shift.comment.length > 10) {
+          //   dottedComment = shift.comment.substring(0,3);
+          // }
+          //  dottedComment.append('...')
+          if(shift.comment.length > 8) {
+            return {
+              _id : shift._id,
+              start : shift.start,
+              priority : shift.shiftTypeId.priority,
+              end : shift.end,
+              shiftname: shift.shiftTypeId.shiftname,
+              requestApprovalStatus: shift.requestApprovalStatus,
+              title : shift.shiftTypeId.shiftname.substring(0,3) + ":"+ " "+shift.userId.lastName+' ('+shift.comment.substring(0,14)+'...'+')',
+              color : shift.shiftTypeId.color,
+              swapable: shift.swapable,
+              userId: shift.userId._id,
+              comment: shift.comment,
+              offApprovalStatus: shift.offApprovalStatus
+            }
+          }else{
+            return {
+              _id : shift._id,
+              start : shift.start,
+              priority : shift.shiftTypeId.priority,
+              end : shift.end,
+              shiftname: shift.shiftTypeId.shiftname,
+              requestApprovalStatus: shift.requestApprovalStatus,
+              title : shift.shiftTypeId.shiftname.substring(0,3) + ":"+ " "+shift.userId.lastName+' ('+shift.comment+')',
+              color : shift.shiftTypeId.color,
+              swapable: shift.swapable,
+              userId: shift.userId._id,
+              comment: shift.comment,
+              offApprovalStatus: shift.offApprovalStatus
+            }
+          }
+          
+        }else{
+          return {
+            _id : shift._id,
+            start : shift.start,
+            priority : shift.shiftTypeId.priority,
+            end : shift.end,
+            shiftname: shift.shiftTypeId.shiftname,
+            requestApprovalStatus: shift.requestApprovalStatus,
+            title : shift.shiftTypeId.shiftname + ":"+ " " +shift.userId.firstName.charAt(0) +" " +shift.userId.lastName,
+            color : shift.shiftTypeId.color,
+            swapable: shift.swapable,
+            userId: shift.userId._id,
+            comment: shift.comment,
+            offApprovalStatus: shift.offApprovalStatus
+          }
         }
+        
       })
     })
   })
@@ -657,7 +709,9 @@ router.get("/currentUserShifts/:id", (req, res) => {
           end : shift.end,
           title : shift.shiftTypeId.shiftname + ":"+ " " +shift.userId.firstName.charAt(0) +" " +shift.userId.lastName,
           color : shift.shiftTypeId.color,
-          swapable: shift.swapable
+          swapable: shift.swapable,
+          shiftname: shift.shiftTypeId.shiftname,
+          offApprovalStatus: shift.offApprovalStatus,
         }
       })
     )

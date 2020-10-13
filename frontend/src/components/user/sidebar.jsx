@@ -18,9 +18,9 @@ import {
   MenuOutlined,
   CalendarOutlined,
   SwapOutlined,
-  BellFilled
+  BellFilled,
+  MinusCircleOutlined
 } from "@ant-design/icons";
-import OffShifts from "./OffShifts";
 
 const { Header, Content, Footer, Sider } = Layout;
     
@@ -101,9 +101,21 @@ const Side = ({ user }) => {
    console.log(message.key)
    settingIndex(message.key)
    
-   {dsplayMessage[message.key].requesterType == 'User' ?
-   set2Visible(true):setVisible(true)
-   } 
+    if(dsplayMessage[message.key].requesterType == 'User'){
+        if(dsplayMessage[message.key].to === currentId){
+          setsentVisible(true)
+        }else{
+          set2Visible(true)  
+        }
+    }else{
+      setVisible(true)  
+    }
+
+  //  {dsplayMessage[message.key].requesterType == 'User' ?
+  //     set2Visible(true)
+  //   :
+  //   setVisible(true)
+  //  } 
    console.log(currentId)
 console.log(dsplayMessage[message.key].shiftFrom)
     axios.get("http://localhost:4000/api/user/getShiftTo/"+dsplayMessage[message.key].to).then((res1) => {
@@ -130,12 +142,12 @@ console.log(dsplayMessage[message.key].shiftFrom)
   }
   const menu = (
     <Menu onClick={showShiftModal}>
-      <b style={{
+      {/* <b style={{
         backgroundColor:'rosybrown',
         color: 'white',
         padding: '15px 15px',
         display: 'block',
-      }}>Notification</b>
+      }}>Notification</b> */}
 
           {dsplayMessage.map((message,index) => (
               <Menu.Item key = {index}>
@@ -145,7 +157,7 @@ console.log(dsplayMessage[message.key].shiftFrom)
                   {
                     message.requesterType === 'Default' ?
                     <div>
-                      <Tag color="success">{message.requesterType}</Tag> {message.message}
+                      <Tag color="success">{message.requesterType}</Tag> <br/>{message.message}
                       <Tag color="default">{message.regDate}</Tag>
                     </div> :
                     
@@ -153,12 +165,12 @@ console.log(dsplayMessage[message.key].shiftFrom)
                       {
                         message.from === currentId ?
                         <div>
-                          <Tag color="green">{message.requesterType}</Tag> {message.message}
+                          <Tag color="green">{message.requesterType}</Tag> <br/>{message.message}
                           <Tag color="default">{message.regDate}</Tag>
                         </div>
                           :
                         <div>
-                          <Tag color="green">{message.requesterType}</Tag> {message.messageFrom}
+                          <Tag color="green">{message.requesterType}</Tag><br/> {message.messageFrom}
                           <Tag color="default">{message.regDate}</Tag>
                         </div>
                       }
@@ -186,7 +198,7 @@ console.log(dsplayMessage[message.key].shiftFrom)
         sidebar={
           <div style={{ backgroundColor: "black" }}>
             <Sider style={{ height: "100vh" }}>
-              <h5 className="pt-4 pb-2 text-center text-muted">{user.username}</h5>
+              <h5 className="pt-4 pb-2 text-center text-muted">{user.firstName}{user.lastName}</h5>
               <Menu theme="dark" mode="inline" defaultSelectedKeys={[]}>
                 <Menu.Item key="1" icon={<UserOutlined />}>
                   <Link to="/user/profile">Profile</Link>
@@ -195,14 +207,12 @@ console.log(dsplayMessage[message.key].shiftFrom)
                   <Link to="/user/shifts-calender">Shifts Calender</Link>
                 </Menu.Item>
                 <Menu.Item key="3" icon={<SwapOutlined />}>
-                  <Link to="/user/user-shifts/my-shifts">All Shifts</Link>
+                  <Link to="/user/user-shifts/my-shifts">My Shifts</Link>
                 </Menu.Item>
-                <Menu.Item key="4" icon={<LogoutOutlined />}>
+                <Menu.Item key="4" icon={<MinusCircleOutlined />}>
                   <Link to="/user/user-shifts/my-off-shifts">Off Shifts</Link>
                 </Menu.Item>
-                <Menu.Item key="5" icon={<UserSwitchOutlined />}>
-                  <Link to="/user/user-shifts/user-exchange-shifts">Exchange Shifts</Link>
-                </Menu.Item>
+               
                 <Menu.Item key="10" icon={<LogoutOutlined />}>
                   <Link to="/superadmin/logout">Logout</Link>
                 </Menu.Item>
@@ -239,7 +249,7 @@ console.log(dsplayMessage[message.key].shiftFrom)
               </Dropdown>
                 
             </span>  
-            <Link to="/superadmin/profile">
+            <Link to="/user/profile">
               <span className="ml-2">
                 <Avatar
                   style={{
@@ -248,7 +258,7 @@ console.log(dsplayMessage[message.key].shiftFrom)
                   }}
                   size="large"
                 >
-                  {user.username.split(" ")[0].charAt(0).toUpperCase()}
+                  {user.firstName.split(" ")[0].charAt(0).toUpperCase()}{user.lastName.split(" ")[0].charAt(0).toUpperCase()}
                 </Avatar>
               </span>
             </Link>
@@ -260,7 +270,7 @@ console.log(dsplayMessage[message.key].shiftFrom)
                   visible={visible}
                   maskClosable={true}
                   onCancel={() => setVisible(false)}
-                  // onOk={handleOk}
+                   onOk={() => setVisible(false)}
                   >
                     <Row>
                       <Col xs={24} sm={24} md={24} lg={24} xl={24}>
@@ -283,7 +293,7 @@ console.log(dsplayMessage[message.key].shiftFrom)
                                     <Card type="inner">
                               
                               <div>
-                                  <b>Shift Details</b><br/>
+                                  <b>Assigned Shift Details</b><br/>
                                   {'Date:'+' '+dat.start}<br/>
                                   {'Shift Name:'+' '+dat.shifname}
 
@@ -366,7 +376,7 @@ console.log(dsplayMessage[message.key].shiftFrom)
                       Cancel
                     </Button>
                   ]}
-                  // onCancel={() => setsentVisible(false)}
+                  onCancel={() => setsentVisible(false)}
                   // // onOk={handleOk}
                   // footer={null}
                 >

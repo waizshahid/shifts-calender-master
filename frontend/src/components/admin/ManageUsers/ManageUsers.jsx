@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
-import MaterialTable from "material-table";
 import axios from "axios";
 // import { EditTwoTone, DeleteTwoTone } from "@ant-design/icons";
-import { Modal, Table, Popconfirm } from "antd";
+import UploadUserExcel from './uploadUsersSheet'
+
+import { Modal, Table, Button } from "antd";
 
 import Register from "./Register";
 
@@ -55,12 +56,8 @@ const ManageUsers = () => {
 
 	useEffect(() => {
 		axios.get("http://localhost:4000/api/user/getusers").then((response1) => {
-			axios.get("http://localhost:4000/api/admin/getadmins").then((response2) => {
-				console.log("res1 = ", response1);
-				console.log("res2 = ", response2);
-				let arr = [...getRequiredValues(response1.data), ...getRequiredValues(response2.data)];
-				setResult(arr);
-			});
+			setResult(response1.data);
+			
 		});
 
 		// axios.get("http://localhost:4000/api/admin/getadmins").then((response) => {
@@ -135,10 +132,24 @@ const ManageUsers = () => {
 
 	return (
 		<div className="container pt-5">
-			<button className="btn btn-outline-primary" onClick={() => setVisible(true)}>
-				+ Add New User
-			</button>
-			<br />
+			<div className="row">
+				<div className="col-6">
+					
+					<Button type="default" onClick={() => setVisible(true)}>
+					<div className="row">
+						<div className="col-1">
+						<i class="fa fa-user-plus" aria-hidden="true"></i>
+						</div>
+						<div className="col-8">
+							Upload New User      
+						</div>
+					</div>
+					</Button>
+				</div>	
+				<div className="col-6">
+					<UploadUserExcel/>	
+				</div>	
+			</div>
 			<br />
 			<Table dataSource={result} columns={columns} />;{/* Register New User */}
 			<Modal

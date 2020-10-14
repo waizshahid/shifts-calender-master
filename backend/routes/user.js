@@ -293,6 +293,39 @@ router.delete("/deleteuser", (req, res) => {
 		});
 });
 
+
+router.get("/getUserDetail/:id",(req,res) => {
+	const userDate = req.params.id
+	User.findOne({
+		_id: userDate
+	})
+	.then((resp) => {
+		res.send(resp)
+	})
+	.catch((err) => {
+		console.log(err)
+	})
+})
+
+router.get("/deleteShiftForOneUser/:id", (req, res) => {
+	const removedUserId = req.params.id
+	createShift.deleteMany({userId: removedUserId})
+	.then((resp)=>{
+		res.send(resp)
+	})
+	.catch((err) => {
+		res.send(err)
+	})
+	// createShift.findByIdAndDelete({ userId: req.params.id })
+	// 	.then((resp) => {
+	// 		console.log(resp);
+	// 		res.send(resp);
+	// 	})
+	// 	.catch((err) => {
+	// 		  res.send(err);
+			
+	// 	});
+});
 //@route  PUT api/user/updateuser
 //@desc   Update user by id
 //@access Public

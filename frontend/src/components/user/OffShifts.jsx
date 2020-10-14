@@ -40,7 +40,7 @@ const OffShifts = () => {
 							id={data[i]._id}
 							onClick={(e) => {
 								axios
-								.delete("http://localhost:4000/api/shift/deleteMyshift/"+e.target.id)
+								.delete("shift/deleteMyshift/"+e.target.id)
 								.then((response) => {
 									window.location.reload()
 								});
@@ -61,7 +61,7 @@ const OffShifts = () => {
 
     useEffect(() => {
 		axios
-        .get("http://localhost:4000/api/shift/currentUserShifts/"+currentId)
+        .get("shift/currentUserShifts/"+currentId)
         .then((res) => {
 			
 			var off = [];
@@ -138,14 +138,14 @@ const OffShifts = () => {
 export default OffShifts;
 // 	if(flag === 'true'){
 	// 		axios
-	// 		.get("http://localhost:4000/api/shift/restrict-swap/"+id+'/'+'false')
+	// 		.get("shift/restrict-swap/"+id+'/'+'false')
 	// 		.then((res) => {
 	// 			setResult(getRequiredValues(res.data))
 			
 	// 		});
 	// 	}else if(flag === 'false'){
 	// 		axios
-	// 		.get("http://localhost:4000/api/shift/restrict-swap/"+id+'/'+'true')
+	// 		.get("shift/restrict-swap/"+id+'/'+'true')
 	// 		.then((res) => {
 	// 			setResult(getRequiredValues(res.data))
 			

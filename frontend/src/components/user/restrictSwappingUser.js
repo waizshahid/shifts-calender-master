@@ -23,7 +23,7 @@ const RestrictSwappingUser = () => {
 							id={data[i]._id}
 							onClick={(e) => {
 								console.log('True value: '+e.target.id)
-								axios.get("http://localhost:4000/api/shift/restrict-swap/"+e.target.id+'/'+'false').then((response) => {
+								axios.get("shift/restrict-swap/"+e.target.id+'/'+'false').then((response) => {
 									console.log(response.data);
 									window.location.reload();
 								});
@@ -52,7 +52,7 @@ const RestrictSwappingUser = () => {
 							id={data[i]._id}
 							onClick={(e) => {
 								console.log('False value: '+e.target.id)
-								axios.get("http://localhost:4000/api/shift/restrict-swap/"+e.target.id+'/'+'true').then((response) => {
+								axios.get("shift/restrict-swap/"+e.target.id+'/'+'true').then((response) => {
 									console.log(response.data);
 									window.location.reload();
 								});
@@ -86,20 +86,20 @@ const RestrictSwappingUser = () => {
 
 	// function turnTrue(index,id){
 	// 	console.log('Turn True'+turnFlag,targetShift);
-	// 	// axios.get("http://localhost:4000/api/shift/restrict-swap/"+ +'true').then((response) => {
+	// 	// axios.get("shift/restrict-swap/"+ +'true').then((response) => {
 	// 	// 	setResult(getRequiredValues(response.data));
 	// 	// });
 	// }
 	// function turnFalse(index,id){
 	// 	console.log('Turn False'+index,id);
-	// 	// axios.get("http://localhost:4000/api/shift/restrict-swap/"+ +'false').then((response) => {
+	// 	// axios.get("shift/restrict-swap/"+ +'false').then((response) => {
 	// 	// 	setResult(getRequiredValues(response.data));
 	// 	// });
 	// }
 
     useEffect(() => {
 		axios
-        .get("http://localhost:4000/api/shift/currentUserShifts/"+currentId)
+        .get("shift/currentUserShifts/"+currentId)
         .then((res) => {
 			var trueVal = [];
 			var falseVal = [];
@@ -189,14 +189,14 @@ const RestrictSwappingUser = () => {
 export default RestrictSwappingUser;
 // 	if(flag === 'true'){
 	// 		axios
-	// 		.get("http://localhost:4000/api/shift/restrict-swap/"+id+'/'+'false')
+	// 		.get("shift/restrict-swap/"+id+'/'+'false')
 	// 		.then((res) => {
 	// 			setResult(getRequiredValues(res.data))
 			
 	// 		});
 	// 	}else if(flag === 'false'){
 	// 		axios
-	// 		.get("http://localhost:4000/api/shift/restrict-swap/"+id+'/'+'true')
+	// 		.get("shift/restrict-swap/"+id+'/'+'true')
 	// 		.then((res) => {
 	// 			setResult(getRequiredValues(res.data))
 			

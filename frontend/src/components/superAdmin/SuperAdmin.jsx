@@ -7,7 +7,7 @@ import ShiftsCalender from "./ShiftsCalender/ShiftsCalender";
 import ExchangeShift from './exchangeShifts'
 import ManageShiftTypes from "./ManageShiftTypes/ManageShiftTypes";
 import OffShift from './OffShiftsRequest'
-import ManageUsers from "./ManageUsers/ManageUsers";
+import ManageUsers from "../superAdmin/ManageUsers/ManageUsers";
 import RequestShift from './ShiftsCalender/requestShift'
 import Logout from "./Logout/Logout";
 import Upload from './ShiftsCalender/uploadfile'
@@ -47,7 +47,7 @@ const SuperAdmin = ({ superAdmin }) => {
 		
 		useEffect(()=> {
 			console.log(notificationId)
-			axios.get("http://localhost:4000/api/user/getSpecificNotification/"+notificationId)
+			axios.get("user/getSpecificNotification/"+notificationId)
 			.then((res) => {
 					console.log(res.data)
 					setShifts(res.data)
@@ -64,7 +64,7 @@ const SuperAdmin = ({ superAdmin }) => {
 		//    },[index])
 		//    useEffect(()=> {
 		// 	console.log(currentId)
-		// 	axios.get("http://localhost:4000/api/user/getSuperNotifcations/"+currentId)
+		// 	axios.get("user/getSuperNotifcations/"+currentId)
 		// 	.then((res) => {
 		// 		let temp = []
 		// 		console.log(res.data)
@@ -116,7 +116,7 @@ const SuperAdmin = ({ superAdmin }) => {
 	}, [shifts]);
 
 	const getNotifications = () => {
-		axios.get("http://localhost:4000/api/user/getNotifcations")
+		axios.get("user/getNotifcations")
 		.then((res1) => {
 			let temp = []
 			for(let i = 0 ; i < res1.data.length ; i++){

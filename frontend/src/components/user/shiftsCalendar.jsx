@@ -134,7 +134,7 @@ const ShiftsCalendar = () => {
     }
 
     const options = {
-      url: "http://localhost:4000/api/shift/createShift",
+      url: "shift/createShift",
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -164,7 +164,7 @@ const ShiftsCalendar = () => {
   const handleOk = (e) => {
     setVisible(false);
   let tempArray = []
-    axios.get("http://localhost:4000/api/shift/currentShifts")
+    axios.get("shift/currentShifts")
     .then((res) => {
       
       console.log(res.data.shifts)
@@ -188,7 +188,7 @@ const ShiftsCalendar = () => {
 
   const handelSelect = (e) => {
     if (e.target.value === "Default") {
-      axios.get("http://localhost:4000/api/shift/currentShifts").then((res) => {
+      axios.get("shift/currentShifts").then((res) => {
         // let temp1 = []
         // let temp2 = []
         // for(let i =0 ; i<res.data.shifts.length; i++){
@@ -202,7 +202,7 @@ const ShiftsCalendar = () => {
       console.log('User Logged In');
       console.log('User Id:'+currentId);
       axios
-        .get("http://localhost:4000/api/shift/currentUserShifts/"+currentId)
+        .get("shift/currentUserShifts/"+currentId)
         .then((res) => {
           if (res.data !== null) {
             setEvents(res.data);
@@ -215,7 +215,7 @@ const ShiftsCalendar = () => {
       console.log('User Logged In OFF');
           console.log('User Id:'+currentId);
       axios
-        .get("http://localhost:4000/api/shift/currentUserOffShifts/"+currentId)
+        .get("shift/currentUserOffShifts/"+currentId)
         .then((res) => {
           
           if (res.data !== null) {
@@ -228,7 +228,7 @@ const ShiftsCalendar = () => {
   };
 
   useEffect(() => {
-    axios.get("http://localhost:4000/api/shift/currentShifts").then((res) => {
+    axios.get("shift/currentShifts").then((res) => {
       let temp1 = []
       let temp2 = []
       let count = 0;
@@ -267,7 +267,7 @@ const ShiftsCalendar = () => {
     setEvents(temp);
     });
     const options = {
-      url: "http://localhost:4000/api/shift/getshifts",
+      url: "shift/getshifts",
       method: "GET",
       headers: {
         Accept: "application/json",
@@ -290,7 +290,7 @@ const ShiftsCalendar = () => {
   function onChange(date, dateString) {
     console.log(dateString);
     console.log(currentId);
-    axios.get("http://localhost:4000/api/shift/specificDateShifts/"+dateString+"/"+currentId)
+    axios.get("shift/specificDateShifts/"+dateString+"/"+currentId)
     .then((res) => {
     var trueSwapableArray = [];
     for(let i = 0; i < res.data.shifts.length ; i++){
@@ -344,7 +344,7 @@ const ShiftsCalendar = () => {
         if(oneEvent.start <= date){
           setFailexchangeVisible(true);
         }else{
-            axios.post("http://localhost:4000/api/user/userNotification",{
+            axios.post("user/userNotification",{
               currentUserId,
               userId1,
               userId2,

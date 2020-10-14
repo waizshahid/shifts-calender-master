@@ -44,6 +44,8 @@ router.delete("/deleteMyshift/:id", (req, res) => {
   })
 });
 
+
+
 router.delete("/deleteshiftUser", (req, res) => {
   createShift.findOneAndDelete({ _id: req.query.id }).then((resp) => {
     console.log(resp);

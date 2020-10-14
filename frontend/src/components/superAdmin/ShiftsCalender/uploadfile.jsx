@@ -17,12 +17,12 @@ class uploadfile extends Component {
     visibleFail:false
   };
   componentDidMount = () =>  {
-    axios.get("http://localhost:4000/api/user/getusers").then((response1) => {
+    axios.get("user/getusers").then((response1) => {
 				console.log(response1.data)
 				this.setState({users: response1.data})
 		});
 		
-    axios.get("http://localhost:4000/api/shift/getshifts").then((response) => {
+    axios.get("shift/getshifts").then((response) => {
       
       let typeArr = []
       response.data.map(resp=> {
@@ -31,7 +31,7 @@ class uploadfile extends Component {
       })
       this.setState({types: typeArr});
     });
-    axios.get("http://localhost:4000/api/shift/currentShifts").then((res) => {
+    axios.get("shift/currentShifts").then((res) => {
         console.log(res.data.shifts);
       });
   }
@@ -136,10 +136,10 @@ class uploadfile extends Component {
     if(this.state.finalArray !== ''){
       // console.log(this.state.finalArray)
       axios
-      .get("http://localhost:4000/api/shift/deleteEventsBetweenTwoDates/"+this.state.startDate+'/'+this.state.endDate)
+      .get("shift/deleteEventsBetweenTwoDates/"+this.state.startDate+'/'+this.state.endDate)
       .then((response) => {
           console.log("response", response);
-          axios.post("http://localhost:4000/api/shift/createShiftsFromExcel",this.state.finalArray)
+          axios.post("shift/createShiftsFromExcel",this.state.finalArray)
           .then((res) => {
            this.setState({
               visible: true,
@@ -162,7 +162,7 @@ class uploadfile extends Component {
 
    deletePreviousData = () => {
     axios
-        .get("http://localhost:4000/api/shift/deleteEventsBetweenTwoDates/"+this.state.startDate+'/'+this.state.endDate)
+        .get("shift/deleteEventsBetweenTwoDates/"+this.state.startDate+'/'+this.state.endDate)
         .then((response) => {
           console.log("response", response);
         })
@@ -224,7 +224,7 @@ class uploadfile extends Component {
                   onCancel={this.handleCancel}
                   visible={this.state.visible}
                   footer={[
-                    <Button key="1" onClick={this.handleCancel}>OK</Button>,
+                    <Button type="primary" key="1" onClick={this.handleCancel}>OK</Button>,
                   ]}
                 >
                   <p>Shifts updated successfuly</p>
@@ -237,7 +237,7 @@ class uploadfile extends Component {
                   onCancel={this.handleFailCancel}
                   visible={this.state.visibleFail}
                   footer={[
-                    <Button key="1" onClick={this.handleFailCancel}>Cancel</Button>,
+                    <Button type="primary" key="1" onClick={this.handleFailCancel}>Cancel</Button>,
                   ]}
                 >
                   <p>Please choose a correct formatted excel file to add Shifts</p>

@@ -9,13 +9,13 @@ const OffShiftsRequest = () => {
 	const [result, setResult] = useState();
     function onChange(date, dateString) {
         console.log(dateString);
-        axios.get("http://localhost:4000/api/shift/specificDateOffEvents/"+dateString).then((res) => {
+        axios.get("shift/specificDateOffEvents/"+dateString).then((res) => {
             console.log(res.data.shifts)
             setResult(getRequiredValues(res.data.shifts));
       })
     }	
     function onClickAll() {
-        axios.get("http://localhost:4000/api/shift/AllOffEvents").then((res) => {
+        axios.get("shift/AllOffEvents").then((res) => {
             setResult(getRequiredValuesAll(res.data.shifts));
     })
     }	
@@ -38,7 +38,7 @@ const OffShiftsRequest = () => {
 							id={data[i]._id}
 							onClick={(e) => {
                             //    console.log('Status Changing Id: '+e.target.id)
-                                axios.get("http://localhost:4000/api/shift/updateApprovalStatustoFalse/"+e.target.id)
+                                axios.get("shift/updateApprovalStatustoFalse/"+e.target.id)
                                 .then((res) => {
                                     console.log('Shift status changed to unapproved')
                                     window.location.reload();
@@ -67,7 +67,7 @@ const OffShiftsRequest = () => {
                                     className="fa fa-toggle-off"
                                     id={data[i]._id}
                                     onClick={(e) => {
-                                        axios.get("http://localhost:4000/api/shift/updateApprovalStatustoTrue/"+e.target.id)
+                                        axios.get("shift/updateApprovalStatustoTrue/"+e.target.id)
                                         .then((res) => {
                                             console.log('Shift status changed to Approved')
                                             window.location.reload();
@@ -109,7 +109,7 @@ const OffShiftsRequest = () => {
                                 id={data[i]._id}
                                 onClick={(e) => {
                                 //    console.log('Status Changing Id: '+e.target.id)
-                                    axios.get("http://localhost:4000/api/shift/updateApprovalStatustoFalse/"+e.target.id)
+                                    axios.get("shift/updateApprovalStatustoFalse/"+e.target.id)
                                     .then((res) => {
                                         console.log('Shift status changed to unapproved')
                                         window.location.reload();
@@ -126,7 +126,7 @@ const OffShiftsRequest = () => {
                                     className="fa fa-toggle-off"
                                     id={data[i]._id}
                                     onClick={(e) => {
-                                        axios.get("http://localhost:4000/api/shift/updateApprovalStatustoTrue/"+e.target.id)
+                                        axios.get("shift/updateApprovalStatustoTrue/"+e.target.id)
                                         .then((res) => {
                                             console.log('Shift status changed to Approved')
                                             window.location.reload();
@@ -146,7 +146,7 @@ const OffShiftsRequest = () => {
 		return temp;
     }
 	useEffect(() => {
-        axios.get("http://localhost:4000/api/shift/AllOffEvents").then((res) => {
+        axios.get("shift/AllOffEvents").then((res) => {
             setResult(getRequiredValuesAll(res.data.shifts));
              
      });

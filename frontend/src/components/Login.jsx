@@ -13,7 +13,7 @@ const Login = (props) => {
 	
 	const submitLogin = (person,email,pass) => {
 		axios
-			.post("http://localhost:4000/api/superadminauth/login", {
+			.post("superadminauth/login", {
 				email,
 				pass,
 				person
@@ -50,7 +50,7 @@ const Login = (props) => {
 		setError(" ");
 		
 
-		axios.get("http://localhost:4000/api/superadminauth/getType/"+email)
+		axios.get("superadminauth/getType/"+email)
 			.then((response) => {
 				submitLogin(response.data.type,email,pass)
 			})

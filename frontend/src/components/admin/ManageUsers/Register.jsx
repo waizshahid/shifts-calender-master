@@ -18,7 +18,7 @@ const Register = ({ setVisible, setEditVisible, isEdit, id }) => {
 		//Student registered
 		if (isEdit) {
 			axios
-				.put("http://localhost:4000/api/user/updateuser", {
+				.put("user/updateuser", {
 					id,
 					newData: { email, username,firstName, lastName, partener, pass, person },
 				})
@@ -32,7 +32,7 @@ const Register = ({ setVisible, setEditVisible, isEdit, id }) => {
 				});
 		} else {
 			axios
-				.post("http://localhost:4000/api/userauth/register", {
+				.post("userauth/register", {
 					email,
 					username,
 					firstName, 

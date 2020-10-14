@@ -10,7 +10,7 @@ export default class uploadUsersSheet extends Component {
   state = { visible: false,visibleFail:false };
   Process = (event) => {
         // console.log("running")
-        // axios.delete("http://localhost:4000/api/user/deleteAndUpdateUsers").then((res) => {
+        // axios.delete("user/deleteAndUpdateUsers").then((res) => {
 				// console.log(res)
 				
         // });
@@ -76,13 +76,13 @@ export default class uploadUsersSheet extends Component {
     updateUsersWithExcel = () => {
       // console.log(this.state.usersAndAdminsfinalArray)
       if(this.state.usersAndAdminsfinalArray !== undefined){
-        axios.delete("http://localhost:4000/api/user/deleteAndUpdateUsers")
+        axios.delete("user/deleteAndUpdateUsers")
           .then((res) => {
             // console.log('All users deleted');
-              axios.delete("http://localhost:4000/api/shift/deleteAllShifts")
+              axios.delete("shift/deleteAllShifts")
               .then((res) => { 
                 console.log('All users and their Shifts are deleted successfully')
-                axios.post("http://localhost:4000/api/user/createUserFromExcel",this.state.usersAndAdminsfinalArray).then((response2) => {
+                axios.post("user/createUserFromExcel",this.state.usersAndAdminsfinalArray).then((response2) => {
                 console.log(response2.data);
                 this.setState({
                   visible: true,

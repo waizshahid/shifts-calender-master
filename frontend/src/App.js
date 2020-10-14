@@ -14,8 +14,12 @@ import User from "./components/user/User";
 import SuperAdminRoute from "./components/superAdmin/routing/SuperAdminRoute";
 import AdminRoute from "./components/admin/routing/AdminRoute";
 import UserRoute from "./components/user/routing/UserRoute";
+import axios from 'axios'
+
+
 
 function App() {
+    axios.defaults.baseURL = "http://localhost:4000/api/";
     return ( 
         <Router >
         <Switch >

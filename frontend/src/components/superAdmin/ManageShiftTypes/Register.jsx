@@ -29,7 +29,7 @@ const Register = ({ setVisible, setEditVisible, isEdit, id }) => {
 		//Student registered
 		if (isEdit) {
 			axios
-				.put("http://localhost:4000/api/shift/updateshift", {
+				.put("shift/updateshift", {
 					id,
 					newData: { 
 						shiftname,
@@ -49,7 +49,7 @@ const Register = ({ setVisible, setEditVisible, isEdit, id }) => {
 				});
 		} else {
 			axios
-				.post("http://localhost:4000/api/shift/register", {
+				.post("shift/register", {
 					shiftname,
 					color,
 					editable,

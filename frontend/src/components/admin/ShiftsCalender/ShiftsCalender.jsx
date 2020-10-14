@@ -90,7 +90,7 @@ const ShiftsCalender = () => {
     // }
     
     const options = {
-      url: "http://localhost:4000/api/shift/createShift",
+      url: "shift/createShift",
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -116,11 +116,11 @@ const ShiftsCalender = () => {
   };
   const handleDoctors = (e) => {
     if(e.target.value === "All"){
-      axios.get("http://localhost:4000/api/shift/currentShifts").then((res) => {
+      axios.get("shift/currentShifts").then((res) => {
         setEvents(res.data.shifts);
       });
     }else{
-      axios.get("http://localhost:4000/api/shift/getUserByName/"+e.target.value).then((res) => {
+      axios.get("shift/getUserByName/"+e.target.value).then((res) => {
       setEvents(res.data.shifts);
     });
         
@@ -129,7 +129,7 @@ const ShiftsCalender = () => {
 
   const setDataAndUser = () => {
     const options = {
-      url: "http://localhost:4000/api/shift/getshifts",
+      url: "shift/getshifts",
       method: "GET",
       headers: {
         Accept: "application/json",
@@ -142,12 +142,12 @@ const ShiftsCalender = () => {
       setData(res.data);
     });
 
-    axios.get("http://localhost:4000/api/user/getusers").then((res) => {
+    axios.get("user/getusers").then((res) => {
       setUsers(res.data);
     });
   }
   const setEventAtRender = () => {
-    axios.get("http://localhost:4000/api/shift/currentShifts").then((res) => {
+    axios.get("shift/currentShifts").then((res) => {
       let temp1 = []
       let temp2 = []
       let temp = []
@@ -190,7 +190,7 @@ const settingEvent = (event) => {
   function onChange(date, dateString) {
     console.log(dateString);
     console.log(currentId);
-    axios.get("http://localhost:4000/api/shift/specificDateShifts/"+dateString+"/"+currentId)
+    axios.get("shift/specificDateShifts/"+dateString+"/"+currentId)
     .then((res) => {
     var trueSwapableArray = [];
     for(let i = 0; i < res.data.shifts.length ; i++){
@@ -221,11 +221,11 @@ const settingEvent = (event) => {
         const currentUserId = currentId;
         console.log(userId1,userId2,shiftId1)
 
-    axios.post("http://localhost:4000/api/user/userNotification",{
+    axios.post("user/userNotification",{
                 currentUserId,userId1,userId2,shiftId1,message,adminresponse,date,requester
             })
             .then((res) => {
-              axios.get("http://localhost:4000/api/shift/swapShiftUser/"+shiftId1+'/'+userId2)
+              axios.get("shift/swapShiftUser/"+shiftId1+'/'+userId2)
               .then((res1) => {
                 console.log('Admin Swap Successful')
                 window.location.reload()

@@ -55,12 +55,12 @@ const ManageUsers = () => {
 	};
 
 	useEffect(() => {
-		axios.get("http://localhost:4000/api/user/getusers").then((response1) => {
+		axios.get("user/getusers").then((response1) => {
 			setResult(response1.data);
 			
 		});
 
-		// axios.get("http://localhost:4000/api/admin/getadmins").then((response) => {
+		// axios.get("admin/getadmins").then((response) => {
 		// 	setResult(result.concat(getRequiredValues(response.data)));
 		// });
 	}, [visible, editVisible, delVisible]);
@@ -74,7 +74,7 @@ const ManageUsers = () => {
 
 	const deleteUser = () => {
 		axios
-			.delete("http://localhost:4000/api/user/deleteuser", {
+			.delete("user/deleteuser", {
 				params: { id: targetUser },
 			})
 			.then((response) => {

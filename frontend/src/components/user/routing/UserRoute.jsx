@@ -10,7 +10,7 @@ const UserRoute = ({ component: Component, render, ...rest }) => {
 	React.useEffect(() => {
 		axios.defaults.headers.common["x-auth-user"] = localStorage.getItem("usertoken");
 		axios
-			.get("http://localhost:4000/api/user")
+			.get("user")
 			.then((res) => {
 				setUser(res.data);
 				setIsUser(true);

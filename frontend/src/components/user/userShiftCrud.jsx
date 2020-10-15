@@ -75,7 +75,7 @@ const UserShiftCrud = () => {
 	};
    
     useEffect(() => {
-		axios.get("http://localhost:4000/api/shift/getshifts").then((response) => {
+		axios.get("shift/getshifts").then((response) => {
             var disableArray = [];
             var enableArray = [];
             for(let i = 0 ; i < response.data.length; i++){
@@ -114,7 +114,7 @@ const UserShiftCrud = () => {
     }, [visible, editVisible, delVisible]);
     const deleteUser = () => {
 		axios
-			.delete("http://localhost:4000/api/shift/deleteshiftUser", { params: { id: targetShift } })
+			.delete("shift/deleteshiftUser", { params: { id: targetShift } })
 			.then((response) => {
 				console.log(response.data);
 			});

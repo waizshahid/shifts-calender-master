@@ -41,7 +41,7 @@ const ExchangeShifts = () => {
     function onChange(date, dateString) {
         console.log(dateString);
         console.log(currentId);
-        axios.get("http://localhost:4000/api/shift/specificDateShifts/"+dateString+"/"+currentId)
+        axios.get("shift/specificDateShifts/"+dateString+"/"+currentId)
         .then((res) => {
         var trueSwapableArray = [];
         for(let i = 0; i < res.data.shifts.length ; i++){
@@ -56,7 +56,7 @@ const ExchangeShifts = () => {
 
     function onChangeTarget(date,dateString){
         console.log(dateString);
-        axios.get("http://localhost:4000/api/shift/specifictargetDateShifts/"+dateString+"/"+currentId)
+        axios.get("shift/specifictargetDateShifts/"+dateString+"/"+currentId)
         .then((res) => {
         var trueSwapableArray = [];
         for(let i = 0; i < res.data.shifts.length ; i++){
@@ -70,7 +70,7 @@ const ExchangeShifts = () => {
       });
     }
     useEffect(() => {
-		axios.get("http://localhost:4000/api/shift/currentShifts").then((res) => {
+		axios.get("shift/currentShifts").then((res) => {
                setResult(getRequiredValues(res.data.shifts));
                 
         });
@@ -97,10 +97,10 @@ const ExchangeShifts = () => {
         console.log('USERID 2 HAI: '+userId2);
         console.log('ShiftID 1 HAI: '+shiftId1);
         console.log('ShiftID 2 HAI: '+shiftId2);
-        // axios.get("http://localhost:4000/api/shift/swapShift/"+shiftId1+'/'+shiftId2)
+        // axios.get("shift/swapShift/"+shiftId1+'/'+shiftId2)
         // .then((res) => {
         //     // console.log(res.data);
-            axios.post("http://localhost:4000/api/user/userNotification",{
+            axios.post("user/userNotification",{
                 adminresponse,currentUserId,userId1,userId2,shiftId1,shiftId2,message,messageFrom,date,requester,requestStatus
             })
             .then((res) => {

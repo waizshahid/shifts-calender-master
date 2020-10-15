@@ -48,14 +48,14 @@ const ManageShiftTypes = () => {
 	};
 
 	useEffect(() => {
-		axios.get("http://localhost:4000/api/shift/getshifts").then((response) => {
+		axios.get("shift/getshifts").then((response) => {
 			setResult(getRequiredValues(response.data));
 		});
 	}, [visible, editVisible, delVisible]);
 
 	const deleteUser = () => {
 		axios
-			.delete("http://localhost:4000/api/shift/deleteshift", { params: { id: targetShift } })
+			.delete("shift/deleteshift", { params: { id: targetShift } })
 			.then((response) => {
 				console.log(response.data);
 				window.location.reload();

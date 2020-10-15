@@ -67,7 +67,7 @@ const ShiftsCalender = () => {
     let shiftTypeId = shiftType;
     var swapable = "true";
     const options = {
-      url: "http://localhost:4000/api/shift/createShift",
+      url: "shift/createShift",
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -92,12 +92,12 @@ const ShiftsCalender = () => {
 
   const handleDoctors = (e) => {
     if(e.target.value === "All"){
-      axios.get("http://localhost:4000/api/shift/currentShifts").then((res) => {
+      axios.get("shift/currentShifts").then((res) => {
         console.log(res.data.shifts);
         setEvents(res.data.shifts);
       });
     }else{
-      axios.get("http://localhost:4000/api/shift/getUserByName/"+e.target.value).then((res) => {
+      axios.get("shift/getUserByName/"+e.target.value).then((res) => {
       console.log('User Id:');
       console.log(res.data.shifts);
       setEvents(res.data.shifts);
@@ -108,7 +108,7 @@ const ShiftsCalender = () => {
 
   const setDataAndUser = () => {
     const options = {
-      url: "http://localhost:4000/api/shift/getshifts",
+      url: "shift/getshifts",
       method: "GET",
       headers: {
         Accept: "application/json",
@@ -121,12 +121,12 @@ const ShiftsCalender = () => {
       setData(res.data);
     });
 
-    axios.get("http://localhost:4000/api/user/getusers").then((res) => {
+    axios.get("user/getusers").then((res) => {
       setUsers(res.data);
     });
   }
   const setEventAtRender = () => {
-    axios.get("http://localhost:4000/api/shift/currentShifts").then((res) => {
+    axios.get("shift/currentShifts").then((res) => {
       let temp1 = []
       let temp2 = []
       let temp = []
@@ -194,11 +194,11 @@ const updateShift = (e) => {
         console.log('Shift 1 '+shiftId1)
         console.log('User 2 '+userId2)
         const currentUserId = currentId;
-          axios.post("http://localhost:4000/api/user/userNotification",{
+          axios.post("user/userNotification",{
                 userId1,userId2,shiftId1,message,date,requester,adminresponse,currentUserId
             })
             .then((res) => {
-              axios.get("http://localhost:4000/api/shift/swapShiftUser/"+shiftId1+'/'+userId2)
+              axios.get("shift/swapShiftUser/"+shiftId1+'/'+userId2)
               .then((res1) => { 
               // console.log(res1.data);
               // console.log(res.data);

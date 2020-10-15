@@ -24,7 +24,7 @@ const RequestShifts = () => {
 							className="fa fa-toggle-off"
 							id={data[i]._id}
 							onClick={(e) => {
-                                axios.get("http://localhost:4000/api/shift/updateRequestApproval/"+e.target.id)
+                                axios.get("shift/updateRequestApproval/"+e.target.id)
                                 .then((response) => {
                                     console.log(response)
                                     window.location.reload();
@@ -41,7 +41,7 @@ const RequestShifts = () => {
                                     className="fa fa-toggle-on"
                                     id={data[i]._id}
                                     onClick={(e) => {
-                                        axios.get("http://localhost:4000/api/shift/updateRequestApproval/"+e.target.id)
+                                        axios.get("shift/updateRequestApproval/"+e.target.id)
                                         .then((response) => {
                                             console.log(response)
                                             window.location.reload();
@@ -62,7 +62,7 @@ const RequestShifts = () => {
     };
 
     useEffect(() => {
-		axios.get("http://localhost:4000/api/shift/RequestEvents").then((res) => {
+		axios.get("shift/RequestEvents").then((res) => {
             let temp = []
             for(let i = 0 ; i < res.data.shifts.length ; i++){
                 if(res.data.shifts[i] !== null){

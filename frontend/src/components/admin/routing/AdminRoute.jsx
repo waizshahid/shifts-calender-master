@@ -10,7 +10,7 @@ const AdminRoute = ({ component: Component, render, ...rest }) => {
 	React.useEffect(() => {
 		axios.defaults.headers.common["x-auth-admin"] = localStorage.getItem("admintoken");
 		axios
-			.get("http://localhost:4000/api/admin")
+			.get("admin")
 			.then((res) => {
 				console.log(res.data)
 				setAdmin(res.data);

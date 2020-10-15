@@ -7,8 +7,43 @@ import axios from "axios";
 
 const { Option } = Select;
 
-const Register = ({ setVisible, setEditVisible, isEdit, id }) => {
+const Register = ({ setVisible, setEditVisible, isEdit, id, userObj }) => {
 	const [error, setError] = React.useState(" ");
+	const [fields, setFields] = React.useState([
+		{
+		  name: ["firstName"],
+		  value: userObj.firstName,
+		},
+		{
+			name: ["lastName"],
+			value: userObj.lastName,
+		},
+		{
+			name: ["username"],
+			value: userObj.username,
+		},
+		{
+			name: ["email"],
+			value: userObj.email,
+		},
+		{
+			name: ["partener"],
+			value: userObj.partener,
+		},
+		{
+			name: ["pass"],
+			value: '',
+		},
+		{
+			name: ["confirm"],
+			value: '',
+		},
+		{
+			name: ["person"],
+			value: userObj.person,
+		},
+		
+	  ]);
 
 	const [form] = Form.useForm();
 	const onFinish = (values) => {
@@ -58,6 +93,7 @@ const Register = ({ setVisible, setEditVisible, isEdit, id }) => {
 			<Form
 				form={form}
 				name="register"
+				fields={fields}
 				onFinish={onFinish}
 				className="register-form p-2 bg-white"
 			>
@@ -94,8 +130,10 @@ const Register = ({ setVisible, setEditVisible, isEdit, id }) => {
 				</Row>
 				<Form.Item
 					name="username"
+
 					rules={[
 						{
+							type:'text',
 							required: true,
 							message: "Please input your User name!",
 							whitespace: true,

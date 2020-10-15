@@ -52,9 +52,9 @@ const Side = ({ user }) => {
     console.log(id)
     console.log(userToExchange)
 
-  axios.get("http://localhost:4000/api/shift/swapShiftUser/"+shiftId1+'/'+userToExchange)
+  axios.get("shift/swapShiftUser/"+shiftId1+'/'+userToExchange)
     .then((res) => {
-      axios.delete("http://localhost:4000/api/user/deleteCurrentNotification/"+id)
+      axios.delete("user/deleteCurrentNotification/"+id)
       .then((res) => {
           console.log(res.data);
           window.location.reload();
@@ -72,7 +72,7 @@ const Side = ({ user }) => {
   const deleteNotification = () => {
     const notificationId =  dsplayMessage[index]._id  
     console.log(dsplayMessage[index]._id)
-      axios.delete("http://localhost:4000/api/user/deleteCurrentNotification/"+notificationId)
+      axios.delete("user/deleteCurrentNotification/"+notificationId)
       .then((res) => {
           console.log(res.data);
           window.location.reload();
@@ -86,8 +86,8 @@ const Side = ({ user }) => {
   }, [shifts]);
 
   const getNotifications = () => {
-    axios.get("http://localhost:4000/api/user/getCurrentUserNotificationsTo/"+currentId).then((res1) => {
-      axios.get("http://localhost:4000/api/user/getCurrentUserNotificationsFrom/"+currentId).then((res2) => {
+    axios.get("user/getCurrentUserNotificationsTo/"+currentId).then((res1) => {
+      axios.get("user/getCurrentUserNotificationsFrom/"+currentId).then((res2) => {
       let array = [...res1.data,...res2.data];
       // console.log(currentId)
       // console.log(array)  
@@ -118,8 +118,8 @@ const Side = ({ user }) => {
   //  } 
    console.log(currentId)
 console.log(dsplayMessage[message.key].shiftFrom)
-    axios.get("http://localhost:4000/api/user/getShiftTo/"+dsplayMessage[message.key].to).then((res1) => {
-      axios.get("http://localhost:4000/api/user/getShiftFrom/"+dsplayMessage[message.key].shiftFrom).then((res2) => {
+    axios.get("user/getShiftTo/"+dsplayMessage[message.key].to).then((res1) => {
+      axios.get("user/getShiftFrom/"+dsplayMessage[message.key].shiftFrom).then((res2) => {
          let shiftArray = [res1.data[0] ,res2.data.shifts[0]]
         //  console.log(res1.data.shifts)
         let temp = []

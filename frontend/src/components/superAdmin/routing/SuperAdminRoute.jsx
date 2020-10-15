@@ -10,7 +10,7 @@ const SuperAdminRoute = ({ component: Component, render, ...rest }) => {
 	React.useEffect(() => {
 		axios.defaults.headers.common["x-auth-superadmin"] = localStorage.getItem("superadmintoken");
 		axios
-			.get("http://localhost:4000/api/superadmin")
+			.get("superadmin")
 			.then((res) => {
 				setSuperAdmin(res.data);
 				setIsSuperAdmin(true);

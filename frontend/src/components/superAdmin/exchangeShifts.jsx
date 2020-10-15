@@ -36,7 +36,7 @@ const ExchangeShifts = () => {
     };
     function onChange(date, dateString) {
         console.log(dateString);
-        axios.get("http://localhost:4000/api/shift/AllspecificDateShifts/"+dateString)
+        axios.get("shift/AllspecificDateShifts/"+dateString)
         .then((res) => {
             var trueSwapableArray = [];
             for(let i = 0; i < res.data.shifts.length ; i++){
@@ -53,7 +53,7 @@ const ExchangeShifts = () => {
     }
     function onChange1(date, dateString) {
         console.log(dateString);
-        axios.get("http://localhost:4000/api/shift/AllspecificDateShifts/"+dateString)
+        axios.get("shift/AllspecificDateShifts/"+dateString)
         .then((res) => {
             var trueSwapableArray = [];
             for(let i = 0; i < res.data.shifts.length ; i++){
@@ -69,13 +69,13 @@ const ExchangeShifts = () => {
         })
     }
     useEffect(() => {
-		axios.get("http://localhost:4000/api/shift/currentShifts").then((res) => {
+		axios.get("shift/currentShifts").then((res) => {
                setResult(getRequiredValues(res.data.shifts));
                 
         });
     }, [visible,editVisible]);
 
-    axios.get("http://localhost:4000/api/shift/currentShifts").then((res) => {
+    axios.get("shift/currentShifts").then((res) => {
         var trueSwapableArray = [];
         for(let i = 0; i < res.data.shifts.length ; i++){
             if(res.data.shifts[i].swapable === 'true'){
@@ -101,10 +101,10 @@ const ExchangeShifts = () => {
         console.log('USERID 2 HAI: '+userId2);
         console.log('ShiftID 1 HAI: '+shiftId1);
         console.log('ShiftID 2 HAI: '+shiftId2);
-        axios.get("http://localhost:4000/api/shift/swapShift/"+shiftId1+'/'+shiftId2)
+        axios.get("shift/swapShift/"+shiftId1+'/'+shiftId2)
         .then((res) => {
             // console.log(res.data);
-            axios.post("http://localhost:4000/api/user/userNotification",{
+            axios.post("user/userNotification",{
                 userId1,userId2,shiftId1,shiftId2,message,date,requester,adminresponse
             })
             .then((res) => {

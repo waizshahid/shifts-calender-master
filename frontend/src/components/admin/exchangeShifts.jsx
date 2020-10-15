@@ -33,13 +33,13 @@ const ExchangeShifts = () => {
     };
 
     useEffect(() => {
-		axios.get("http://localhost:4000/api/shift/currentShifts").then((response) => {
+		axios.get("shift/currentShifts").then((response) => {
             setResult(getRequiredValues(response.data.shifts));
             //console.log("Exchange Shift data"+response.data.shifts);
 		});
     }, []);
 
-    axios.get("http://localhost:4000/api/shift/currentShifts").then((res) => {
+    axios.get("shift/currentShifts").then((res) => {
         var trueSwapableArray = [];
         for(let i = 0; i < res.data.shifts.length ; i++){
             if(res.data.shifts[i].swapable === 'true'){
@@ -52,7 +52,7 @@ const ExchangeShifts = () => {
     const handleOk = (e) => {
         console.log('ID 1 HAI: '+id1);
         console.log('ID 2 HAI: '+id2);
-        axios.get("http://localhost:4000/api/shift/swapShift/"+id1+'/'+id2).
+        axios.get("shift/swapShift/"+id1+'/'+id2).
         then((res) => {
             console.log(res.data);
           });

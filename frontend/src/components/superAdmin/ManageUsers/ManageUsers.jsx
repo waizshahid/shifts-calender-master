@@ -3,7 +3,7 @@ import axios from "axios";
 import { Modal, Table, Button } from "antd";
 import UploadUserExcel from './uploadUsersSheet'
 
-import Register from "./Register";
+import Register from "../../superAdmin/ManageUsers/Register";
 
 const ManageUsers = () => {
 	const [result, setResult] = useState();
@@ -11,7 +11,17 @@ const ManageUsers = () => {
 	const [visible, setVisible] = useState(false);
 	const [editVisible, setEditVisible] = useState(false);
 	const [delVisible, setDelVisible] = useState(false);
-
+	const [defined, setDefined] = useState({})
+	const [emptyUser, setEmptyUser] = useState({
+		firstName: '',
+		lastName: '',
+		email: '',
+		username: '',
+		person: '',
+		pass: '',
+		confirm: '',
+		partener: ''
+	})
 	const getRequiredValues = (data) => {
 		let temp = [];
 		for (var i = 0; i < data.length; i++) {
@@ -30,8 +40,13 @@ const ManageUsers = () => {
 							className="fa fa-edit"
 							id={data[i]._id}
 							onClick={(e) => {
-								setEditVisible(true);
-								setTargetUser(e.target.id);
+								axios.get("http://localhost:4000/api/user/getUserDetail/"+e.target.id) 
+								.then((resp) => {
+									setDefined(resp.data)
+									
+								})
+								
+								// setTargetUser(e.target.id);
 							}}
 							style={{ fontSize: "18px", cursor: "pointer" }}
 						></i>
@@ -43,7 +58,7 @@ const ManageUsers = () => {
 								setDelVisible(true);
 								setTargetUser(e.target.id);
 							}}
-							style={{ fontSize: "18px", cursor: "pointer", color: "red" }}
+							style={{ fontSize: "18px", cursor: "pointer"}}
 						></i>
 					</div>
 				),
@@ -51,17 +66,26 @@ const ManageUsers = () => {
 		}
 		return temp;
 	};
-
+	const callingEditModal = (userObj) => {
+		setEditVisible(true)
+	}
 	useEffect(() => {
-		axios.get("http://localhost:4000/api/user/getusers").then((response1) => {
+		// if(defined === undefined){
+		// 	// setEditVisible(true);
+		// }
+		// setDelVisible(true)
+		if(defined._id !== undefined){
+			callingEditModal(defined)
+		}
+		console.log(defined._id)
+	}, [defined]);
+	useEffect(() => {
+		axios.get("user/getusers").then((response1) => {
 			
 				console.log("res1 = ", response1);
-				setResult(response1.data);
+				setResult(getRequiredValues(response1.data));
 			});
 
-		// axios.get("http://localhost:4000/api/admin/getadmins").then((response) => {
-		// 	setResult(result.concat(getRequiredValues(response.data)));
-		// });
 	}, [visible, editVisible, delVisible]);
 
 	const requestBody = {
@@ -72,14 +96,28 @@ const ManageUsers = () => {
 	config.data = requestBody;
 
 	const deleteUser = () => {
-		axios
-			.delete("http://localhost:4000/api/user/deleteuser", {
-				params: { id: targetUser },
+		console.log(targetUser)
+		axios.get("user/deleteShiftForOneUser/"+targetUser)
+			.then((res) => {
+				console.log(res)
+				axios.delete("user/deleteuser", {
+					params: { id: targetUser },
+				})
+				.then((response) => {
+					setDelVisible(false);
+				})
+				.catch((err) => {
+					console.log(err)
+				})
+				// setDelVisible(false);
+			})	
+			.catch((err)=>{
+				console.log(err)
 			})
-			.then((response) => {
-				console.log(response.data);
-			});
-		setDelVisible(false);
+		
+
+		
+		// /deleteShiftForOneUser
 	};
 
 	// const editUser=()=>{
@@ -140,7 +178,7 @@ const ManageUsers = () => {
 						<i class="fa fa-user-plus" aria-hidden="true"></i>
 						</div>
 						<div className="col-8">
-							Upload New User      
+							Create New User      
 						</div>
 					</div>
 					</Button>
@@ -160,7 +198,7 @@ const ManageUsers = () => {
 				visible={visible}
 				footer={false}
 			>
-				<Register setVisible={(val) => setVisible(val)} isEdit={false} id={0} />
+				<Register setVisible={(val) => setVisible(val)} isEdit={false} id={0} userObj={emptyUser} />
 			</Modal>
 			{/* Edit User */}
 			<Modal
@@ -170,7 +208,7 @@ const ManageUsers = () => {
 				visible={editVisible}
 				footer={false}
 			>
-				<Register  setEditVisible={(val) => setEditVisible(val)} isEdit={true} id={targetUser} />
+				<Register  setEditVisible={(val) => setEditVisible(val)} isEdit={true} id={targetUser} userObj={defined} />
 			</Modal>
 			{/* Delete User */}
 			<Modal

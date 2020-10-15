@@ -16,7 +16,7 @@ const Register = (props) => {
 		setError("");
 		//Student registered
 		axios
-			.post("http://localhost:4000/api/students", {
+			.post("students", {
 				Gender,
 				Email,
 				UserName,

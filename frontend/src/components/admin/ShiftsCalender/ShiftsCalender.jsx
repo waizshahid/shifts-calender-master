@@ -288,7 +288,7 @@ const settingEvent = (event) => {
         title="Create Shift"
         visible={visible}
         // onOk={handleOk}
-        // onCancel={handleCancel}
+         onCancel={handleCancel}
         footer={[
           <Button key="1" onClick={handleCancel}>Cancel</Button>,
           <Button onClick={handleOk} key="2" type="primary">

@@ -40,7 +40,7 @@ const ManageUsers = () => {
 							className="fa fa-edit"
 							id={data[i]._id}
 							onClick={(e) => {
-								axios.get("http://localhost:4000/api/user/getUserDetail/"+e.target.id) 
+								axios.get("user/getUserDetail/"+e.target.id) 
 								.then((resp) => {
 									setDefined(resp.data)
 									

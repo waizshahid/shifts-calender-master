@@ -170,7 +170,7 @@ console.log(dsplayMessage[message.key].shiftFrom)
                         </div>
                           :
                         <div>
-                          <Tag color="green">{message.requesterType}</Tag><br/> {message.messageFrom}
+                          <Tag color="green">{message.requesterType}</Tag><br/> {message.message}
                           <Tag color="default">{message.regDate}</Tag>
                         </div>
                       }

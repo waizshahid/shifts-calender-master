@@ -96,7 +96,13 @@ const Admin = ({ admin }) => {
 	// })
 	axios.get("user/getNotifcations")
 		.then((res1) => {
-			setMessage(res1.data)
+			let array = []
+			for(let i = 0 ; i < res1.data.length ; i++){
+				if(res1.data[i].requesterType === 'Admin')
+					array.push(res1.data[i])
+			}
+			console.log(array)
+			setMessage(array)
 			})
 		.catch((err) => {
 		  console.log(err)
@@ -147,9 +153,9 @@ const Admin = ({ admin }) => {
 				  }} 
 				  >
 					  {
-						message.requesterType === 'Default' ?
+						message.requesterType === 'Admin' ?
 						<div>
-						   <Tag color="success">{message.requesterType}</Tag> <br/>{message.message}
+						   <Tag color="success">{message.requesterType}</Tag> <br/>{message.adminresponse}
 						  <Tag color="default">{message.regDate}</Tag>
 						</div> :
 						

@@ -33,7 +33,7 @@ const SuperAdmin = ({ superAdmin }) => {
 	const [sidebarOpen, setSidebarOpen] = useState(false);
 	const [visible, setVisible] = useState(false);
 	const [index, setIndex] = useState();
-	const [shifts,setShifts] = useState({});
+	const [shifts,setShifts] = useState([]);
 	const [dsplayMessage, setMessage] = useState([]);
 	const token = localStorage.superadmintoken
     const decoded = jwt_decode(token)
@@ -49,8 +49,8 @@ const SuperAdmin = ({ superAdmin }) => {
 			console.log(notificationId)
 			axios.get("user/getSpecificNotification/"+notificationId)
 			.then((res) => {
-					console.log(res.data)
-					setShifts(res.data)
+					console.log(res.data.shifts)
+					setShifts(res.data.shifts)
 			})
 			.catch((err) => {
 				console.log(err)
@@ -147,10 +147,40 @@ const SuperAdmin = ({ superAdmin }) => {
                   onCancel={() => setVisible(false)}
                   // onOk={handleOk}
                   >
-                    <Row>
-                      {shifts.requesterType}
-                      
-                    </Row>
+                    {shifts.map((message) => (
+				  <div style={{
+				  }} 
+				  >
+							<div>
+				  					<div className="container">
+				  						<div className="row">
+										  <b>Date:</b>{' '+message.date}
+										</div>
+									</div>
+				  						<br/>
+									<div className="row">
+				  						<div className="col-6" style={{
+											  border: '1px solid lightgrey',
+											  padding: '10px 10px 10px 10px'
+										  }}>
+										  <b>Person 1</b><br/>
+										  <b>Name:</b>{' '+message.user1Name}<br/>
+										  <b>Type:</b>{' '+message.user1Type}
+										</div>
+										<div className="col-6"  style={{
+											  border: '1px solid lightgrey',
+											  padding: '10px 10px 10px 10px'
+										  }}>
+											<b>Person 2</b><br/>
+											<b>Name:</b>{' '+message.user2Name}<br/>
+											<b>Type:</b>{' '+message.user2Type}
+										</div>  
+									</div>
+							</div>
+							
+						</div> 
+				 
+			  ))}
                     
                 </Modal>
             </div>

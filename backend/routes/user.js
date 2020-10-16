@@ -190,16 +190,58 @@ router.delete("/deleteAllNotifications", (req, res) => {
 })
 
 router.get("/getSpecificNotification/:id", (req, res) => {
-	Notification.findOne({
+	Notification.find({
 		_id: req.params.id
 	})
 	.populate("to")
 	.populate("from")
 	.populate("shiftFrom")
 	.exec()
-	.then((notification) => {
-		res.send(notification)
-	})
+	// .then((notifions) => {
+	// 	res.send(notifions)
+	// })
+	.then((shifts) => {
+    
+		// console.log(shifts);
+		
+			// userId, start, end, title, color
+			res.status(200).json({
+			  shifts : shifts.map(shift => {
+					return {
+						_id : shift._id,
+						shiftId: shift.shiftFrom._id,
+						date: shift.shiftFrom.start,
+						user1Name: shift.from.firstName+' '+shift.from.lastName,
+						user2Name: shift.to.firstName+' '+shift.to.lastName,
+						user1Email: shift.from.email,
+						user2Email: shift.to.email,
+						user1Type: shift.from.type,
+						user2Type: shift.to.type,
+					}
+				  
+			  })
+			})
+		  })
+	// .then(notifications => {
+	// 	res.status(200).json({
+	// 		notification : notifications.map(notification => {
+	// 			// res.send(notification)
+	// 			return{
+					//   _id : shift._id,
+					//   shiftId: shift.shiftFrom._id,
+					//   shiftId: shift.shiftFrom.start,
+					//   user1Name: shift.from.firstName+' '+shift.from.lastName,
+					//   user2Name: shift.to.firstName+' '+shift.to.lastName,
+					//   user1Email: shift.from.email,
+					//   user2Email: shift.to.email,
+					//   user1Type: shift.from.type,
+					//   user2Type: shift.to.type,
+	// 			}
+	// 		})
+	// 	})
+		
+	// })
+		
     .catch(err=> {
       res.status(500).json({
         error : err

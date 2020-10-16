@@ -130,10 +130,8 @@ const Register = ({ setVisible, setEditVisible, isEdit, id, userObj }) => {
 				</Row>
 				<Form.Item
 					name="username"
-
 					rules={[
 						{
-							type:'text',
 							required: true,
 							message: "Please input your User name!",
 							whitespace: true,

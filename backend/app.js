@@ -24,7 +24,7 @@ app.use("/api/userauth", userAuthRouter);
 app.use("/api/shift", shiftRouter);
 
 //Server Config
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 4000;
 app.listen(port, () => {
   console.clear();
   console.log(`server running on port ${port}`);

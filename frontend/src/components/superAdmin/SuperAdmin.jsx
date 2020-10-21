@@ -11,13 +11,13 @@ import ManageUsers from "../superAdmin/ManageUsers/ManageUsers";
 import RequestShift from './ShiftsCalender/requestShift'
 import Logout from "./Logout/Logout";
 import Upload from './ShiftsCalender/uploadfile'
+import EditUser from './EditSuperAdmin'
 import UserSheet from './ManageUsers/uploadUsersSheet'
 import jwt_decode from 'jwt-decode'
-import { Layout, Menu, Avatar, Modal,Row,Col,Card,Tag, Dropdown,Badge } from "antd";
+import { Layout, Menu, Avatar, Modal,Button,Col,Card,Tag, Dropdown,Badge } from "antd";
 import {
 	FormOutlined,
 	PullRequestOutlined,
-	UserOutlined,
 	LogoutOutlined,
 	BellFilled,
 	MenuOutlined,
@@ -32,16 +32,34 @@ let notificationId=""
 const SuperAdmin = ({ superAdmin }) => {
 	const [sidebarOpen, setSidebarOpen] = useState(false);
 	const [visible, setVisible] = useState(false);
+	const [delVisible,setdelVisible] = useState(false);
 	const [index, setIndex] = useState();
 	const [shifts,setShifts] = useState([]);
 	const [dsplayMessage, setMessage] = useState([]);
+	const [myDetails,setMyDetails] = useState({})
+	const [editProfile,setEditProfile] = useState(false)
 	const token = localStorage.superadmintoken
     const decoded = jwt_decode(token)
-    const currentId = decoded.id
+	const currentId = decoded.id
+	
+	const editingProfile = () => {
+		setEditProfile(true)
+	  }
+	
+	  useEffect(() => {
+        axios.get('user/getSuperAdminDetails/'+currentId)
+        .then((resp) => {
+		  setMyDetails(resp.data)
+		  console.log(currentId)
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+  },[editProfile])
+
 	const showShiftModal = (message) => {
 		console.log(message.key)
-		// console.log(dsplayMessage[message.key]._id)
-		notificationId = dsplayMessage[message.key]._id;
+			notificationId = dsplayMessage[message.key]._id;
 		setVisible(true)
 		 };
 		
@@ -56,47 +74,22 @@ const SuperAdmin = ({ superAdmin }) => {
 				console.log(err)
 			})
 		},[visible])
-		//     useEffect(()=> {
-		// 		console.log(dsplayMessage)
-		// 		// console.log('User1: '+dsplayMessage.from)
-		// 		// console.log('User2: '+dsplayMessage.to)
-		// 		// console.log(dsplayMessage[index].to)
-		//    },[index])
-		//    useEffect(()=> {
-		// 	console.log(currentId)
-		// 	axios.get("user/getSuperNotifcations/"+currentId)
-		// 	.then((res) => {
-		// 		let temp = []
-		// 		console.log(res.data)
-		// 		for(let i = 0 ; i < res.data.length ; i++){
-		// 			if(res.data[i] !== undefined)
-		// 			{
-		// 				temp.push(res.data[i])
-		// 			}
-		// 		}
-		// 		   setShifts(temp)
-		// 	   })
-		// 	   .catch((err) => {
-		// 		 console.log(err)
-		// 	   })
-		//    },[visible])
+		
 	const menu = (
 		<Menu onClick={showShiftModal}>
-		  {/* <b style={{
-			backgroundColor:'rosybrown',
-			color: 'white',
-			padding: '15px 15px',
-			display: 'block',
-		  }}>Notification</b> */}
-	
+		
 			  {dsplayMessage.map((message,index) => (
 				  <Menu.Item key = {index}>
 				  <div style={{
 				  }} 
 				  >
 							<div>
-							<Tag color="success">{message.requesterType}</Tag>
-							  {message.adminresponse}
+							<div className="row">
+				  					<div className="col-12"><Tag color="success">{message.requesterType}</Tag></div>
+									  
+							</div>
+							  {/* {message.adminresponse} */}
+							  {'Your call for the shift named '+ message.shiftName + ' has been swapped'}
 							  <Tag color="default">{message.regDate}</Tag>
 							</div>
 							
@@ -112,6 +105,16 @@ const SuperAdmin = ({ superAdmin }) => {
 	}, []);
 
 	useEffect(() => {
+		axios.delete("user/deleteCurrentNotification/"+notificationId)
+		.then((res) => {
+			console.log(res.data);
+			window.location.reload();
+			})
+		.catch((err) =>{
+        	console.log(err)
+      })
+	},[delVisible])
+	useEffect(() => {
 		getNotifications()
 	}, [shifts]);
 
@@ -119,8 +122,9 @@ const SuperAdmin = ({ superAdmin }) => {
 		axios.get("user/getNotifcations")
 		.then((res1) => {
 			let temp = []
+			console.log(res1)
 			for(let i = 0 ; i < res1.data.length ; i++){
-				if(res1.data[i].requesterType === 'Default'){
+				if(res1.data[i].requesterType === 'Super Admin'){
 					temp.push(res1.data[i])
 				}
 			}
@@ -140,12 +144,27 @@ const SuperAdmin = ({ superAdmin }) => {
 	return (
 		<div>
 			<div>
+			    <Modal
+                  title="Edit Profile"
+                  visible={editProfile}
+                  maskClosable={true}
+                  onCancel={() => setEditProfile(false)}
+                  // onOk={handleOk}
+                  footer={null}
+                >
+                  <EditUser setEditProfile={(val) => setEditProfile(val)} userObj={myDetails} id={myDetails._id} />
+                </Modal>
                 <Modal
                   title="Swapped shifts details"
                   visible={visible}
-                  maskClosable={true}
-                  onCancel={() => setVisible(false)}
-                  // onOk={handleOk}
+				  maskClosable={true}
+				  onCancel={() => setVisible(false)}
+				  footer={[
+					<Button key="1" onClick={()=> setdelVisible(true)}>Delete this notification</Button>,
+					<Button key="2" type="primary" onClick={() => setVisible(false)}>OK</Button>
+					
+					
+				  ]}	
                   >
                     {shifts.map((message) => (
 				  <div style={{
@@ -159,21 +178,26 @@ const SuperAdmin = ({ superAdmin }) => {
 									</div>
 				  						<br/>
 									<div className="row">
-				  						<div className="col-6" style={{
+				  						<div className="col-6">
+										  <div style={{
 											  border: '1px solid lightgrey',
 											  padding: '10px 10px 10px 10px'
 										  }}>
-										  <b>Person 1</b><br/>
-										  <b>Name:</b>{' '+message.user1Name}<br/>
-										  <b>Type:</b>{' '+message.user1Type}
+											<b>Person 1</b><br/>
+											<b>Name:</b>{' '+message.user1Name}<br/>
+											<b>Type:</b>{' '+message.user1Type}
+										  </div>
+										  
 										</div>
-										<div className="col-6"  style={{
+										<div className="col-6">
+											<div style={{
 											  border: '1px solid lightgrey',
 											  padding: '10px 10px 10px 10px'
 										  }}>
 											<b>Person 2</b><br/>
 											<b>Name:</b>{' '+message.user2Name}<br/>
 											<b>Type:</b>{' '+message.user2Type}
+										  </div>
 										</div>  
 									</div>
 							</div>
@@ -190,9 +214,9 @@ const SuperAdmin = ({ superAdmin }) => {
 						<Sider style={{ height: "100vh" }}>
 							<h5 className="pt-4 pb-2 text-center text-muted">{superAdmin.username}</h5>
 							<Menu theme="dark" mode="inline" defaultSelectedKeys={[]}>
-								<Menu.Item key="1" icon={<UserOutlined />}>
+								{/* <Menu.Item key="1" icon={<UserOutlined />}>
 									<Link to="/superadmin/profile">Profile</Link>
-								</Menu.Item>
+								</Menu.Item> */}
 								<Menu.Item key="2" icon={<CalendarOutlined />}>
 									<Link to="/superadmin/shifts-calender">Shifts Calender</Link>
 								</Menu.Item>
@@ -203,7 +227,7 @@ const SuperAdmin = ({ superAdmin }) => {
 									<Link to="/superadmin/manage-users">Manage Users</Link>
 								</Menu.Item>
 								<Menu.Item key="5" icon={<FileExcelOutlined />}>
-									<Link to="/superadmin/upload">Upload Shifts Excel</Link>
+									<Link to="/superadmin/upload">Shifts Excel Sheet</Link>
 								</Menu.Item>
 								<Menu.Item key="6" icon={<MinusCircleOutlined />}>
 									<Link to="/superadmin/off-shifts">Off Shifts</Link>
@@ -242,14 +266,14 @@ const SuperAdmin = ({ superAdmin }) => {
 					</Dropdown>
 						
 					</span>
-						<Link to="/superadmin/profile">
-							<span className="ml-2">
-								<Avatar style={{ backgroundColor: "#001529", verticalAlign: "middle" }} size="large">
+						
+							<span className="ml-2" onClick={editingProfile} >
+								<Avatar style={{ backgroundColor: "#001529", verticalAlign: "middle", cursor: "pointer" }} size="large">
 									{console.log(superAdmin)}
 									{superAdmin.first_name.split(" ")[0].charAt(0).toUpperCase()+superAdmin.last_name.split(" ")[0].charAt(0).toUpperCase()}
 								</Avatar>
 							</span>
-						</Link>
+						
 					</div>
 				</nav>
 

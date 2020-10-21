@@ -115,7 +115,7 @@ const ShiftsCalender = () => {
     setVisible(false);
   };
   const handleDoctors = (e) => {
-    if(e.target.value === "All"){
+    if(e.target.value === "All Users"){
       axios.get("shift/currentShifts").then((res) => {
         setEvents(res.data.shifts);
       });
@@ -220,44 +220,97 @@ const settingEvent = (event) => {
         const requester ="Admin"
         const currentUserId = currentId;
         console.log(userId1,userId2,shiftId1)
+        let shiftName=""
 
-    axios.post("user/userNotification",{
-                currentUserId,userId1,userId2,shiftId1,message,adminresponse,date,requester
-            })
-            .then((res) => {
-              axios.get("shift/swapShiftUser/"+shiftId1+'/'+userId2)
-              .then((res1) => {
-                console.log('Admin Swap Successful')
-                window.location.reload()
-              })
-              .catch((err) => {
-                console.log(err)
-              })
-               
-            })
-            .catch((err) => {
-              console.log(err.response);
-            });
+        axios.get("shift/getShiftName/"+shiftId1)
+        .then((res) => {
+          shiftName = res.data.shiftname
+          axios.post("user/userNotification",{
+            currentUserId,userId1,userId2,shiftId1,message,adminresponse,date,requester,shiftName
+        })
+        .then((res) => {
+          axios.get("shift/swapShiftUser/"+shiftId1+'/'+userId2)
+          .then((res1) => {
+            console.log('Admin Swap Successful')
+            window.location.reload()
+          })
+          .catch((err) => {
+            console.log(err)
+          })
+           
+        })
+        .catch((err) => {
+          console.log(err.response);
+        });
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+        
   }
+
+  const filterShift = (e) => {
+    console.log(e.target.value)
+    if(e.target.value === "All Shifts"){
+     axios.get("shift/currentShifts").then((res) => {
+       console.log(res.data.shifts);
+       setEvents(res.data.shifts);
+     });
+    }else{
+     axios.get("shift/filterShift/"+e.target.value)
+     .then((res) => {
+       setEvents(res.data.shifts)
+     })
+     .catch((err) => {
+       console.log(err)
+     })
+    }
+    
+  }
+
   return (
     <div className="m-sm-4 m-2">
+        <div className="row">
         <div className="col-3">
-        <select
-          id="selectDoctor"
-          name="cars"
-          className="custom-select bg-light m-2 shadow-sm"
-          onChange={handleDoctors}
-        >
-          <option defaultValue="All">
-           All
-          </option>
-          {users.map((dat) => (
-            <option value={dat._id} key={dat._id}>
-              {dat.firstName+' '+dat.lastName}
+          <select
+            id="selectDoctor"
+            name="cars"
+            className="custom-select bg-light m-2 shadow-sm"
+            onChange={handleDoctors}
+          >
+            <option defaultValue="All Users">
+            All Users
             </option>
-          ))}
-          </select>
-        </div>
+            {users.map((dat) => (
+              <option value={dat._id} key={dat._id}>
+                {dat.firstName+' '+dat.lastName}
+              </option>
+            ))}
+            </select>
+          </div>
+          <div className="col-3">
+          <select
+            id="selectDoctor"
+            name="cars"
+            className="custom-select bg-light m-2 shadow-sm"
+             onChange={filterShift}
+          >
+            <option defaultValue="All Users">
+            All Shifts
+            </option>
+            {data.map((dat) => (
+              <option value={dat._id} key={dat._id}>
+                {dat.shiftname}
+              </option>
+            ))}
+            </select>
+          </div>
+          {/* <div className="col-5"></div>
+          <div className="col-4"> */}
+            {/* <UploadShiftFile /> */}
+          {/* </div> */}
+      </div>
+        <br/>
         <br/>
       <FullCalendar
         defaultView="dayGridMonth"
@@ -265,6 +318,12 @@ const settingEvent = (event) => {
         weekNumberCalculation = 'ISO'
         dateClick={showModal}
         eventClick={handleEventClick}
+        titleFormat={{ month: 'long', year: 'numeric' }}
+        headerToolbar={{
+          left: '',
+          end:'',
+          center:  'prev,title,next'
+        }}
         eventOrder="priority"
         // eventClick={handelModal}
         events={events}

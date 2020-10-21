@@ -57,10 +57,9 @@ const ManageShiftTypes = () => {
 		axios
 			.delete("shift/deleteshift", { params: { id: targetShift } })
 			.then((response) => {
-				console.log(response.data);
-				window.location.reload();
+				setDelVisible(false);
 			});
-		setDelVisible(false);
+		
 	};
 
 	// const editUser=()=>{

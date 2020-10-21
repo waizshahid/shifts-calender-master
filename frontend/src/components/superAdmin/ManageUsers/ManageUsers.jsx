@@ -43,10 +43,10 @@ const ManageUsers = () => {
 								axios.get("user/getUserDetail/"+e.target.id) 
 								.then((resp) => {
 									setDefined(resp.data)
-									
+									// setTargetUser(data[i]._id)
 								})
 								
-								// setTargetUser(e.target.id);
+								setTargetUser(e.target.id);
 							}}
 							style={{ fontSize: "18px", cursor: "pointer" }}
 						></i>
@@ -204,7 +204,7 @@ const ManageUsers = () => {
 			<Modal
 				title="Edit User"
 				maskClosable={true}
-				onCancel={() => setEditVisible(false)}
+				onCancel={() => window.location.reload()}
 				visible={editVisible}
 				footer={false}
 			>

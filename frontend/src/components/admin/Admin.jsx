@@ -8,7 +8,8 @@ import Logout from "./Logout/Logout";
 import ExchangeShift from './requestShift'
 import axios from 'axios'
 import jwt_decode from 'jwt-decode'
-import UploadFile from './ShiftsCalender/uploadfile'
+import EditUser from '../user/editUser'
+// import UploadFile from './ShiftsCalender/uploadfile'
 import { Layout, Menu, Avatar, Tag, Dropdown, Badge, Modal, Col, Row, Card, Button } from "antd";
 import {
 	BellFilled,
@@ -29,13 +30,26 @@ const Admin = ({ admin }) => {
 	const decoded = jwt_decode(token)
 	const currentId = decoded.id
 	const [shifts, setShifts] = useState([]);
+	const [editProfile,setEditProfile] = useState(false)
 	const [index, setIndex] = useState();
+	const [myDetails,setMyDetails] = useState({})
 	const [visible, setVisible] = useState(false);
   	const [visible2, set2Visible] = useState(false);
 	useEffect(() => {
 		console.log(admin);
 	}, []);
-
+	const editingProfile = () => {
+		setEditProfile(true)
+	  }
+	useEffect(() => {
+        axios.get('user/getMyDetails/'+currentId)
+        .then((resp) => {
+          setMyDetails(resp.data)
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+  },[editProfile])
 	const onSetSidebarOpen = (open) => {
 		setSidebarOpen(open);
 	};
@@ -98,7 +112,7 @@ const Admin = ({ admin }) => {
 		.then((res1) => {
 			let array = []
 			for(let i = 0 ; i < res1.data.length ; i++){
-				if(res1.data[i].requesterType === 'Admin')
+				if(res1.data[i].requesterType === 'Admin' || res1.data[i].requesterType === 'Super Admin')
 					array.push(res1.data[i])
 			}
 			console.log(array)
@@ -115,7 +129,9 @@ const Admin = ({ admin }) => {
 		{dsplayMessage[message.key].requesterType == 'User' ?
 		set2Visible(true):setVisible(true)
 		} 
-		
+		const editingProfile = () => {
+			setEditProfile(true)
+		  }
 		axios.get("user/getShiftTo/"+dsplayMessage[message.key].to).then((res1) => {
 			axios.get("user/getShiftFrom/"+dsplayMessage[message.key].shiftFrom).then((res2) => {
 			   let shiftArray = [res1.data[0] ,res2.data.shifts[0]]
@@ -153,24 +169,33 @@ const Admin = ({ admin }) => {
 				  }} 
 				  >
 					  {
-						message.requesterType === 'Admin' ?
-						<div>
-						   <Tag color="success">{message.requesterType}</Tag> <br/>{message.adminresponse}
-						  <Tag color="default">{message.regDate}</Tag>
-						</div> :
-						
-						<div>
-						  {
-							message.from === currentId ?
+						message.requesterType === 'Super Admin' ?
 							<div>
-							  <Tag color="green">{message.requesterType}</Tag><br/> {message.messageFrom}
-							  <Tag color="default">{message.regDate}</Tag>
+							<Tag color="success">{message.requesterType}</Tag> <br/>{message.message}
+							<Tag color="default">{message.regDate}</Tag>
 							</div>
-							  :
+							:
+							message.requesterType === 'Admin' && message.currentUserId === currentId
+							?
 							<div>
-							  <Tag color="green">{message.requesterType}</Tag> <br/>{message.messageFrom}
-							  <Tag color="default">{message.regDate}</Tag>
-							</div>
+							<Tag color="success">{message.requesterType}</Tag> 
+							<br/>{'Your call for the shift named '+ message.shiftName + ' has been swapped'}
+							<Tag color="default">{message.regDate}</Tag>
+							</div> :
+							
+							<div>
+							{
+								message.from === currentId || message.to === currentId 
+								?
+								<div>
+								<Tag color="green">{message.requesterType}</Tag><br/> {message.message}
+								<Tag color="default">{message.regDate}</Tag>
+								</div>
+								:
+								<div>
+								<Tag color="green">{message.requesterType}</Tag> <br/>{message.message}
+								<Tag color="default">{message.regDate}</Tag>
+								</div>
 						  }
 	
 						</div> 
@@ -184,6 +209,8 @@ const Admin = ({ admin }) => {
 	
 		</Menu>
 	  );
+
+	 
 	return (
 		<div>
 			<Sidebar
@@ -192,9 +219,9 @@ const Admin = ({ admin }) => {
 						<Sider style={{ height: "100vh" }}>
 							<h5 className="pt-4 pb-2 text-center text-muted">{admin.firstName.charAt(0)+' '+admin.lastName}</h5>
 							<Menu theme="dark" mode="inline" defaultSelectedKeys={[]}>
-								<Menu.Item key="1" icon={<UserOutlined />}>
+								{/* <Menu.Item key="1" icon={<UserOutlined />}>
 									<Link to="/admin/profile">Profile</Link>
-								</Menu.Item>
+								</Menu.Item> */}
 								<Menu.Item key="2" icon={<CalendarOutlined />}>
 									<Link to="/admin/shifts-calender">Shifts Calender</Link>
 								</Menu.Item>
@@ -204,9 +231,9 @@ const Admin = ({ admin }) => {
 								<Menu.Item key="3" icon={<PullRequestOutlined />}>
 									<Link to="/admin/exchange-shifts">Requested Shifts</Link>
 								</Menu.Item>
-								<Menu.Item key="5" icon={<FileExcelOutlined />}>
+								{/* <Menu.Item key="5" icon={<FileExcelOutlined />}>
 									<Link to="/admin/upload">Upload Shifts Excel</Link>
-								</Menu.Item>
+								</Menu.Item> */}
 								<Menu.Item key="10" icon={<LogoutOutlined />}>
 									<Link to="/admin/logout">Logout</Link>
 								</Menu.Item>
@@ -238,14 +265,14 @@ const Admin = ({ admin }) => {
               </Dropdown>
                 
             </span>  
-						<Link to="/admin/profile">
-							<span className="ml-2">
-								<Avatar style={{ backgroundColor: "#001529", verticalAlign: "middle" }} size="large">
+						
+							<span className="ml-2"  onClick={editingProfile}>
+								<Avatar style={{ backgroundColor: "#001529", verticalAlign: "middle", cursor: 'pointer' }} size="large">
 									{console.log(admin)}
 									{admin.firstName.split(" ")[0].charAt(0).toUpperCase()+admin.lastName.split(" ")[0].charAt(0).toUpperCase()}
 								</Avatar>
 							</span>
-						</Link>
+						
 					</div>
 				</nav>
 
@@ -254,17 +281,34 @@ const Admin = ({ admin }) => {
 					<Route exact path="/admin/shifts-calender" component={ShiftsCalender} />
 					<Route exact path="/admin/manage-users" component={ManageUsers} />
 					<Route exact path="/admin/exchange-shifts" component={ExchangeShift} />
-					<Route exact path="/admin/upload" component={UploadFile} />
+					{/* <Route exact path="/admin/upload" component={UploadFile} /> */}
 					<Route exact path="/admin/logout" component={Logout} />
 				</Switch>
 			</Sidebar>
-
+			    <Modal
+                  title="Edit Profile"
+                  visible={editProfile}
+                  maskClosable={true}
+                  onCancel={() => setEditProfile(false)}
+                  // onOk={handleOk}
+                  footer={null}
+                >
+                  <EditUser setEditProfile={(val) => setEditProfile(val)} userObj={myDetails} id={myDetails._id} />
+                </Modal>
 			<Modal
                   title="Swapped shifts details"
                   visible={visible}
                   maskClosable={true}
 				  onCancel={() => setVisible(false)}
 				  onOk={() => setVisible(false)}
+				  footer={[
+					  <Button key="1" onClick={deleteNotification} >
+						  	Delete this notification
+					  </Button>,
+					  <Button onClick={() => setVisible(false)} key="2" type="primary">
+						  	OK
+					  </Button>
+				  ]}
                   // onOk={handleOk}
                   >
                     <Row>

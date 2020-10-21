@@ -4,6 +4,7 @@ import "../../../css/Register.css";
 import { Form, Input, Button, Modal, Row, Col, Switch } from "antd";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import useSelection from "antd/lib/table/hooks/useSelection";
 
 
 // const { Option } = Select;
@@ -21,6 +22,7 @@ const Register = ({ setVisible, setEditVisible, isEdit, id }) => {
 			value: "#ab12ac",
 		  },
 	  ]);
+	  
 	const [form] = Form.useForm();
 	const onFinish = (values) => {
 		const { shiftname, color, editable, priority} = values;
@@ -28,6 +30,7 @@ const Register = ({ setVisible, setEditVisible, isEdit, id }) => {
 		setError("");
 		//Student registered
 		if (isEdit) {
+			setEditVisible(false)
 			axios
 				.put("shift/updateshift", {
 					id,
@@ -39,13 +42,11 @@ const Register = ({ setVisible, setEditVisible, isEdit, id }) => {
 					},
 				})
 				.then((res) => {
-					setEditVisible(false);
-					window.location.reload();
-					console.log(res.data);
+					console.log(res.data)
 				})
 				.catch((err) => {
 					console.log(err.response);
-					failVisible(true)
+					setFailVisible(true)
 				});
 		} else {
 			axios
@@ -156,7 +157,9 @@ const Register = ({ setVisible, setEditVisible, isEdit, id }) => {
                     
                   ]}
                 >
-                  <p>Error creating the shift type</p>
+                  <b style={{
+					  color: 'red'
+				  }}>The given credentials are already created or empty</b>
                   
                 </Modal>
 			</div>

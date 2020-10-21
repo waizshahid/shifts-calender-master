@@ -1,7 +1,7 @@
 import React from "react";
 import "antd/dist/antd.css";
 import "../../../css/Register.css";
-import { Form, Input, Button, Select, Radio, Row, Col } from "antd";
+import { Form, Input, Button, Select, Radio, Row, Col, Modal } from "antd";
 import { Link } from "react-router-dom";
 import axios from "axios";
 
@@ -9,6 +9,7 @@ const { Option } = Select;
 
 const Register = ({ setVisible, setEditVisible, isEdit, id, userObj }) => {
 	const [error, setError] = React.useState(" ");
+	const [success, setEditSuccess] = React.useState(false)
 	const [fields, setFields] = React.useState([
 		{
 		  name: ["firstName"],
@@ -52,13 +53,16 @@ const Register = ({ setVisible, setEditVisible, isEdit, id, userObj }) => {
 		setError("");
 		//Student registered
 		if (isEdit) {
+			setEditVisible(false);
+			setEditSuccess(true)
+			console.log(id)
 			axios
 				.put("user/updateuser", {
 					id,
 					newData: { email, firstName, lastName, username, partener, pass, person },
 				})
 				.then((res) => {
-					setEditVisible(false);
+				
 					console.log(res.data);
 				})
 				.catch((err) => {
@@ -90,6 +94,22 @@ const Register = ({ setVisible, setEditVisible, isEdit, id, userObj }) => {
 
 	return (
 		<div className="p-0">
+			<Modal
+                  title="Profile Updated Successfully"
+                  visible={success}
+                  maskClosable={true}
+                  onCancel={() => setEditSuccess(false)}
+                  // onOk={handleOk}
+                  footer={[
+					  <Button key="1" onClick={() => window.location.reload()}> OK </Button>
+				  ]}
+                >
+                  <b style={{
+					  color: '#5cb85c'
+				  }}>
+					  Profile has been updated successfully
+				  </b>
+              </Modal>
 			<Form
 				form={form}
 				name="register"

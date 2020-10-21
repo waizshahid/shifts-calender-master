@@ -21,6 +21,7 @@ const ShiftsCalendar = () => {
   const [off, setOff] = useState([]);
   const [assign, setAssign] = useState("");
   const [shiftType, setShiftType] = useState("");
+  const [adminCheck, setAdminCheck] = useState("")
   const [start, setStart] = useState("");
   const [end, setEnd] = useState("");
   const [approval, setApproval] = useState("");
@@ -34,7 +35,7 @@ const ShiftsCalendar = () => {
     let dateCurrent = new Date().toISOString().slice(0,10);
     console.log(date)
     console.log(dateCurrent)
-    if(date === dateCurrent){
+    if(date >= dateCurrent){
         setVisible(true)
       
     }else{
@@ -187,7 +188,7 @@ const ShiftsCalendar = () => {
   };
 
   const handelSelect = (e) => {
-    if (e.target.value === "Default") {
+    if (e.target.value === "All Shifts") {
       axios.get("shift/currentShifts").then((res) => {
         // let temp1 = []
         // let temp2 = []
@@ -319,8 +320,13 @@ const ShiftsCalendar = () => {
   }
   const handleEventClick = ({ event, el }) => {
     date = new Date().toISOString().slice(0,10);
-    if(event.startStr === date){
-      settingEvent(event._def.extendedProps)
+    console.log(event)
+    if(event.startStr >= date){
+      if(event._def.extendedProps.userType === 'user'){
+        settingEvent(event._def.extendedProps)
+      }else{
+        setAdminCheck(true)
+      }
     }else{
       setFailexchangeVisible(true)
     }
@@ -338,36 +344,44 @@ const ShiftsCalendar = () => {
         const currentUserId = currentId;
         const messageFrom = "Your request has been sent. Wait for the Response"
         const requestStatus = "true"
-
+        let shiftName=""
         console.log(userId1,userId2,shiftId1)
 
         if(oneEvent.start <= date){
           setFailexchangeVisible(true);
         }else{
-            axios.post("user/userNotification",{
-              currentUserId,
-              userId1,
-              userId2,
-              shiftId1,
-              message,
-              messageFrom,
-              date,
-              requester,
-              requestStatus
-          })
-          .then((res) => {
-              console.log(res.data);
-              window.location.reload()
-          })
-          .catch((err) => {
-            console.log(err.response);
-          });
+          axios.get("shift/getShiftName/"+shiftId1)
+        .then((res) => {
+          shiftName = res.data.shiftname
+          axios.post("user/userNotification",{
+            currentUserId,
+            userId1,
+            userId2,
+            shiftId1,
+            message,
+            messageFrom,
+            date,
+            requester,
+            requestStatus,
+            shiftName
+        })
+        .then((res) => {
+            console.log(res.data);
+            window.location.reload()
+        })
+        .catch((err) => {
+          console.log(err.response);
+        });
+        })
+        .catch((err) => {
+          console.log(err)
+        })
         }
     
   }
   return (
     <div>
-        <div className="container">
+        <div className="container-fluid">
            <div className="row">
            <select
               id="cars"
@@ -375,7 +389,7 @@ const ShiftsCalendar = () => {
               className="custom-select bg-light m-2 shadow-sm float-right w-25"
               onChange={handelSelect}
             >
-              <option defaultValue="Default">Default </option>
+              <option defaultValue="All Shifts">All Shifts</option>
               <option value="My Shifts">My Shifts </option>
               <option value="Off">Off </option>
               <option value="Shifts Offered">Shifts Offered </option>
@@ -387,6 +401,12 @@ const ShiftsCalendar = () => {
           defaultView="dayGridMonth"
           plugins={[dayGridPlugin, interactionPlugin]}
           events={events}
+          titleFormat={{ month: 'long' ,year: 'numeric' }}
+          headerToolbar={{
+            left: '',
+            end:'',
+            center:  'prev,title,next'
+          }}
           dateClick={showModal}
           eventClick={handleEventClick}
           eventOrder="priority"
@@ -432,6 +452,26 @@ const ShiftsCalendar = () => {
             
       </Modal>
 
+        
+                  <Modal
+                    title="Swap Request Failed"
+                    visible={adminCheck}
+                    maskClosable={true}
+                    onCancel={() => setAdminCheck(false)}
+                    footer={[
+                      <Button key="1" onClick={() => setAdminCheck(false)}>Cancel</Button>,
+                      
+                    ]}
+                  >
+                    <div>
+                    <Card type="inner">
+                        The selected event is assigned to an admin. You can only swap request with users
+                    </Card>
+                  </div></Modal>
+
+
+
+
                   <Modal
                     title="Confirm Request"
                     visible={exchangeVisible}
@@ -461,7 +501,7 @@ const ShiftsCalendar = () => {
                   >
                     <div>
                     <Card type="inner">
-                        Please click on current date to create event
+                        Please click on current date or future dates to create event
                     </Card>
                   </div></Modal>
                   <Modal
@@ -475,7 +515,7 @@ const ShiftsCalendar = () => {
                   >
                     <div>
                     <Card type="inner">
-                      You can choose current date events only
+                      Please choose current dates or dates in the future to send swapping request
                     </Card>
                   </div>
                 

@@ -19,10 +19,50 @@ router.use(bodyParser.json());
 //@access Public
 
 router.get("/getshifts", (req, res) => {
-  Shift.find().then((allShift) => {
-    res.send(allShift);
+  Shift.find()
+    .sort({
+      shiftname: 1
+    })
+    .then((allShift) => {
+      res.send(allShift);
+    })
+    .catch((err) => {
+      res.send(err)
+    })
+});
+
+router.get("/filterShift/:id", (req, res) => {
+  const id = req.params.id;
+
+  console.log("Name searched with id = " + id);
+
+  createShift.find({ shiftTypeId: id }).populate('userId').populate('shiftTypeId').exec().then(async (shifts) => {
+    console.log(shifts);
+    res.status(200).json({
+      shifts: shifts.map(shift => {
+        console.log(shift.title)
+        return {
+          _id: shift._id,
+          start: shift.start,
+          end: shift.end,
+          title: shift.shiftTypeId.shiftname + ":" + " " + shift.userId.firstName.charAt(0) + " " + shift.userId.lastName,
+          color: shift.shiftTypeId.color,
+          swapable: shift.swapable
+        }
+      })
+    })
   });
 });
+
+router.delete('/deletetypes', (req,res) => {
+  Shift.deleteMany()
+  .then((resp) => {
+    res.send(resp)
+  })
+  .catch((err) => {
+    console.log(err)
+  })
+})
 
 //@route  DELETE api/shift/deleteshift
 //@desc   Delete shift by id
@@ -39,9 +79,9 @@ router.delete("/deleteMyshift/:id", (req, res) => {
     console.log(resp);
     res.send(resp);
   })
-  .catch((err) => {
-    console.log(err)
-  })
+    .catch((err) => {
+      console.log(err)
+    })
 });
 
 
@@ -60,16 +100,16 @@ router.delete("/deleteAllShifts", (req, res) => {
   });
 });
 
-router.post("/createShiftsFromExcel",(req,res)=> {
-   const shiftsArray = req.body;
+router.post("/createShiftsFromExcel", (req, res) => {
+  const shiftsArray = req.body;
   let temp = [];
   shiftsArray.forEach(eachShift => {
     const shift = new createShift({
-         userId :       eachShift.userId,
-         start:         eachShift.start,
-         end:           eachShift.end,
-         shiftTypeId:   eachShift.shiftTypeId,
-         swapable:      eachShift.swappable,
+      userId: eachShift.userId,
+      start: eachShift.start,
+      end: eachShift.end,
+      shiftTypeId: eachShift.shiftTypeId,
+      swapable: eachShift.swappable,
     })
     temp.push(shift)
   })
@@ -79,47 +119,143 @@ router.post("/createShiftsFromExcel",(req,res)=> {
 
   temp.forEach(tempObj => {
     tempObj.save()
-    .then(obj => 
-      console.log(obj)
+      .then(obj =>
+        console.log(obj)
       )
-     .catch((err) => console.log("Could not saved shifts from excel", err));
+      .catch((err) => console.log("Could not saved shifts from excel", err));
   })
 
   res.status(201).json({
-    message : "users added successfully"
+    message: "users added successfully"
   })
 
 
 
 
-  
+
 })
 
 
+
+router.get('/getEventsBetweenTwoDates/:start/:end', (req, res) => {
+  const startDate = req.params.start;
+  const endDate = req.params.end;
+
+  // const start1 = startDate.substring
+
+  createShift.find({
+    'end': { $lte: endDate },
+    'start': { $gte: startDate }
+  })
+    .sort({
+      start : 1
+    })
+    .populate('userId')
+    .populate('shiftTypeId')
+    .exec()
+    .then((shifts) => {
+      res.status(200).json({
+        shifts: shifts.map(shift => {
+          console.log(shift.title)
+          if (shift.shiftTypeId.shiftname === 'Heart') {
+            return {
+              // _id: shift._id,
+              Date: shift.start,
+              // shiftname: shift.shiftTypeId.shiftname,
+              Heart: shift.userId.username
+            }
+          } else if (shift.shiftTypeId.shiftname === 'Peds') {
+            return {
+              // _id: shift._id,
+              Date: shift.start,
+              // shiftname: shift.shiftTypeId.shiftname,
+              Peds: shift.userId.username
+            }
+          } else if (shift.shiftTypeId.shiftname === 'Night') {
+            return {
+              // _id: shift._id,
+              Date: shift.start,
+              // shiftname: shift.shiftTypeId.shiftname,
+              Night: shift.userId.username
+            }
+          } else if (shift.shiftTypeId.shiftname === 'OB Day') {
+            return {
+              // _id: shift._id,
+              Date: shift.start,
+              // shiftname: shift.shiftTypeId.shiftname,
+              'OB Day': shift.userId.username
+            }
+          } else if (shift.shiftTypeId.shiftname === 'OB Night') {
+            return {
+              // _id: shift._id,
+              Date: shift.start,
+              // shiftname: shift.shiftTypeId.shiftname,
+              'OB Night': shift.userId.username
+            }
+          } else if (shift.shiftTypeId.shiftname === '2nd') {
+            return {
+              // _id: shift._id,
+              Date: shift.start,
+              // shiftname: shift.shiftTypeId.shiftname,
+              '2nd': shift.userId.username
+            }
+          } else if (shift.shiftTypeId.shiftname === '3rd') {
+            return {
+              // _id: shift._id,
+              Date: shift.start,
+              // shiftname: shift.shiftTypeId.shiftname,
+              '3rd': shift.userId.username
+            }
+          } else if (shift.shiftTypeId.shiftname === 'Day') {
+            return {
+              // _id: shift._id,
+              Date: shift.start,
+              // shiftname: shift.shiftTypeId.shiftname,
+              Day: shift.userId.username
+            }
+          } else if (shift.shiftTypeId.shiftname === '4th') {
+            return {
+              // _id: shift._id,
+              Date: shift.start,
+              // shiftname: shift.shiftTypeId.shiftname,
+              '4th': shift.userId.username
+            }
+          } else;
+
+        })
+      })
+    })
+    .catch((err) => {
+      res.status(500).json({
+        message: "Failed to get Shifts"
+      })
+    })
+})
+
 //Deleting all past data
-router.get("/deleteEventsBetweenTwoDates/:start/:end", async(req, res, next) => {
+router.get("/deleteEventsBetweenTwoDates/:start/:end", async (req, res, next) => {
   const startDate = req.params.start;
   const endDate = req.params.end;
   var array = [];
   await createShift.find({
-    'end' : { $lte: endDate},
-    'start' : { $gte: startDate }
+    'end': { $lte: endDate },
+    'start': { $gte: startDate }
   }).then((allShift) => {
     //res.send(allShift);
-    for(let i = 0 ; i < allShift.length ; i++){
+    for (let i = 0; i < allShift.length; i++) {
       array.push(allShift[i])
     }
   });
-  
+
 
   console.log('Array of Shift')
   // console.log(array)
 
-  await array.forEach( eachEvent => {
+  await array.forEach(eachEvent => {
     createShift.remove({
       _id: eachEvent._id
     })
-    .exec();
+      .exec();
   })
   res.status(201).json({
     message: "SHIFTS ARE DELETED SUCCESSFULLY"
@@ -138,36 +274,36 @@ router.get("/deleteEventsBetweenTwoDates/:start/:end", async(req, res, next) => 
 router.delete("/deleteCurrentShift/:id", (req, res) => {
   const id = req.params.id;
   console.log(id);
-  createShift.remove({_id:id})
-  .exec()
-  .then(result => {
-    Shift.findById(id)
+  createShift.remove({ _id: id })
     .exec()
-    .then(shift => {
-      console.log(shift)
-      if(result.deletedCount>0){
-        res.status(201).json({
-          message : "shift deleted successfully"
+    .then(result => {
+      Shift.findById(id)
+        .exec()
+        .then(shift => {
+          console.log(shift)
+          if (result.deletedCount > 0) {
+            res.status(201).json({
+              message: "shift deleted successfully"
+            })
+          }
+          else {
+            res.status(404).json({
+              message: "no shift found"
+            })
+          }
         })
-      }
-      else{
-        res.status(404).json({
-          message : "no shift found"
+        .catch(err => {
+          res.status(500).json({
+            error: err
+          })
         })
-      }
+
     })
-    .catch(err=> {
+    .catch(err => {
       res.status(500).json({
-        error : err
+        error: err
       })
     })
-    
-  })
-  .catch(err=>{
-    res.status(500).json({
-      error : err
-    })
-  })
   // Shift.findByIdAndDelete({ _id: req.params.id }).then((resp) => {
   //   console.log(resp);
   //   res.send(resp);
@@ -176,46 +312,34 @@ router.delete("/deleteCurrentShift/:id", (req, res) => {
 
 
 
-router.get("/getUserByName/:id",async (req,res) => {
+router.get("/getUserByName/:id", async (req, res) => {
   const id = req.params.id;
-  
+
   var shiftsList = [];
-  console.log("Name searched with id = "+id);
+  console.log("Name searched with id = " + id);
 
-    createShift.find({userId: id}).populate('userId').populate('shiftTypeId').exec().then(async (shifts) => {
-
-// await      Shift.find()
-//       .exec()
-//       .then(shiftsObj => {
-//         console.log(shiftsObj);
-//       })
-//       .catch(err=> {
-//         res.status(500).json({
-//           error : err
-//         })
-//       })
-
-      
-
-
-      // res.send(shfts);
+  createShift.find({ userId: id })
+    .populate('userId')
+    .populate('shiftTypeId')
+    .exec()
+    .then(async (shifts) => {
       console.log(shifts);
       res.status(200).json({
-        shifts : shifts.map(shift => {
+        shifts: shifts.map(shift => {
           console.log(shift.title)
           return {
-            _id : shift._id,
-            start : shift.start,
-            end : shift.end,
-            title : shift.shiftTypeId.shiftname + ":"+ " " +shift.userId.firstName.charAt(0) +" " +shift.userId.lastName,
-            color : shift.shiftTypeId.color,
+            _id: shift._id,
+            start: shift.start,
+            end: shift.end,
+            title: shift.shiftTypeId.shiftname + ":" + " " + shift.userId.firstName.charAt(0) + " " + shift.userId.lastName,
+            color: shift.shiftTypeId.color,
             swapable: shift.swapable
           }
         })
       })
     });
-  
-  
+
+
 })
 
 
@@ -224,7 +348,7 @@ router.post("/createShift", (req, res) => {
   if (req.body === null) res.status(400).send("Bad Request");
   let newShift = new createShift({
     // _id : 
-    userId : req.body.userId,
+    userId: req.body.userId,
     start: req.body.start,
     end: req.body.end,
     shiftTypeId: req.body.shiftTypeId,
@@ -234,7 +358,7 @@ router.post("/createShift", (req, res) => {
     requestApprovalStatus: req.body.requestApprovalStatus
   });
 
-  console.log("Shift created as: "+newShift)
+  console.log("Shift created as: " + newShift)
   newShift
     .save()
     .then((newShift) => res.send(newShift))
@@ -262,434 +386,473 @@ router.post("/createShift", (req, res) => {
 //   );
 // });
 
-router.get('/restrict-swap/:id/:swapable',(req,res)=>{
+router.get('/restrict-swap/:id/:swapable', (req, res) => {
   const id = req.params.id;
   createShift.findById(id)
- .exec()
- .then(shift => {
-    shift.swapable = req.params.swapable;
-    shift.save()
-    .then(shiftObj => {
-      res.status(201).json({
-        message : "shift updated successfully",
-        shift : shiftObj
-      })
+    .exec()
+    .then(shift => {
+      shift.swapable = req.params.swapable;
+      shift.save()
+        .then(shiftObj => {
+          res.status(201).json({
+            message: "shift updated successfully",
+            shift: shiftObj
+          })
+        })
+        .catch(err => {
+          res.status(500).json({
+            error: err
+          })
+        })
     })
-    .catch(err=> {
+    .catch(err => {
       res.status(500).json({
-        error : err
+        error: err
       })
     })
- })
- .catch(err=> {
-   res.status(500).json({
-     error : err
-   })
- }) 
 });
 
-router.get("/updateRequestApproval/:id", (req,res) => {
+router.get("/updateRequestApproval/:id", (req, res) => {
   const shiftId = req.params.id;
-  console.log('Shift ID'+shiftId)
+  console.log('Shift ID' + shiftId)
   createShift.findOne({
-    _id : shiftId
+    _id: shiftId
   })
-  .exec()
-  .then(shift=> {
-    shift.requestApprovalStatus = 'approved';
-    shift.save()
-    .then(shiftObj => {
-      res.status(201).json({
-        message : "shift status changed successfully",
-        shift : shiftObj
-      })
+    .exec()
+    .then(shift => {
+      shift.requestApprovalStatus = 'approved';
+      shift.save()
+        .then(shiftObj => {
+          res.status(201).json({
+            message: "shift status changed successfully",
+            shift: shiftObj
+          })
+        })
+        .catch(err => {
+          res.status(500).json({
+            error: err
+          })
+        })
     })
-    .catch(err=> {
+    .catch(err => {
       res.status(500).json({
-        error : err
+        error: err
       })
     })
-  })
-  .catch(err=> {
-    res.status(500).json({
-      error : err
-    })
-  })
 })
 
-router.get("/updateApprovalStatustoFalse/:id", (req,res) => {
+router.get("/updateApprovalStatustoFalse/:id", (req, res) => {
   const shiftId = req.params.id;
-  console.log('Shift IIIIIID'+shiftId)
+  console.log('Shift IIIIIID' + shiftId)
   createShift.findOne({
-    _id : shiftId
+    _id: shiftId
   })
-  .exec()
-  .then(shift=> {
-    shift.offApprovalStatus = 'Unapproved';
-    shift.save()
-    .then(shiftObj => {
-      res.status(201).json({
-        message : "shift status changed successfully",
-        shift : shiftObj
-      })
+    .exec()
+    .then(shift => {
+      shift.offApprovalStatus = 'Unapproved';
+      shift.save()
+        .then(shiftObj => {
+          res.status(201).json({
+            message: "shift status changed successfully",
+            shift: shiftObj
+          })
+        })
+        .catch(err => {
+          res.status(500).json({
+            error: err
+          })
+        })
     })
-    .catch(err=> {
+    .catch(err => {
       res.status(500).json({
-        error : err
+        error: err
       })
     })
-  })
-  .catch(err=> {
-    res.status(500).json({
-      error : err
-    })
-  })
 })
 
-router.get("/updateApprovalStatustoTrue/:id", (req,res) => {
+router.get("/updateApprovalStatustoTrue/:id", (req, res) => {
   const shiftId = req.params.id;
-  console.log('Shift ID'+shiftId)
+  console.log('Shift ID' + shiftId)
   createShift.findOne({
-    _id : shiftId
+    _id: shiftId
   })
-  .exec()
-  .then(shift=> {
-    shift.offApprovalStatus = 'Approved';
-    shift.save()
-    .then(shiftObj => {
-      res.status(201).json({
-        message : "shift status changed successfully",
-        shift : shiftObj
-      })
+    .exec()
+    .then(shift => {
+      shift.offApprovalStatus = 'Approved';
+      shift.save()
+        .then(shiftObj => {
+          res.status(201).json({
+            message: "shift status changed successfully",
+            shift: shiftObj
+          })
+        })
+        .catch(err => {
+          res.status(500).json({
+            error: err
+          })
+        })
     })
-    .catch(err=> {
+    .catch(err => {
       res.status(500).json({
-        error : err
+        error: err
       })
     })
-  })
-  .catch(err=> {
-    res.status(500).json({
-      error : err
-    })
-  })
 })
 
-router.get("/RequestEvents" , (req,res) => {
+router.get("/RequestEvents", (req, res) => {
   createShift.find()
-  .populate('userId')
-  .populate('shiftTypeId')
-  .exec()
-  .then(shifts => {
-    res.status(200).json({
-      shifts : shifts.map(shift => {
-        if(shift.shiftTypeId.shiftname === 'Request'){
+    .populate('userId')
+    .populate('shiftTypeId')
+    .exec()
+    .then(shifts => {
+      res.status(200).json({
+        shifts: shifts.map(shift => {
+          if (shift.shiftTypeId.shiftname === 'Request') {
+            return {
+              _id: shift._id,
+              start: shift.start,
+              priority: shift.shiftTypeId.priority,
+              //shiftTypeId: shift.shiftTypeId,
+              end: shift.end,
+              title: shift.userId.firstName + " " + shift.userId.lastName,
+              color: shift.shiftTypeId.color,
+              swapable: shift.swapable,
+              shifname: shift.shiftTypeId.shiftname,
+              comment: shift.comment,
+              status: shift.offApprovalStatus,
+              requestApproval: shift.requestApprovalStatus
+            }
+          }
+
+        })
+      })
+    })
+    .catch(err => {
+      res.status(500).json({
+        error: err
+      })
+    })
+})
+
+router.get("/specificDateShifts/:date/:id", (req, res) => {
+  createShift.find({
+    start: req.params.date,
+    userId: req.params.id
+  })
+    .populate('userId')
+    .populate('shiftTypeId')
+    .exec()
+    .then(shifts => {
+      res.status(200).json({
+        shifts: shifts.map(shift => {
           return {
-            _id : shift._id,
-            start : shift.start,
-            priority : shift.shiftTypeId.priority,
+            _id: shift._id,
+            start: shift.start,
+            priority: shift.shiftTypeId.priority,
             //shiftTypeId: shift.shiftTypeId,
-            end : shift.end,
-            title : shift.userId.firstName+" " +shift.userId.lastName,
-            color : shift.shiftTypeId.color,
+            end: shift.end,
+            title: shift.userId.firstName + " " + shift.userId.lastName,
+            color: shift.shiftTypeId.color,
             swapable: shift.swapable,
             shifname: shift.shiftTypeId.shiftname,
             comment: shift.comment,
             status: shift.offApprovalStatus,
-            requestApproval: shift.requestApprovalStatus
+            userId: shift.userId._id
           }
-        }
-        
+
         })
       })
     })
-    .catch(err=> {
+    .catch(err => {
       res.status(500).json({
-        error : err
+        error: err
       })
+    })
 })
-})
 
-router.get("/specificDateShifts/:date/:id", (req,res) => {
-      createShift.find({
-          start: req.params.date,
-          userId: req.params.id
-      })
-      .populate('userId')
-      .populate('shiftTypeId')
-      .exec()
-      .then(shifts => {
-        res.status(200).json({
-          shifts : shifts.map(shift => {
-              return {
-                _id : shift._id,
-                start : shift.start,
-                priority : shift.shiftTypeId.priority,
-                //shiftTypeId: shift.shiftTypeId,
-                end : shift.end,
-                title : shift.userId.firstName+" " +shift.userId.lastName,
-                color : shift.shiftTypeId.color,
-                swapable: shift.swapable,
-                shifname: shift.shiftTypeId.shiftname,
-                comment: shift.comment,
-                status: shift.offApprovalStatus,
-                userId: shift.userId._id
-              }
-            
-            })
-          })
-        })
-        .catch(err=> {
-          res.status(500).json({
-            error : err
-          })
-    })
-    })
-
-    router.get("/AllspecificDateShifts/:date", (req,res) => {
-      createShift.find({
-          start: req.params.date,
-      })
-      .populate('userId')
-      .populate('shiftTypeId')
-      .exec()
-      .then(shifts => {
-        res.status(200).json({
-          shifts : shifts.map(shift => {
-              return {
-                _id : shift._id,
-                start : shift.start,
-                priority : shift.shiftTypeId.priority,
-                //shiftTypeId: shift.shiftTypeId,
-                end : shift.end,
-                title : shift.userId.firstName+" " +shift.userId.lastName,
-                color : shift.shiftTypeId.color,
-                swapable: shift.swapable,
-                shifname: shift.shiftTypeId.shiftname,
-                comment: shift.comment,
-                status: shift.offApprovalStatus,
-                userId: shift.userId._id
-              }
-            
-            })
-          })
-        })
-        .catch(err=> {
-          res.status(500).json({
-            error : err
-          })
-    })
-    })
-
-router.get("/specifictargetDateShifts/:date/:id", (req,res) => {
+router.get("/AllspecificDateShifts/:date", (req, res) => {
   createShift.find({
-      start: req.params.date,
-      userId: { $nin: req.params.id }
+    start: req.params.date,
   })
-  .populate('userId')
-      .populate('shiftTypeId')
-      .exec()
-      .then(shifts => {
-        res.status(200).json({
-          shifts : shifts.map(shift => {
-              return {
-                _id : shift._id,
-                start : shift.start,
-                priority : shift.shiftTypeId.priority,
-                //shiftTypeId: shift.shiftTypeId,
-                end : shift.end,
-                title : shift.userId.firstName+" " +shift.userId.lastName,
-                color : shift.shiftTypeId.color,
-                swapable: shift.swapable,
-                shifname: shift.shiftTypeId.shiftname,
-                comment: shift.comment,
-                status: shift.offApprovalStatus,
-                userId: shift.userId._id
-              }
-            
-            })
-          })
-        })
-        .catch(err=> {
-          res.status(500).json({
-            error : err
-          })
-    })
-    })
-router.get("/AllOffEvents" , (req,res) => {
-  createShift.find()
-  .populate('userId')
-  .populate('shiftTypeId')
-  .exec()
-  .then(shifts => {
-    res.status(200).json({
-      shifts : shifts.map(shift => {
-        if(shift.shiftTypeId.shiftname === 'Off'){
+    .populate('userId')
+    .populate('shiftTypeId')
+    .exec()
+    .then(shifts => {
+      res.status(200).json({
+        shifts: shifts.map(shift => {
           return {
-            _id : shift._id,
-            start : shift.start,
-            priority : shift.shiftTypeId.priority,
+            _id: shift._id,
+            start: shift.start,
+            priority: shift.shiftTypeId.priority,
             //shiftTypeId: shift.shiftTypeId,
-            end : shift.end,
-            title : shift.userId.firstName+" " +shift.userId.lastName,
-            color : shift.shiftTypeId.color,
+            end: shift.end,
+            title: shift.userId.firstName + " " + shift.userId.lastName,
+            color: shift.shiftTypeId.color,
             swapable: shift.swapable,
             shifname: shift.shiftTypeId.shiftname,
             comment: shift.comment,
-            offApprovalStatus: shift.offApprovalStatus
+            status: shift.offApprovalStatus,
+            userId: shift.userId._id
           }
-        }
-        
+
         })
       })
     })
-    .catch(err=> {
+    .catch(err => {
       res.status(500).json({
-        error : err
+        error: err
       })
-})
+    })
 })
 
-router.get("/specificDateOffEvents/:start" , (req,res) => {
+router.get("/specifictargetDateShifts/:date/:id", (req, res) => {
+  createShift.find({
+    start: req.params.date,
+    userId: { $nin: req.params.id }
+  })
+    .populate('userId')
+    .populate('shiftTypeId')
+    .exec()
+    .then(shifts => {
+      res.status(200).json({
+        shifts: shifts.map(shift => {
+          return {
+            _id: shift._id,
+            start: shift.start,
+            priority: shift.shiftTypeId.priority,
+            //shiftTypeId: shift.shiftTypeId,
+            end: shift.end,
+            title: shift.userId.firstName + " " + shift.userId.lastName,
+            color: shift.shiftTypeId.color,
+            swapable: shift.swapable,
+            shifname: shift.shiftTypeId.shiftname,
+            comment: shift.comment,
+            status: shift.offApprovalStatus,
+            userId: shift.userId._id
+          }
+
+        })
+      })
+    })
+    .catch(err => {
+      res.status(500).json({
+        error: err
+      })
+    })
+})
+router.get("/AllOffEvents", (req, res) => {
+  createShift.find()
+    .populate('userId')
+    .populate('shiftTypeId')
+    .exec()
+    .then(shifts => {
+      res.status(200).json({
+        shifts: shifts.map(shift => {
+          if (shift.shiftTypeId.shiftname === 'Off') {
+            return {
+              _id: shift._id,
+              start: shift.start,
+              priority: shift.shiftTypeId.priority,
+              //shiftTypeId: shift.shiftTypeId,
+              end: shift.end,
+              title: shift.userId.firstName + " " + shift.userId.lastName,
+              color: shift.shiftTypeId.color,
+              swapable: shift.swapable,
+              shifname: shift.shiftTypeId.shiftname,
+              comment: shift.comment,
+              offApprovalStatus: shift.offApprovalStatus
+            }
+          }
+
+        })
+      })
+    })
+    .catch(err => {
+      res.status(500).json({
+        error: err
+      })
+    })
+})
+
+router.get("/specificDateOffEvents/:start", (req, res) => {
   const startDate = req.params.start
   createShift.find({
-    'start' : { $gte: startDate }
+    'start': { $gte: startDate }
   })
-  .populate('userId')
-  .populate('shiftTypeId')
-  .exec()
-  .then(shifts => {
-    res.status(200).json({
-      shifts : shifts.map(shift => {
-        if(shift.shiftTypeId.shiftname === 'Off'){
-          return {
-            _id : shift._id,
-            start : shift.start,
-            priority : shift.shiftTypeId.priority,
-            //shiftTypeId: shift.shiftTypeId,
-            end : shift.end,
-            title : shift.userId.firstName+" " +shift.userId.lastName,
-            color : shift.shiftTypeId.color,
-            swapable: shift.swapable,
-            shifname: shift.shiftTypeId.shiftname,
-            comment: shift.comment,
-            offApprovalStatus: shift.offApprovalStatus
+    .populate('userId')
+    .populate('shiftTypeId')
+    .exec()
+    .then(shifts => {
+      res.status(200).json({
+        shifts: shifts.map(shift => {
+          if (shift.shiftTypeId.shiftname === 'Off') {
+            return {
+              _id: shift._id,
+              start: shift.start,
+              priority: shift.shiftTypeId.priority,
+              //shiftTypeId: shift.shiftTypeId,
+              end: shift.end,
+              title: shift.userId.firstName + " " + shift.userId.lastName,
+              color: shift.shiftTypeId.color,
+              swapable: shift.swapable,
+              shifname: shift.shiftTypeId.shiftname,
+              comment: shift.comment,
+              offApprovalStatus: shift.offApprovalStatus
+            }
           }
-        }
-        
+
         })
       })
     })
-    .catch(err=> {
+    .catch(err => {
       res.status(500).json({
-        error : err
+        error: err
       })
-})
+    })
 })
 
-router.get("/swapShiftUser/:shiftId/:userId", (req,res) => {
+router.get("/swapShiftUser/:shiftId/:userId", (req, res) => {
   const id = req.params.shiftId;
   const userId = req.params.userId;
-    createShift.findOne({_id: id})
+  createShift.findOne({ _id: id })
     .exec()
     .then(shift => {
       shift.userId = userId;
       shift.save()
-      .then(shiftObj => {
-        res.status(201).json({
-          message : "user swapped successfully",
-          shift : shiftObj
+        .then(shiftObj => {
+          res.status(201).json({
+            message: "user swapped successfully",
+            shift: shiftObj
+          })
         })
-      })
-      .catch(err=> {
-        res.status(500).json({
-          error : err
+        .catch(err => {
+          res.status(500).json({
+            error: err
+          })
         })
+    })
+    .catch(err => {
+      res.status(500).json({
+        erroe: err
       })
     })
-    .catch(err=> {
-      res.status(500).json({
-        erroe : err
-      })
-    })  
 })
+
+router.get("/editCurrentShiftType/:id", (req, res) => {
+  Shift.findOne({
+    _id: req.params.id
+  })
+    .then((resp) => {
+      res.send(resp)
+    })
+    .catch((err) => {
+      res.send(err)
+    })
+})
+
+router.get("/getShiftName/:id", (req,res) => {
+    createShift.findOne({
+      _id : req.params.id
+    })
+    .populate('shiftTypeId')
+    .exec()
+    // .then((resp) => {
+    //   res.send(resp)
+    // })
+    .then(shiftname => {
+        res.status(200).json({
+              shiftname: shiftname.shiftTypeId.shiftname
+            
+          
+        })
+    })
+    .catch(err => {
+      res.status(500).json({
+        error: err
+      })
+    })
+})
+
 
 router.get("/currentShifts", (req, res) => {
   console.log('shifts')
   createShift.find()
-  .populate('userId')
-  .populate('shiftTypeId')
-  .exec()
-  .then(shifts => {
-    
-// console.log(shifts);
+    .populate('userId')
+    .populate('shiftTypeId')
+    .exec()
+    .then(shifts => {
 
-    // userId, start, end, title, color
-    res.status(200).json({
-      shifts : shifts.map(shift => {
-        if(shift.shiftTypeId.shiftname === 'Request'){
-          // let dottedComment;
-          // if(shift.comment.length > 10) {
-          //   dottedComment = shift.comment.substring(0,3);
-          // }
-          //  dottedComment.append('...')
-          if(shift.comment.length > 8) {
-            return {
-              _id : shift._id,
-              start : shift.start,
-              priority : shift.shiftTypeId.priority,
-              end : shift.end,
-              shiftname: shift.shiftTypeId.shiftname,
-              requestApprovalStatus: shift.requestApprovalStatus,
-              title : shift.shiftTypeId.shiftname.substring(0,3) + ":"+ " "+shift.userId.lastName+' ('+shift.comment.substring(0,14)+'...'+')',
-              color : shift.shiftTypeId.color,
-              swapable: shift.swapable,
-              userId: shift.userId._id,
-              comment: shift.comment,
-              offApprovalStatus: shift.offApprovalStatus
+      // console.log(shifts);
+
+      // userId, start, end, title, color
+      res.status(200).json({
+        shifts: shifts.map(shift => {
+          if (shift.shiftTypeId.shiftname === 'Request') {
+            // let dottedComment;
+            // if(shift.comment.length > 10) {
+            //   dottedComment = shift.comment.substring(0,3);
+            // }
+            //  dottedComment.append('...')
+            if (shift.comment.length > 8) {
+              return {
+                _id: shift._id,
+                start: shift.start,
+                priority: shift.shiftTypeId.priority,
+                end: shift.end,
+                shiftname: shift.shiftTypeId.shiftname,
+                requestApprovalStatus: shift.requestApprovalStatus,
+                title: shift.shiftTypeId.shiftname.substring(0, 3) + ":" + " " + shift.userId.lastName + ' (' + shift.comment.substring(0, 14) + '...' + ')',
+                color: shift.shiftTypeId.color,
+                swapable: shift.swapable,
+                userId: shift.userId._id,
+                userType: shift.userId.type,
+                comment: shift.comment,
+                offApprovalStatus: shift.offApprovalStatus
+              }
+            } else {
+              return {
+                _id: shift._id,
+                start: shift.start,
+                priority: shift.shiftTypeId.priority,
+                end: shift.end,
+                shiftname: shift.shiftTypeId.shiftname,
+                requestApprovalStatus: shift.requestApprovalStatus,
+                title: shift.shiftTypeId.shiftname.substring(0, 3) + ":" + " " + shift.userId.lastName + ' (' + shift.comment + ')',
+                color: shift.shiftTypeId.color,
+                swapable: shift.swapable,
+                userId: shift.userId._id,
+                userType: shift.userId.type,
+                comment: shift.comment,
+                offApprovalStatus: shift.offApprovalStatus
+              }
             }
-          }else{
+
+          } else {
             return {
-              _id : shift._id,
-              start : shift.start,
-              priority : shift.shiftTypeId.priority,
-              end : shift.end,
+              _id: shift._id,
+              start: shift.start,
+              priority: shift.shiftTypeId.priority,
+              end: shift.end,
               shiftname: shift.shiftTypeId.shiftname,
               requestApprovalStatus: shift.requestApprovalStatus,
-              title : shift.shiftTypeId.shiftname.substring(0,3) + ":"+ " "+shift.userId.lastName+' ('+shift.comment+')',
-              color : shift.shiftTypeId.color,
+              title: shift.shiftTypeId.shiftname + ":" + " " + shift.userId.firstName.charAt(0) + " " + shift.userId.lastName,
+              color: shift.shiftTypeId.color,
               swapable: shift.swapable,
               userId: shift.userId._id,
+              userType: shift.userId.type,
               comment: shift.comment,
               offApprovalStatus: shift.offApprovalStatus
             }
           }
-          
-        }else{
-          return {
-            _id : shift._id,
-            start : shift.start,
-            priority : shift.shiftTypeId.priority,
-            end : shift.end,
-            shiftname: shift.shiftTypeId.shiftname,
-            requestApprovalStatus: shift.requestApprovalStatus,
-            title : shift.shiftTypeId.shiftname + ":"+ " " +shift.userId.firstName.charAt(0) +" " +shift.userId.lastName,
-            color : shift.shiftTypeId.color,
-            swapable: shift.swapable,
-            userId: shift.userId._id,
-            comment: shift.comment,
-            offApprovalStatus: shift.offApprovalStatus
-          }
-        }
-        
+
+        })
       })
     })
-  })
-  .catch(err=> {
-    res.status(500).json({
-      error : err
+    .catch(err => {
+      res.status(500).json({
+        error: err
+      })
     })
-  })
   // createShift.find().populate('userId').exec().then((shfts) => {
   //   res.send(shfts);
   // });
@@ -697,32 +860,32 @@ router.get("/currentShifts", (req, res) => {
 
 router.get("/currentUserShifts/:id", (req, res) => {
   const id = req.params.id;
-  createShift.find({userId : id})
-  .populate('userId')
-  .populate('shiftTypeId')
-  .exec()
-  .then(shifts => {
-    // userId, start, end, title, color
-    res.status(200).json(
-       shifts.map(shift => {
-        return {
-          _id : shift._id,
-          start : shift.start,
-          end : shift.end,
-          title : shift.shiftTypeId.shiftname + ":"+ " " +shift.userId.firstName.charAt(0) +" " +shift.userId.lastName,
-          color : shift.shiftTypeId.color,
-          swapable: shift.swapable,
-          shiftname: shift.shiftTypeId.shiftname,
-          offApprovalStatus: shift.offApprovalStatus,
-        }
-      })
-    )
-  })
-  .catch(err=> {
-    res.status(500).json({
-      error : err
+  createShift.find({ userId: id })
+    .populate('userId')
+    .populate('shiftTypeId')
+    .exec()
+    .then(shifts => {
+      // userId, start, end, title, color
+      res.status(200).json(
+        shifts.map(shift => {
+          return {
+            _id: shift._id,
+            start: shift.start,
+            end: shift.end,
+            title: shift.shiftTypeId.shiftname + ":" + " " + shift.userId.firstName.charAt(0) + " " + shift.userId.lastName,
+            color: shift.shiftTypeId.color,
+            swapable: shift.swapable,
+            shiftname: shift.shiftTypeId.shiftname,
+            offApprovalStatus: shift.offApprovalStatus,
+          }
+        })
+      )
     })
-  })
+    .catch(err => {
+      res.status(500).json({
+        error: err
+      })
+    })
   // createShift.find().populate('userId').exec().then((shfts) => {
   //   res.send(shfts);
   // });
@@ -736,43 +899,43 @@ router.get("/currentUserShifts/:id", (req, res) => {
 // });
 
 
-router.get("/currentUserOffShifts/:id", async(req, res) => {
+router.get("/currentUserOffShifts/:id", async (req, res) => {
   const id = req.params.id;
   var offId;
-  await Shift.findOne({shiftname:"Off"})
-  .exec()
-  .then(obj => {
-    offId = obj._id
-  })
-  .catch(err=>{
-    res.status(500).json({
-      error : err
+  await Shift.findOne({ shiftname: "Off" })
+    .exec()
+    .then(obj => {
+      offId = obj._id
     })
-  })
-  await createShift.find({userId : id, shiftTypeId : offId})
-  .populate('userId')
-  .populate('shiftTypeId')
-  .exec()
-  .then(shifts => {
-    res.status(200).json(
-      shifts.map(shift => {
-       return {
-         _id : shift._id,
-         start : shift.start,
-         end : shift.end,
-         title : shift.shiftTypeId.shiftname + ":"+ " " +shift.userId.firstName.charAt(0) +" " +shift.userId.lastName,
-         color : shift.shiftTypeId.color,
-         swapable: shift.swapable
-       }
-     })
-   )
-  })
-  .catch(err=> {
-    res.status(500).json({
-      error : err
+    .catch(err => {
+      res.status(500).json({
+        error: err
+      })
     })
-  })
- 
+  await createShift.find({ userId: id, shiftTypeId: offId })
+    .populate('userId')
+    .populate('shiftTypeId')
+    .exec()
+    .then(shifts => {
+      res.status(200).json(
+        shifts.map(shift => {
+          return {
+            _id: shift._id,
+            start: shift.start,
+            end: shift.end,
+            title: shift.shiftTypeId.shiftname + ":" + " " + shift.userId.firstName.charAt(0) + " " + shift.userId.lastName,
+            color: shift.shiftTypeId.color,
+            swapable: shift.swapable
+          }
+        })
+      )
+    })
+    .catch(err => {
+      res.status(500).json({
+        error: err
+      })
+    })
+
 });
 
 router.put("/swapShifts", (req, res) => {
@@ -785,32 +948,32 @@ router.put("/swapShifts", (req, res) => {
       )
       .then(
         () => {
-        createShift
-          .replaceOne(
-            { _id: req.body.id2 },
-            {
-              title: req.body.title2,
-              start: req.body.start2,
-              end: req.body.end2,
-            }
-          )
-          .then(() => {
-            User.find({
-              $or: [
-                { username: { $regex: req.body.title1.split(" ")[0] } },
-                { username: { $regex: req.body.title2.split(" ")[0] } },
-              ],
-            }).then((user) => {
-              sendMail(
-                user[0].email,
-                user[1].email,
-                req.body.title1.toString(),
-                req.body.title2.toString()
-              );
-              res.send("Shifts are swapped");
+          createShift
+            .replaceOne(
+              { _id: req.body.id2 },
+              {
+                title: req.body.title2,
+                start: req.body.start2,
+                end: req.body.end2,
+              }
+            )
+            .then(() => {
+              User.find({
+                $or: [
+                  { username: { $regex: req.body.title1.split(" ")[0] } },
+                  { username: { $regex: req.body.title2.split(" ")[0] } },
+                ],
+              }).then((user) => {
+                sendMail(
+                  user[0].email,
+                  user[1].email,
+                  req.body.title1.toString(),
+                  req.body.title2.toString()
+                );
+                res.send("Shifts are swapped");
+              });
             });
-          });
-      });
+        });
   } catch (err) {
     console.log(err);
   }
@@ -899,17 +1062,29 @@ router.post(
         if (person) {
           return res.status(400).json({ email: "Shift already exists!" });
         } else {
-          let newPerson = new Shift({
-            shiftname: req.body.shiftname,
-            color: req.body.color,
-            editable: req.body.editable,
-            priority: req.body.priority,
-          });
+          try {
+            Shift.findOne({ priority: req.body.priority }).then((person) => {
+              if (person) {
+                return res.status(400).json({ email: "Priority already exists!" });
+              }
+              let newPerson = new Shift({
+                shiftname: req.body.shiftname,
+                color: req.body.color,
+                editable: req.body.editable,
+                priority: req.body.priority,
+              });
 
-          newPerson
-            .save()
-            .then((newperson) => res.json({ newperson }))
-            .catch((err) => console.log(err));
+              newPerson
+                .save()
+                .then((newperson) => res.json({ newperson }))
+                .catch((err) => console.log(err));
+            });
+          }
+          catch (err) {
+            console.error(err.message);
+            res.status(500).send("Server error");
+          }
+
         }
       });
     } catch (err) {
@@ -923,55 +1098,55 @@ router.post(
 module.exports = router;
 
 
-router.get("/swapShift/:id1/:id2", (req,res,next) => {
+router.get("/swapShift/:id1/:id2", (req, res, next) => {
   const id1 = req.params.id1;
   const id2 = req.params.id2;
   var shift1;
   createShift.findById(id1)
-  .exec()
-  .then(shift1Obj => {
-    shift1 = shift1Obj.userId;
+    .exec()
+    .then(shift1Obj => {
+      shift1 = shift1Obj.userId;
       createShift.findById(id2)
-      .exec()
-      .then(shift2Obj => {
-        shift1Obj.userId = shift2Obj.userId;
-        shift2Obj.userId = shift1;
+        .exec()
+        .then(shift2Obj => {
+          shift1Obj.userId = shift2Obj.userId;
+          shift2Obj.userId = shift1;
 
-        shift1Obj.save()
-        .then(result1 => {
-        
-          shift2Obj.save()
-        .then(result2 => {
-            res.status(201).json({
-              shift1 : result1,
-              shift2 : result2
+          shift1Obj.save()
+            .then(result1 => {
+
+              shift2Obj.save()
+                .then(result2 => {
+                  res.status(201).json({
+                    shift1: result1,
+                    shift2: result2
+                  })
+                })
+                .catch(err => {
+                  res.status(500).json({
+                    error: err
+                  })
+                })
+
             })
-        })
-        .catch(err=> {
-          res.status(500).json({
-            error : err
-          })
-        })
+            .catch(err => {
+              res.status(500).json({
+                error: err
+              })
+            })
 
         })
-        .catch(err=> {
+        .catch(err => {
           res.status(500).json({
-            error : err
+            error: err
           })
         })
-
-      })
-      .catch(err=> {
-        res.status(500).json({
-          error :err
-        })
-      })
-  })
-  .catch(err=> {
-    res.status(500).json({
-      error : err
     })
-  })
+    .catch(err => {
+      res.status(500).json({
+        error: err
+      })
+    })
 
 
 

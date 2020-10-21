@@ -16,7 +16,10 @@ const notificationSchema = new mongoose.Schema({
 		type: mongoose.Schema.Types.ObjectId,
 		required: true,
 		ref: 'users'
-    },
+	},
+	shiftName:{
+		type: String
+	},
     from: {
 		type: mongoose.Schema.Types.ObjectId,
 		required: true,

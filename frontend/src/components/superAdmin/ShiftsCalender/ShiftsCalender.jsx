@@ -89,9 +89,29 @@ const ShiftsCalender = () => {
   const handleCancel = (e) => {
     setVisible(false);
   };
+   
+   const filterShift = (e) => {
+     console.log(e.target.value)
+     if(e.target.value === "All Shifts"){
+      axios.get("shift/currentShifts").then((res) => {
+        console.log(res.data.shifts);
+        setEvents(res.data.shifts);
+      });
+     }else{
+      axios.get("shift/filterShift/"+e.target.value)
+      .then((res) => {
+        setEvents(res.data.shifts)
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+     }
+     
+   }
 
   const handleDoctors = (e) => {
-    if(e.target.value === "All"){
+    console.log(e.target.value)
+    if(e.target.value === "All Users"){
       axios.get("shift/currentShifts").then((res) => {
         console.log(res.data.shifts);
         setEvents(res.data.shifts);
@@ -122,6 +142,7 @@ const ShiftsCalender = () => {
     });
 
     axios.get("user/getusers").then((res) => {
+      
       setUsers(res.data);
     });
   }
@@ -188,29 +209,41 @@ const updateShift = (e) => {
         let userId1 = currentUser
         let date = new Date().toISOString().slice(0,10);
         const message = "Your shift has been swapped. Click for details"
-        const requester = "Default"
-        const adminresponse = "The requested shifts  has been swapped."   
+        const requester = "Super Admin"
+        const adminresponse = "The requested shifts  has been swapped."
+        let shiftName=""   
         console.log('User 1 '+userId1)
         console.log('Shift 1 '+shiftId1)
         console.log('User 2 '+userId2)
         const currentUserId = currentId;
+        
+        axios.get("shift/getShiftName/"+shiftId1)
+        .then((res) => {
+          shiftName = res.data.shiftname
           axios.post("user/userNotification",{
-                userId1,userId2,shiftId1,message,date,requester,adminresponse,currentUserId
-            })
-            .then((res) => {
-              axios.get("shift/swapShiftUser/"+shiftId1+'/'+userId2)
-              .then((res1) => { 
-              // console.log(res1.data);
-              // console.log(res.data);
-              window.location.reload();
-				})
-				.catch((err) => {
-					console.log(err.response);
-				});
-          })
-          .catch((err) => {
-              console.log(err)
-          })
+            userId1,userId2,shiftId1,message,date,requester,adminresponse,currentUserId,shiftName
+        })
+        .then((res) => {
+          axios.get("shift/swapShiftUser/"+shiftId1+'/'+userId2)
+          .then((res1) => { 
+          // console.log(res1.data);
+          console.log(res.data)
+          
+          // console.log(res.data);
+          window.location.reload();
+    })
+    .catch((err) => {
+      console.log(err.response);
+    });
+      })
+      .catch((err) => {
+          console.log(err)
+      })
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+        
         
 }
 
@@ -240,12 +273,29 @@ const updateShift = (e) => {
             className="custom-select bg-light m-2 shadow-sm"
             onChange={handleDoctors}
           >
-            <option defaultValue="All">
-            All
+            <option defaultValue="All Users">
+            All Users
             </option>
             {users.map((dat) => (
               <option value={dat._id} key={dat._id}>
                 {dat.firstName+' '+dat.lastName}
+              </option>
+            ))}
+            </select>
+          </div>
+          <div className="col-3">
+          <select
+            id="selectDoctor"
+            name="cars"
+            className="custom-select bg-light m-2 shadow-sm"
+             onChange={filterShift}
+          >
+            <option defaultValue="All Users">
+            All Shifts
+            </option>
+            {data.map((dat) => (
+              <option value={dat._id} key={dat._id}>
+                {dat.shiftname}
               </option>
             ))}
             </select>
@@ -264,6 +314,12 @@ const updateShift = (e) => {
         eventOrder="priority"
         eventClick={handleEventClick}
         // eventRender={eventRender}
+        titleFormat={{ month: 'long', year: 'numeric' }}
+          headerToolbar={{
+            left: '',
+            end:'',
+            center:  'prev,title,next'
+          }}
         events={events}
         
       />

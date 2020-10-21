@@ -8,6 +8,7 @@ const User = require("../models/User");
 const createShift = require("../models/createShift");
 const Notification = require("../models/Notifications");
 const Admin = require("../models/Admin");
+const SuperAdmin = require("../models/SuperAdmin")
 const saltRounds = 10;
 
 //@route  GET api/user/test
@@ -43,9 +44,16 @@ router.get("/", userauth, async (req, res) => {
 // 	});
 // });
 router.get("/getusers", (req, res) => {
-	User.find().then((allUsers) => {
+	User.find()
+	.sort({
+		firstName: 1
+	})
+	.then((allUsers) => {
 		res.send(allUsers);
-	});
+	})
+	.catch((err) =>{
+		res.send(err)
+	})
 });
 router.get("/getNotifcations", (req, res) => {
 	Notification.find().then((allUsers) => {
@@ -65,6 +73,9 @@ router.get("/getCurrentUserNotificationsTo/:id", (req,res) => {
 	Notification.find({
 		to : Id
 		})
+		.sort({
+			regDate: 1
+		})
 	.then((notifcations)=> {
 		res.send(notifcations)
 	})
@@ -76,6 +87,9 @@ router.get("/getCurrentUserNotificationsFrom/:id", (req,res) => {
 	const Id = req.params.id;
 	Notification.find({
 		from : Id
+		})
+		.sort({
+			regDate: 1
 		})
 	.then((notifcations)=> {
 		res.send(notifcations)
@@ -94,6 +108,44 @@ router.delete("/deleteAllNotifications", (req, res) => {
 		console.log(err)
 	})
   });
+  
+  router.put(
+	"/updateResponses/:id",
+	async (req, res) => {
+	  try {
+		let newPerson = {
+		  message: 'Your shift has been exchanged. View Details',
+		  messageFrom: 'Your swap request for the shift has been accepted'
+		};
+  
+		Notification.update({ _id: req.params.id }, { $set: newPerson }).then((resp) => {
+		  console.log(resp);
+		});
+	  } catch (err) {
+		console.error(err.message);
+		res.status(500).send("Server error");
+	  }
+	}
+  );
+
+  router.put(
+	"/updateResponsesandDelete/:id",
+	async (req, res) => {
+	  try {
+		let newPerson = {
+		  message: 'Your rejection response has been sent to the swap requester',
+		  messageFrom: 'Your swap request for the shift has been rejected'
+		};
+  
+		Notification.update({ _id: req.params.id }, { $set: newPerson }).then((resp) => {
+		  console.log(resp);
+		});
+	  } catch (err) {
+		console.error(err.message);
+		res.status(500).send("Server error");
+	  }
+	}
+  );
 
   router.delete("/deleteCurrentNotification/:id", (req, res) => {
 	Notification.findByIdAndDelete({ _id: req.params.id })
@@ -292,6 +344,7 @@ router.post("/userNotification", (req, res) => {
 	regDate:  req.body.date,
 	requesterType: req.body.requester,
 	messageFrom: req.body.messageFrom,
+	shiftName: req.body.shiftName,
 	requestStatus:req.body.requestStatus
   });
 
@@ -368,6 +421,113 @@ router.get("/deleteShiftForOneUser/:id", (req, res) => {
 			
 	// 	});
 });
+
+router.put(
+	"/updateMe",
+	[
+	  check("email", "Please enter a valid email.").not().isEmpty(),
+	  check("firstName", "Please enter a first name.").not().isEmpty(),
+	  check("lastName", "Please enter a last name.").not().isEmpty(),
+	  check("username", "Please enter a Username.").not().isEmpty(),
+	  check("pass", "Please enter a Password.").not().isEmpty(),
+	],
+	async (req, res) => {
+	  try {
+		let newPerson = {
+			email: req.body.newData.email,
+			firstName: req.body.newData.firstName,
+			lastName: req.body.newData.lastName,
+			username: req.body.newData.username,
+			pass: req.body.newData.pass
+		};
+  
+		bcrypt.genSalt(10, (err, salt) => {
+			bcrypt.hash(newPerson.pass, salt, (err, hash) => {
+				if (err) throw err;
+				newPerson.pass = hash;
+				// Admin.findOneAndUpdate({ _id: req.body.id }, req.body.newData);
+				// console.log(newPerson);
+				User.update({ _id: req.body.id }, { $set: newPerson }).then((resp) => {
+					console.log(resp);
+				  });
+				// newPerson
+				// 	.save()
+				// 	.then((newperson) => res.json({ newperson }))
+				// 	.catch((err) => console.log(err));
+			});
+		});
+		
+	  } catch (err) {
+		console.error(err.message);
+		res.status(500).send("Server error");
+	  }
+	}
+  );
+
+  router.put(
+	"/updateSuperAdmin",
+	[
+	  check("email", "Please enter a valid email.").not().isEmpty(),
+	//   check("firstName", "Please enter a first name.").not().isEmpty(),
+	//   check("lastName", "Please enter a last name.").not().isEmpty(),
+	//   check("username", "Please enter a Username.").not().isEmpty(),
+	  check("pass", "Please enter a Password.").not().isEmpty(),
+	],
+	async (req, res) => {
+	  try {
+		let newPerson = {
+			email: req.body.newData.email,
+			// firstName: req.body.newData.firstName,
+			// lastName: req.body.newData.lastName,
+			// username: req.body.newData.username,
+			pass: req.body.newData.pass
+		};
+  
+		bcrypt.genSalt(10, (err, salt) => {
+			bcrypt.hash(newPerson.pass, salt, (err, hash) => {
+				if (err) throw err;
+				newPerson.pass = hash;
+				// Admin.findOneAndUpdate({ _id: req.body.id }, req.body.newData);
+				// console.log(newPerson);
+				SuperAdmin.update({ _id: req.body.id }, { $set: newPerson }).then((resp) => {
+					console.log(resp);
+				  });
+				// newPerson
+				// 	.save()
+				// 	.then((newperson) => res.json({ newperson }))
+				// 	.catch((err) => console.log(err));
+			});
+		});
+		
+	  } catch (err) {
+		console.error(err.message);
+		res.status(500).send("Server error");
+	  }
+	}
+  );
+
+router.get('/getMyDetails/:id', (req,res) => {
+	User.findOne({
+		_id: req.params.id
+	})
+	.then((resp) => {
+		res.send(resp)
+	})
+	.catch((err) => {
+		res.send(err)
+	})
+})
+router.get('/getSuperAdminDetails/:id', (req,res) => {
+	SuperAdmin.findOne({
+		_id: req.params.id
+	})
+	.then((resp) => {
+		res.send(resp)
+	})
+	.catch((err) => {
+		res.send(err)
+	})
+})
 //@route  PUT api/user/updateuser
 //@desc   Update user by id
 //@access Public
@@ -386,30 +546,7 @@ router.put(
 	],
 	async (req, res) => {
 		try {
-			//check if Admin exists
-			if (req.body.newData.person === "admin") {
-				// Admin.findOne({ email: req.body.newData.email }).then((person) => {
-				// 	if (person) {
-				// 		return res.status(400).json({ email: "Email already exists!" });
-				// 	}
-				// });
-				console.log("in try !");
-				const avatar = gravatar.url(req.body.newData.email, {
-					s: "200", //mm
-					r: "pg", //Rating
-					d: "mm", //Default
-				});
-
-				let date_ob = new Date();
-				// current date
-				// adjust 0 before single digit date
-				let date = ("0" + date_ob.getDate()).slice(-2);
-				// current month
-				let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
-				// current year
-				let year = date_ob.getFullYear();
-
-				let newPerson = {
+		 let newPerson = {
 					username: req.body.newData.username,
 					firstName: req.body.newData.firstName,
 					lastName: req.body.newData.lastName,
@@ -417,72 +554,52 @@ router.put(
 					partener: req.body.newData.partener,
 					type: req.body.newData.person,
 					pass: req.body.newData.pass,
-					avatar,
-					regDate: year + "-" + month + "-" + date,
 				};
-
-				bcrypt.genSalt(10, (err, salt) => {
-					bcrypt.hash(newPerson.pass, salt, (err, hash) => {
-						if (err) throw err;
-						newPerson.pass = hash;
-
-						Admin.update({ _id: req.body.id }, { $set: newPerson }).then((resp) => {
-							console.log(resp);
-						});
+	
+		  bcrypt.genSalt(10, (err, salt) => {
+			  bcrypt.hash(newPerson.pass, salt, (err, hash) => {
+				  if (err) throw err;
+				  newPerson.pass = hash;
+				  // Admin.findOneAndUpdate({ _id: req.body.id }, req.body.newData);
+				  // console.log(newPerson);
+				  User.update({ _id: req.body.id }, { $set: newPerson }).then((resp) => {
+					  console.log(resp);
 					});
-				});
-			}
-			//check if User exists
-			if (req.body.newData.person === "user") {
-				// User.findOne({ email: req.body.newData.email }).then((person) => {
-				// 	if (person) {
-				// 		return res.status(400).json({ email: "Email already exists!" });
-				// 	}
-				// });
-				console.log("in try !");
-				const avatar = gravatar.url(req.body.newData.email, {
-					s: "200", //mm
-					r: "pg", //Rating
-					d: "mm", //Default
-				});
-
-				let date_ob = new Date();
-				// current date
-				// adjust 0 before single digit date
-				let date = ("0" + date_ob.getDate()).slice(-2);
-				// current month
-				let month = ("0" + (date_ob.getMonth() + 1)).slice(-2);
-				// current year
-				let year = date_ob.getFullYear();
-
-				let newPerson = {
-					username: req.body.newData.username,
-					firstName: req.body.newData.firstName,
-					lastName: req.body.newData.lastName,
-					email: req.body.newData.email,
-					partener: req.body.newData.partener,
-					type: req.body.newData.person,
-					pass: req.body.newData.pass,
-					avatar,
-					regDate: year + "-" + month + "-" + date,
-				};
-
-				bcrypt.genSalt(10, (err, salt) => {
-					bcrypt.hash(newPerson.pass, salt, (err, hash) => {
-						if (err) throw err;
-						newPerson.pass = hash;
-
-						User.update({ _id: req.body.id }, { $set: newPerson }).then((resp) => {
-							console.log(resp);
-						});
-					});
-				});
-			}
+				  // newPerson
+				  // 	.save()
+				  // 	.then((newperson) => res.json({ newperson }))
+				  // 	.catch((err) => console.log(err));
+			  });
+		  });
+		  
 		} catch (err) {
-			console.error(err.message);
-			res.status(500).send("Server error");
+		  console.error(err.message);
+		  res.status(500).send("Server error");
 		}
-	}
+	  }
+				// let newPerson = {
+				// 	username: req.body.newData.username,
+				// 	firstName: req.body.newData.firstName,
+				// 	lastName: req.body.newData.lastName,
+				// 	email: req.body.newData.email,
+				// 	partener: req.body.newData.partener,
+				// 	type: req.body.newData.person,
+				// 	pass: req.body.newData.pass,
+				// 	avatar,
+				// 	regDate: year + "-" + month + "-" + date,
+				// };
+
+				// bcrypt.genSalt(10, (err, salt) => {
+				// 	bcrypt.hash(newPerson.pass, salt, (err, hash) => {
+				// 		if (err) throw err;
+				// 		newPerson.pass = hash;
+
+				// 		Admin.update({ _id: req.body.id }, { $set: newPerson }).then((resp) => {
+				// 			console.log(resp);
+				// 		});
+				// 	});
+				// });
+	
 );
 
 router.post("/createUserFromExcel",async(req,res) => {
@@ -546,3 +663,14 @@ router.post("/createUserFromExcel",async(req,res) => {
 
    
 module.exports = router;
+// let newPerson = {
+// 	username: req.body.newData.username,
+// 	firstName: req.body.newData.firstName,
+// 	lastName: req.body.newData.lastName,
+// 	email: req.body.newData.email,
+// 	partener: req.body.newData.partener,
+// 	type: req.body.newData.person,
+// 	pass: req.body.newData.pass,
+// 	avatar,
+// 	regDate: year + "-" + month + "-" + date,
+// };

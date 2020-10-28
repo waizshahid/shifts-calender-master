@@ -7,6 +7,7 @@ const { check, validationResult } = require("express-validator");
 const User = require("../models/User");
 const createShift = require("../models/createShift");
 const Notification = require("../models/Notifications");
+const History = require("../models/notificationsHistory")
 const Admin = require("../models/Admin");
 const SuperAdmin = require("../models/SuperAdmin")
 const saltRounds = 10;
@@ -43,6 +44,18 @@ router.get("/", userauth, async (req, res) => {
 // 		});
 // 	});
 // });
+router.get("/getlastNameUser", (req, res) => {
+	User.find()
+	.sort({
+		lastName: 1
+	})
+	.then((allUsers) => {
+		res.send(allUsers);
+	})
+	.catch((err) =>{
+		res.send(err)
+	})
+});
 router.get("/getusers", (req, res) => {
 	User.find()
 	.sort({
@@ -118,9 +131,13 @@ router.delete("/deleteAllNotifications", (req, res) => {
 		  messageFrom: 'Your swap request for the shift has been accepted'
 		};
   
-		Notification.update({ _id: req.params.id }, { $set: newPerson }).then((resp) => {
-		  console.log(resp);
-		});
+		Notification.update({ _id: req.params.id }, { $set: newPerson })
+		.then((resp) => {
+		  res.send(resp);
+		})
+		.catch((err) => {
+			res.send(err)
+		})
 	  } catch (err) {
 		console.error(err.message);
 		res.status(500).send("Server error");
@@ -661,7 +678,125 @@ router.post("/createUserFromExcel",async(req,res) => {
 })
 
 
+////////////////Notifications History API'S
    
+router.post("/createNotificationHistory", (req, res) => {
+    console.log(req.body);
+  if (req.body === null) res.status(400).send("Bad Request");
+  let newNotification = new History({
+    shiftFrom:  req.body.shiftId1,
+    currentUserId: req.body.currentUserId,
+	from:       req.body.userId1,
+    to:     req.body.userId2,
+	message:  req.body.message,
+	adminresponse: req.body.adminresponse,
+	regDate:  req.body.date,
+	requesterType: req.body.requester,
+	messageFrom: req.body.messageFrom,
+	shiftName: req.body.shiftName,
+	requestStatus:req.body.requestStatus
+  })
+  console.log("Notification created as: "+newNotification)
+  newNotification
+    .save()
+    .then((newShift) => res.send(newShift))
+    .catch((err) => console.log(err));
+})
+
+router.get("/getHistory", (req, res) => {
+	History.find().then((allUsers) => {
+		res.send(allUsers);
+	});
+});
+
+// router.get("/getEventHistory/:id", (req, res) => {
+// 	History.find({
+// 		shiftFrom : req.params.id
+// 	})
+// 	.then((allUsers) => {
+// 		res.send(allUsers);
+// 	})
+// 	.catch((err) => {
+// 		res.send(err)
+// 	})
+// });
+
+
+router.get("/getEventHistory/:id", async (req, res) => {
+	const id = req.params.id;
+  		History.find({ 
+			shiftFrom: id 
+		})
+	  .populate('currentUserId')
+	  .populate('from')
+	  .populate('to')
+	  .populate('shiftFrom')
+	  .exec()
+	//   .then((history)=>{
+	// 	  res.send(history)
+	//   })
+	  .then(async (shifts) => {
+		console.log(shifts);
+		res.status(200).json({
+		  shifts: shifts.map(shift => {
+			// console.log(shift.title)
+			if(shift.requesterType === 'Super Admin')
+			{
+				return {
+					_id: shift._id,
+					doctorAssigned: shift.to.firstName+ ' ' +shift.to.lastName,
+					shiftName: shift.shiftName,
+					swappingDate: shift.regDate,
+					shiftDate: shift.shiftFrom.start,
+					modifiedBy: 'soondubu@gmail.com'
+				}
+			}else{
+				return {
+					_id: shift._id,
+					doctorAssigned: shift.to.firstName+ ' ' +shift.to.lastName,
+					shiftName: shift.shiftName,
+					swappingDate: shift.regDate,
+					shiftDate: shift.shiftFrom.start,
+					modifiedBy: shift.currentUserId.email
+				}
+			}
+			
+		  })
+		})
+	  })
+	//   .then(async (history) => {
+	// 	console.log(history);
+	// 	res.status(200).json({
+	// 		history: history.map(shift => {
+	// 		console.log(shift.title)
+	// 		return {
+	// 		  _id: shift._id,
+	// 		  doctorAssigned: shift.to.firstName+ ' ' +shift.to.lastName,
+	// 		  shiftName: shift.shiftName,
+	// 		  swappingDate: shift.regDate,
+	// 		  shiftDate: shift.shiftFrom.start,
+	// 		  email: shift.currentUserId.email   
+	// 		}
+	// 	  })
+	// 	})
+	//   })
+	  .catch((err) => {
+		  res.send(err)
+	  })
+  
+  
+  })
+
+router.get("/deleteEventHistory", (req, res) => {
+	History.deleteMany()
+	.then((allUsers) => {
+		res.send(allUsers);
+	})
+	.catch((err) => {
+		res.send(err)
+	})
+});
+
 module.exports = router;
 // let newPerson = {
 // 	username: req.body.newData.username,

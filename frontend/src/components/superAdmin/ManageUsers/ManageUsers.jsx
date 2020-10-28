@@ -129,29 +129,34 @@ const ManageUsers = () => {
 			title: "UserName",
 			dataIndex: "username",
 			key: "username",
+			sorter: (a, b) => a.username.localeCompare(b.username)
 		},
 		{
 			title: "First Name",
 			dataIndex: "firstName",
 			key: "firstName",
+			sorter: (a, b) => a.firstName.localeCompare(b.firstName),
 		},
 		{
 			title: "Last Name",
 			dataIndex: "lastName",
 			key: "lastName",
+			sorter: (a, b) => a.lastName.localeCompare(b.lastName),
 		},
 		{
 			title: "Email",
 			dataIndex: "email",
 			key: "email",
+			sorter: (a, b) => a.email.localeCompare(b.email),
 		},
 		{
 			title: "Type",
 			dataIndex: "type",
 			key: "type",
+			sorter: (a, b) => a.type.localeCompare(b.type),
 		},
 		{
-			title: "Partener",
+			title: "Partner",
 			dataIndex: "partener",
 			key: "partener",
 		},

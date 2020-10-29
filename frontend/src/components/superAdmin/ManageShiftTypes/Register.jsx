@@ -1,36 +1,40 @@
-import React from "react";
+import React,{useEffect,useState} from "react";
 import "antd/dist/antd.css";
 import "../../../css/Register.css";
 import { Form, Input, Button, Modal, Row, Col, Switch } from "antd";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import useSelection from "antd/lib/table/hooks/useSelection";
 
-
-// const { Option } = Select;
-
-const Register = ({ setVisible, setEditVisible, isEdit, id }) => {
-	const [error, setError] = React.useState(" ");
-	const [failVisible, setFailVisible] = React.useState(false);
-	const [fields, setFields] = React.useState([
+const Register = ({ setEditVisible, id, userObj }) => {
+	const [error, setError] = useState(" ");
+	const [failVisible, setFailVisible] = useState(false);
+	const [success, setEditSuccess] = React.useState(false)
+	const [fields, setFields] = useState([
 		{
 		  name: ["editable"],
-		  value: false,
+		  value: userObj.editable,
 		},
 		{
 			name: ["color"],
-			value: "#ab12ac",
-		  },
-	  ]);
-	  
+			value: userObj.color,
+		},
+		{
+			name: ["priority"],
+			value: userObj.priority,
+		},
+		{
+			name: ["shiftname"],
+			value: userObj.shiftname,
+		},
+	]);
+
 	const [form] = Form.useForm();
 	const onFinish = (values) => {
 		const { shiftname, color, editable, priority} = values;
 		console.log(values)
+		
+
 		setError("");
-		//Student registered
-		if (isEdit) {
-			setEditVisible(false)
 			axios
 				.put("shift/updateshift", {
 					id,
@@ -43,28 +47,18 @@ const Register = ({ setVisible, setEditVisible, isEdit, id }) => {
 				})
 				.then((res) => {
 					console.log(res.data)
+					setEditVisible(false)
+					setEditSuccess(true)
+					
+			
 				})
 				.catch((err) => {
 					console.log(err.response);
 					setFailVisible(true)
 				});
-		} else {
-			axios
-				.post("shift/register", {
-					shiftname,
-					color,
-					editable,
-					priority
-				})
-				.then((res) => {
-					setVisible(false);
-					console.log(res.data);
-				})
-				.catch((err) => {
-					console.log(err.response);
-					setError(err.response.data);
-				});
-		}
+			// window.location.reload()
+			
+		
 		console.log("Received values of form: ", values);
 	};
 	// const handleToggler = (e) => {
@@ -72,6 +66,22 @@ const Register = ({ setVisible, setEditVisible, isEdit, id }) => {
     // };
 	return (
 		<div className="p-0">
+			<Modal
+                  title="Shift Updated Successfully"
+                  visible={success}
+                  maskClosable={true}
+                  onCancel={() => window.location.reload()}
+                  // onOk={handleOk}
+                  footer={[
+					  <Button type="primary" key="1" onClick={() => window.location.reload()}> OK </Button>
+				  ]}
+                >
+                  <b style={{
+					  color: '#5cb85c'
+				  }}>
+					  Shift has been updated successfully
+				  </b>
+              </Modal>
 			<Form
 				form={form}
 				fields={fields}
@@ -142,7 +152,7 @@ const Register = ({ setVisible, setEditVisible, isEdit, id }) => {
 					<Col span={11}>
 						<Form.Item>
 							<Button className="w-100" type="primary" htmlType="submit">
-								{isEdit ? <p>Update</p> : <p>Register</p>}
+								<p>Update</p>
 							</Button>
 						</Form.Item>
 					</Col>
@@ -151,9 +161,10 @@ const Register = ({ setVisible, setEditVisible, isEdit, id }) => {
 			<div>
 			<Modal
                   title="Shift create failed"
-                  visible={failVisible}
+				  visible={failVisible}
+				  onCancel={() => setFailVisible(false)}
                   footer={[
-                    <Button key="1" onClick={() => failVisible(false)}>Cancel</Button>,
+                    <Button key="1" onClick={() => setFailVisible(false)}>Cancel</Button>,
                     
                   ]}
                 >

@@ -101,7 +101,7 @@ const Register = ({ setVisible, setEditVisible, isEdit, id, userObj }) => {
                   onCancel={() => setEditSuccess(false)}
                   // onOk={handleOk}
                   footer={[
-					  <Button key="1" onClick={() => window.location.reload()}> OK </Button>
+					  <Button type="primary" key="1" onClick={() => window.location.reload()}> OK </Button>
 				  ]}
                 >
                   <b style={{
@@ -178,15 +178,17 @@ const Register = ({ setVisible, setEditVisible, isEdit, id, userObj }) => {
 
 				<Form.Item
 					name="partener"
+					// placeholder="Partner"
 					hasFeedback
 					rules={[
 						{
 							required: true,
-							message: "Please select your partener!",
+							message: "Please select your partner!",
 						},
 					]}
 				>
-					<Select placeholder="Partener">
+					<Select placeholder="Partner">
+						<Option value="" disabled>Partner</Option>
 						<Option value="yes">Yes</Option>
 						<Option value="no">No</Option>
 					</Select>

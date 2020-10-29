@@ -76,8 +76,21 @@ const SuperAdmin = ({ superAdmin }) => {
 		},[visible])
 		
 	const menu = (
-		<Menu onClick={showShiftModal}>
-		
+		<Menu onClick={showShiftModal}  style={{
+			width: '400',
+			borderRadius: '6px',
+			marginRight: '30px',
+			marginTop: '20px'
+		}} >
+		{
+			dsplayMessage.length === 0
+			?
+			<div>No notification right now</div>
+			:
+			<div>
+				
+			</div>
+		}
 			  {dsplayMessage.map((message,index) => (
 				  <Menu.Item key = {index}>
 				  <div style={{

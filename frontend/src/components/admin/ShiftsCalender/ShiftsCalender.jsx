@@ -2,13 +2,16 @@ import React, { useState, useEffect } from "react";
 import { Calendar, momentLocalizer, Views } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import { Modal, Button, Select, Card } from "antd";
+import { Modal, Button, Select, Card, Tabs, Divider  } from "antd";
+import { HistoryOutlined,EditOutlined } from '@ant-design/icons';
 import CustomeEvents from "./components/customEvents/CustomeEvents";
 import FullCalendar from "@fullcalendar/react";
 import interactionPlugin from "@fullcalendar/interaction"; // needed for dayClick
 import dayGridPlugin from "@fullcalendar/daygrid";
 import axios from "axios";
+import "antd/dist/antd.css";
 import jwt_decode from 'jwt-decode'
+import ShowHistory from './showHistory'
 moment.locale("ko", {
   week: {
     dow: 1,
@@ -17,26 +20,40 @@ moment.locale("ko", {
 });
 const localizer = momentLocalizer(moment);
 const { Option } = Select;
+const { TabPane } = Tabs;
 let date = ""
 let title= ""
+let shiftUserName = ""
+let shiftNameUser = ""
 const ShiftsCalender = () => {
   const [visible, setVisible] = useState(false);
   const [data, setData] = useState([]);
+  const [history, setHistory] = useState([]);
   const [oneEvent, setOneEvent] = useState({});
   const [events, setEvents] = useState([]);
   const [assign, setAssign] = useState("");
   const [shiftType, setShiftType] = useState("");
   const [start, setStart] = useState("");
+  
+  const [filderedData, setFData] = useState([]);
   const [end, setEnd] = useState("");
   const [users, setUsers] = useState([]);
+  const [lastNameUsers, setlastNameUsers] = useState([]);
   const [stop, setStop] = useState(0);
+  const [adminCheck, setAdminCheck] = useState("")
   const [exchangeVisible, setexchangeVisible] = useState(false);
   const [id2, setTargetId] = useState("");
   const token = localStorage.admintoken
+  const [commentVisible, setcommentVisible] = useState("");
+  const [comment, setComment] = useState("");
   const decoded = jwt_decode(token)
   const [login,setLoginUserShift] = useState([]);
   const currentId = decoded.id
  
+  function callback(key) {
+    console.log(key);
+  }
+
   const showModal = (e) => {
     date = e.dateStr
     setVisible(true);
@@ -48,8 +65,26 @@ const ShiftsCalender = () => {
     e.preventDefault();
     setAssign(e.target.value);
   };
+
+  function setRequestEvent(e){
+    console.log(e.target.value)
+    shiftNameUser = e.target.value
+    setcommentVisible("true")
+  }
+  useEffect((e) => {
+    setShiftType(shiftNameUser);
+  }, [commentVisible]);
   const handelShift = (e) => {
-    setShiftType(e.target.value);
+    if(e.target.value.substring(e.target.value.indexOf(":") + 1) === 'Request'){
+      setRequestEvent(e)
+    }else{
+      setcommentVisible(false);
+      setShiftType(e.target.value);
+    }
+    
+  };
+  const handleComment = (e) => {
+    setComment(e.target.value);
   };
   const handelDate = (e) => {
     setStart(e.target.value);
@@ -101,6 +136,9 @@ const ShiftsCalender = () => {
         start: date,
         userId: userId,
         end: date,
+        comment: comment,
+        offApprovalStatus: 'Approved',
+        requestApprovalStatus: 'approved',
         shiftTypeId: shiftTypeId,
         swapable: swapable,
 
@@ -141,10 +179,24 @@ const ShiftsCalender = () => {
       console.log(res.data);
       setData(res.data);
     });
-
+    axios(options).then((res) => {
+      console.log('Shift Ids:');
+      console.log(res.data);
+      let arr = []
+      for(let i = 0 ; i < res.data.length ; i++){
+        if(res.data[i].shiftname === 'Off'){
+            arr.push(res.data[i])
+        }
+      }
+      setFData(arr);
+    });
     axios.get("user/getusers").then((res) => {
       setUsers(res.data);
     });
+
+    axios.get("user/getlastNameUser").then((res) => {
+      setlastNameUsers(res.data)
+    })
   }
   const setEventAtRender = () => {
     axios.get("shift/currentShifts").then((res) => {
@@ -170,12 +222,23 @@ const ShiftsCalender = () => {
   }
   const handleEventClick = ({ event, el }) => {
     title = event.title
-    settingEvent(event._def.extendedProps)
+    
+    
+    if(event._def.extendedProps.userId !== currentId){
+      console.log(event._def)
+      settingEvent(event._def.extendedProps)
+    }else{
+      setAdminCheck(true)
+    }
+    // settingEvent(event._def.extendedProps)
 };
 useEffect(() => {
-  console.log(oneEvent)
-  console.log(oneEvent._id)
+  // console.log(history[0].shiftName)
+  // console.log(history[0].doctorAssigned)
+  // console.log(history[0].shiftDate)
+
   console.log(currentId)
+  console.log(history)
   {
     oneEvent.userId === undefined && oneEvent._id === undefined ?
     setexchangeVisible(false)
@@ -183,7 +246,7 @@ useEffect(() => {
     setexchangeVisible(true)
   }
   
-},[oneEvent]);
+},[history]);
 const settingEvent = (event) => {
   setOneEvent(event)
 }
@@ -209,6 +272,20 @@ const settingEvent = (event) => {
     
   }, [stop]);
 
+  // useEffect(()=>{
+  //   console.log(history)
+  // },[history])
+  useEffect(()=>{
+    console.log(oneEvent._id)
+    axios.get("user/getEventHistory/"+oneEvent._id)
+    .then((res) => {
+      
+      setHistory(res.data.shifts)
+    })
+    .catch((err)=>{
+      console.log(err)
+    })  
+  },[oneEvent])
   const passNotification = () => {
     // console.log(oneEvent.userId)
         const userId1 = oneEvent.userId;
@@ -229,15 +306,25 @@ const settingEvent = (event) => {
             currentUserId,userId1,userId2,shiftId1,message,adminresponse,date,requester,shiftName
         })
         .then((res) => {
-          axios.get("shift/swapShiftUser/"+shiftId1+'/'+userId2)
-          .then((res1) => {
-            console.log('Admin Swap Successful')
-            window.location.reload()
+          axios.post("user/createNotificationHistory",{
+            currentUserId,userId1,userId2,shiftId1,message,adminresponse,date,requester,shiftName
+          })
+          .then((resp) => {
+            axios.get("shift/swapShiftUser/"+shiftId1+'/'+userId2)
+            .then((res1) => {
+                console.log(res1)
+                window.location.reload()  
+              
+            })
+            .catch((err) => {
+              console.log(err)
+            })
+             
           })
           .catch((err) => {
             console.log(err)
           })
-           
+          
         })
         .catch((err) => {
           console.log(err.response);
@@ -268,6 +355,18 @@ const settingEvent = (event) => {
     
   }
 
+  function showHistory(){
+    return <div>
+      {/* {
+        history.map((dat,index) => {
+          <div>
+            {dat.shiftname}
+          </div>
+        })
+      } */}
+    </div>
+  }
+
   return (
     <div className="m-sm-4 m-2">
         <div className="row">
@@ -296,11 +395,11 @@ const settingEvent = (event) => {
              onChange={filterShift}
           >
             <option defaultValue="All Users">
-            All Shifts
+              All Shifts
             </option>
-            {data.map((dat) => (
+            {filderedData.map((dat) => (
               <option value={dat._id} key={dat._id}>
-                {dat.shiftname}
+                Shifts without {dat.shiftname} 
               </option>
             ))}
             </select>
@@ -328,6 +427,22 @@ const settingEvent = (event) => {
         // eventClick={handelModal}
         events={events}
       />
+      <Modal
+        title="Swap Request Failed"
+        visible={adminCheck}
+        maskClosable={true}
+        onCancel={() => setAdminCheck(false)}
+        footer={[
+          <Button key="1" onClick={() => setAdminCheck(false)}>Cancel</Button>,
+          
+        ]}
+      >
+        <div>
+        <Card type="inner">
+            You can't request your own shift
+        </Card>
+                  </div></Modal>
+
       {/* <Calendar
         selectable
         localizer={localizer}
@@ -385,6 +500,20 @@ const settingEvent = (event) => {
             </option>
           ))}
         </select>
+        {
+          commentVisible === 'true'
+          ?
+          <div>
+            <input
+            type="text"
+            className="form-control m-2 bg-light shadow-sm"
+            placeholder="Comments for requested shift type"
+            onChange={handleComment}
+          />
+          </div>
+          :
+          <div></div>
+        }
         
       </Modal>
                 <Modal
@@ -393,41 +522,107 @@ const settingEvent = (event) => {
                     maskClosable={true}
                      onCancel={() => setexchangeVisible(false)}
                     // onOk={passNotification}
-                    footer={[
-                      <Button key="1" onClick={() => setexchangeVisible(false)}>Cancel</Button>,
-                      <Button onClick={passNotification} key="2" type="primary">
-                        Update
-                      </Button>
-                    ]}
+                    footer={null}
                 >
+                  <Tabs defaultActiveKey="1" onChange={callback}>
+                    <TabPane tab={
+                      <span>
+                        <EditOutlined />
+                        Edit Shift
+                      </span>
+                    } key="1">
                     <div>
                     <Card type="inner">
-                    <b>Select user for this shift</b><br/>
-                        <Select defaultValue="Select Any User" style={{ width: 400 }} onChange={handelFrom}>
-                            {users.map((dat) => (
+                      <div className="row">
+                         <div className="col-4" style={{
+                                    textAlign: 'right'
+                                }}><b>Select User:</b></div>
+                         <div className="col-6">
+                         <Select defaultValue="Select Any User" style={{ width: 280 }} onChange={handelFrom}>
+                            {lastNameUsers.map((dat) => (
                                 <Option value={dat._id} key={dat._id}>
                                     {dat.firstName+' '+dat.lastName}
                                 </Option>
                             ))}
                             
                             </Select>
-                            <br/><br/>
-                      Shift Name:
-                      {oneEvent.shiftname}<br/><br/>
-                      {
+                         </div>
+                      </div>
+                    
+                        <br/>
+                            
+                            <div className="row">
+                                <div className="col-4" style={{
+                                    textAlign: 'right'
+                                }}><b>Shift Name:</b></div>
+                                <div className="col-6">{oneEvent.shiftname}</div>
+                            </div>
+
+                            <br/>
+                            <div className="row">
+                                <div className="col-4" style={{
+                                    textAlign: 'right'
+                                }}><b>Shift title:</b></div>
+                                <div className="col-6">{title}</div>
+                            </div>
+                            {/* <div className="row">
+                                <div className="col-4" style={{
+                                    textAlign: 'right'
+                                }}><b>Current User:</b></div>
+                                <div className="col-6">{title.substring(
+                                    title.lastIndexOf(":") + 1
+                                )}</div>
+                            </div> */}
+                         {
                         oneEvent.comment == undefined ?
                         <div>
                           
                         </div>
                         :
                         <div>
+                          <Divider/>
+                          <div style={{
+                            textAlign: 'center',
+                            fontStyle: 'italic'
+                         }}>{oneEvent.comment}</div>
                          
-                        {title+' '+oneEvent.comment}
                         </div>
                       }
                       
                     </Card>
-                  </div></Modal>
+                    <br/>
+                    <div className="row">
+                      <div className="col-7"></div>
+                      <div className="col-2">
+                      <Button onClick={() => setexchangeVisible(false)}>Cancel</Button></div>
+                      <div className="col-2">
+                      <Button onClick={passNotification} type="primary">
+                        Update
+                      </Button>
+                      </div>
+                    </div>
+                      
+                  </div>  
+                    </TabPane>
+                    <TabPane 
+                    tab={
+                      <span>
+                        <HistoryOutlined />
+                        History
+                      </span>
+                    }
+                     key="2">
+                       <ShowHistory historyObj= {history} />
+                       <div className="row">
+                         <div className="col-9"></div>
+                         <div className="col-3">
+                         <Button onClick={() => setexchangeVisible(false)}>Cancel</Button>
+                         </div>
+                       </div>
+                       
+                    </TabPane>
+                  </Tabs>
+                    </Modal>
 {/* 
                   <Modal
                     title="Confirm Request"

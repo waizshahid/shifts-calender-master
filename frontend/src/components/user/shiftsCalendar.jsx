@@ -8,6 +8,11 @@ import jwt_decode from 'jwt-decode'
 const { Option } = Select;
 let date = "";
 let shiftNameUser = "";
+
+let name=""
+let day=""
+let sName=""
+
 const ShiftsCalendar = () => {
   const [events, setEvents] = useState([]);
   const [oneEvent, setOneEvent] = useState({});
@@ -321,8 +326,11 @@ const ShiftsCalendar = () => {
   const handleEventClick = ({ event, el }) => {
     date = new Date().toISOString().slice(0,10);
     console.log(event)
+    name = event.title.substring(event.title.indexOf(":") + 1)
+    sName = event.title.substring(0, event.title.indexOf(':'))
+    day = new Date(event.startStr).toLocaleString('default', { month: 'short', day: 'numeric', year: 'numeric' })
     if(event.startStr >= date){
-      if(event._def.extendedProps.userType === 'user'){
+      if(event._def.extendedProps.userId !== currentId){
         settingEvent(event._def.extendedProps)
       }else{
         setAdminCheck(true)
@@ -465,7 +473,7 @@ const ShiftsCalendar = () => {
                   >
                     <div>
                     <Card type="inner">
-                        The selected event is assigned to an admin. You can only swap request with users
+                        You can't request your own shift
                     </Card>
                   </div></Modal>
 
@@ -485,10 +493,11 @@ const ShiftsCalendar = () => {
                     ]}
                   >
                     <div>
-                    <Card type="inner">
-                        Please confirm to send swap request
-                    </Card>
-                  </div></Modal>
+                      <Card type="inner">
+                          Please confirm to send swap request for <b>{name}</b>{','} <b>{day}</b>  {' '}{' '}<br/> <b>{sName}</b>{' '} call
+                      </Card>
+                    </div>
+                  </Modal>
                   <Modal
                     title="Choose current date"
                     visible={dateVisible}

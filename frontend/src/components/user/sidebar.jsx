@@ -25,7 +25,10 @@ import {
 import EditUser from "./editUser";
 
 const { Header, Content, Footer, Sider } = Layout;
-    
+let user1 = ""
+let user2 = ""
+let date = ""
+let shiftname = ""
 
 const Side = ({ user }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -89,11 +92,6 @@ const Side = ({ user }) => {
 
   const swapShift = () => {
     console.log(index)
-    exchangeAndDelete()
-    set2Visible(false)
-  }
-  const [form] = Form.useForm();
-  const exchangeAndDelete = () => {
     console.log(index)
     console.log(dsplayMessage[index])
     const id = dsplayMessage[index]._id
@@ -103,22 +101,49 @@ const Side = ({ user }) => {
     console.log(id)
     console.log(userToExchange)
 
-  axios.get("shift/swapShiftUser/"+shiftId1+'/'+userToExchange)
-    .then((res) => {
+
+    const currentUserId = currentId
+    const userId1 = dsplayMessage[index].from
+    const userId2 = userToExchange
+    // const shiftId1 = dsplayMessage[index].shiftFrom
+    const message = dsplayMessage[index].message
+    const adminresponse = dsplayMessage[index].adminresponse
+    const date = dsplayMessage[index].regDate
+    const requester = dsplayMessage[index].requesterType
+    const shiftName = dsplayMessage[index].shiftName
+
+    axios.get("shift/swapShiftUser/"+shiftId1+'/'+userToExchange)
+    .then((res) =>{
+      console.log(res)
       axios.put("user/updateResponses/"+id)
       .then((res) => {
-          window.location.reload();
+        // console.log(res)
+        updateHistory(currentUserId,userId1,userId2,shiftId1,message,adminresponse,date,requester,shiftName)
         })
       .catch((err) =>{
         console.log(err)
       })
-      console.log(res)
     })
     .catch((err)=>{
       console.log(err)
     })
   }
+  const [form] = Form.useForm();
+  const exchangeAndDelete = () => {
+    
+  }
   
+  const updateHistory = (currentUserId,userId1,userId2,shiftId1,message,adminresponse,date,requester,shiftName) => {
+    axios.post("user/createNotificationHistory",{
+      currentUserId,userId1,userId2,shiftId1,message,adminresponse,date,requester,shiftName
+    })
+    .then((res) =>{
+      refresh();
+    })
+    .catch((err) =>{
+      console.log(err)
+    })
+  }
   const updateNotification = () => {
     const notificationId =  dsplayMessage[index]._id  
     console.log(dsplayMessage[index]._id)
@@ -187,17 +212,25 @@ const Side = ({ user }) => {
 console.log(dsplayMessage[message.key].shiftFrom)
     axios.get("user/getShiftTo/"+dsplayMessage[message.key].to).then((res1) => {
       axios.get("user/getShiftFrom/"+dsplayMessage[message.key].shiftFrom).then((res2) => {
-         let shiftArray = [res1.data[0] ,res2.data.shifts[0]]
-        //  console.log(res1.data.shifts)
-        let temp = []
-        for(let i = 0 ; i < shiftArray.length ; i++){
-          if(shiftArray[i] != undefined)
-          {
-            temp.push(shiftArray[i])
-          }
-        }  
-        console.log(temp)
-           setShifts(temp)
+        axios.get("user/getShiftTo/"+dsplayMessage[message.key].from).then((res3) => {
+          let shiftArray = [res1.data[0] ,res2.data.shifts[0],res3.data[0]]
+          //  console.log(res1.data.shifts)
+          let temp = []
+          for(let i = 0 ; i < shiftArray.length ; i++){
+            if(shiftArray[i] != undefined)
+            {
+              temp.push(shiftArray[i])
+            }
+          }  
+          user1 = temp[0].firstName + ' ' +temp[0].lastName
+					user2 = temp[2].firstName +' ' +temp[2].lastName
+					date =  new Date(temp[1].start).toLocaleString('default', { month: 'short', day: 'numeric', year: 'numeric' })
+          shiftname = temp[1].shifname
+          console.log(user1,user2,date,shiftname)
+          console.log(temp)
+          setShifts(temp)
+        })
+        
       })})
       .catch((err) => {
         console.log(err)
@@ -208,7 +241,12 @@ console.log(dsplayMessage[message.key].shiftFrom)
     setIndex(key)
   }
   const menu = (
-    <Menu onClick={showShiftModal}>
+    <Menu onClick={showShiftModal}  style={{
+			width: '400',
+			borderRadius: '6px',
+			marginRight: '30px',
+			marginTop: '20px'
+		}} >
       {/* <b style={{
         backgroundColor:'rosybrown',
         color: 'white',
@@ -218,7 +256,11 @@ console.log(dsplayMessage[message.key].shiftFrom)
 
           {dsplayMessage.map((message,index) => (
               <Menu.Item key = {index}>
-              <div>
+              <div style={{
+					  width: '400',
+					  borderRadius: '6px',
+					  margin: '10px'
+				}}>
                   {
                     message.requesterType === 'Super Admin' ?
                     <div>
@@ -280,11 +322,7 @@ console.log(dsplayMessage[message.key].shiftFrom)
                                 <div className="col-6"><Tag color="default">{message.shiftName}</Tag><Tag color="default">{message.regDate}</Tag></div>
                                 
                               </div>
-                              <div className="row">
-                                <div className="col-12">
                                 {message.messageFrom}
-                                </div>
-                              </div>
                               
                             </div>
                           }
@@ -298,7 +336,6 @@ console.log(dsplayMessage[message.key].shiftFrom)
               <div className="row">
                   <div className="col-12">
                     <div style={{
-                      borderBottom: '1px solid lightgrey',
                       marginTop: '2px',
                       marginBottom: '2px'
                     }}></div>
@@ -413,25 +450,43 @@ console.log(dsplayMessage[message.key].shiftFrom)
                                   <Card type="inner">
                               
                                   <div>
-                                    <b>Assigned Doctor Details</b><br/>
+                                    <b>Currently Assigned Doctor</b><br/>
                                       {'Name:'+' '+dat.firstName+' '+dat.lastName}<br/>
                                       {'Email:'+' '+dat.email}<br/>
  
                                   </div>
                                   </Card>
                                   :
-                                  <div>
-                                    <br/>
-                                    <Card type="inner">
-                              
-                              <div>
-                                  <b>Assigned Shift Details</b><br/>
-                                  {'Date:'+' '+dat.start}<br/>
-                                  {'Shift Name:'+' '+dat.shifname}
+                                  (
+                                    <div>
+                                      {
+                                        index === 1
+                                        ?
+                                        <div>
+                                              <br/>
+                                              <Card type="inner">
+                                        
+                                        <div>
+                                            <b>Shift Details</b><br/>
+                                            {'Date:'+' '+ new Date(dat.start).toLocaleString('default', { month: 'short', day: 'numeric', year: 'numeric' })}<br/>
+                                            {'Shift Name:'+' '+dat.shifname}
 
-                              </div>
-                              </Card>
+                                        </div>
+                                        </Card>
+                                              </div>
+                                        :
+                                        <Card type="inner">
+                              
+                                  <div>
+                                    <b>Previously Assigned Doctor</b><br/>
+                                      {'Name:'+' '+dat.firstName+' '+dat.lastName}<br/>
+                                      {'Email:'+' '+dat.email}<br/>
+ 
+                                  </div>
+                                  </Card>
+                                      }
                                     </div>
+                                  )
                                   
                             }
                           </div>
@@ -479,20 +534,30 @@ console.log(dsplayMessage[message.key].shiftFrom)
                                   </div>
                                   </Card>
                                   :
-                                  <div>
-                              <br/>
-                                    <Card type="inner">
-                              
-                              <div>
-                                <b>Shift Details</b><br/>
-                                  {'Current Doctor:'+' '+dat.title}<br/>
-                                  {'Date:'+' '+dat.start}<br/>
-                                  {'Shift Name:'+' '+dat.shifname}
-
-                              </div>
-                              </Card>
-                              
-                                  </div>
+                                 (
+                                   <div>
+                                     {
+                                       index === 1
+                                       ?
+                                       <div>
+                                       <br/>
+                                             <Card type="inner">
+                                       
+                                       <div>
+                                         <b>Shift Details</b><br/>
+                                           {'Current Doctor:'+' '+dat.title}<br/>
+                                           {'Date:'+' '+dat.start}<br/>
+                                           {'Shift Name:'+' '+dat.shifname}
+         
+                                       </div>
+                                       </Card>
+                                       
+                                           </div>
+                                           :
+                                           <div></div>
+                                     }
+                                   </div>
+                                 )
                             }
                           </div>
                         ))}
@@ -546,20 +611,32 @@ console.log(dsplayMessage[message.key].shiftFrom)
                                   </div>
                                   </Card>
                                   :
-                                  <div>
-                              <br/>
-                                    <Card type="inner">
-                              
-                              <div>
-                                <b>Shift Details</b><br/>
-                                  {'Current Doctor:'+' '+dat.title}<br/>
-                                  {'Date:'+' '+dat.start}<br/>
-                                  {'Shift Name:'+' '+dat.shifname}
+                                  (
+                                    <div>
+                                        {
+                                          index === 1
+                                          ?
+                                          <div>
+                                          <br/>
+                                                <Card type="inner">
+                                          
+                                          <div>
+                                            <b>Shift Details</b><br/>
+                                              {'Current Doctor:'+' '+dat.title}<br/>
+                                              {'Date:'+' '+ new Date(dat.start).toLocaleString('default', { month: 'short', day: 'numeric', year: 'numeric' })}<br/>
+                                              {'Shift Name:'+' '+dat.shifname}
 
-                              </div>
-                              </Card>
-                              
-                                  </div>
+                                          </div>
+                                          </Card>
+                                          
+                                          </div>
+                                          :
+                                          <div>
+                                          
+                                          </div>
+                                        }
+                                    </div>
+                                  )
                             }
                           </div>
                         ))}

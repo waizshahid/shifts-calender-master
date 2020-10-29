@@ -22,7 +22,10 @@ import {
 } from "@ant-design/icons";
 
 const { Header, Content, Footer, Sider } = Layout;
-
+let user1 = ""
+let user2 = ""
+let date = ""
+let shiftname = ""
 const Admin = ({ admin }) => {
 	const [sidebarOpen, setSidebarOpen] = useState(false);
 	const [dsplayMessage, setMessage] = useState([]);
@@ -74,10 +77,10 @@ const Admin = ({ admin }) => {
 	
 	  axios.get("shift/swapShiftUser/"+shiftId1+'/'+userToExchange)
 		.then((res) => {
-		  axios.delete("user/deleteCurrentNotification/"+id)
-		  .then((res) => {
-			  console.log(res.data);
-			  window.location.reload();
+		//   axios.delete("user/deleteCurrentNotification/"+id)
+		axios.put("user/updateResponses/"+id)  
+		.then((res) => {
+			  refresh()
 			})
 		  .catch((err) =>{
 			console.log(err)
@@ -112,7 +115,7 @@ const Admin = ({ admin }) => {
 		.then((res1) => {
 			let array = []
 			for(let i = 0 ; i < res1.data.length ; i++){
-				if(res1.data[i].requesterType === 'Admin' || res1.data[i].requesterType === 'Super Admin')
+				if(res1.data[i].requesterType === 'Admin' || res1.data[i].requesterType === 'Super Admin' || res1.data[i].requesterType === 'User')
 					array.push(res1.data[i])
 			}
 			console.log(array)
@@ -132,19 +135,27 @@ const Admin = ({ admin }) => {
 		const editingProfile = () => {
 			setEditProfile(true)
 		  }
-		axios.get("user/getShiftTo/"+dsplayMessage[message.key].to).then((res1) => {
+
+		
+		axios.get("user/getShiftTo/"+dsplayMessage[message.key].from).then((res1) => {
 			axios.get("user/getShiftFrom/"+dsplayMessage[message.key].shiftFrom).then((res2) => {
-			   let shiftArray = [res1.data[0] ,res2.data.shifts[0]]
-			  //  console.log(res1.data.shifts)
-			  let temp = []
-			  for(let i = 0 ; i < shiftArray.length ; i++){
-				if(shiftArray[i] != undefined)
-				{
-				  temp.push(shiftArray[i])
-				}
-			  }  
-			  console.log(temp)
-				 setShifts(temp)
+				axios.get("user/getShiftTo/"+dsplayMessage[message.key].to).then((res3) => {
+					let shiftArray = [res1.data[0] ,res2.data.shifts[0],res3.data[0]]
+					let temp = []
+					for(let i = 0 ; i < shiftArray.length ; i++){
+						if(shiftArray[i] != undefined)
+						{
+						temp.push(shiftArray[i])
+						}
+					}
+					user1 = temp[0].firstName + ' ' +temp[0].lastName
+					user2 = temp[2].firstName +' ' +temp[2].lastName
+					date =  new Date(temp[1].start).toLocaleString('default', { month: 'short', day: 'numeric', year: 'numeric' })
+					shiftname = temp[1].shifname
+					console.log(temp)
+					console.log(user1,user2,date,shiftname)
+					setShifts(temp)
+				})
 			})})
 			.catch((err) => {
 			  console.log(err)
@@ -155,7 +166,12 @@ const Admin = ({ admin }) => {
 		 setIndex(key)
 	   }
 	const menu = (
-		<Menu onClick={showShiftModal}>
+		<Menu onClick={showShiftModal}  style={{
+			width: '400',
+			borderRadius: '6px',
+			marginRight: '30px',
+			marginTop: '30px'
+		}} >
 		  {/* <b style={{
 			backgroundColor:'rosybrown',
 			color: 'white',
@@ -166,6 +182,9 @@ const Admin = ({ admin }) => {
 			  {dsplayMessage.map((message,index) => (
 				  <Menu.Item key = {index}>
 				  <div style={{
+					  width: '400',
+					  borderRadius: '6px',
+					  marginRight: '10px'
 				  }} 
 				  >
 					  {
@@ -175,27 +194,58 @@ const Admin = ({ admin }) => {
 							<Tag color="default">{message.regDate}</Tag>
 							</div>
 							:
-							message.requesterType === 'Admin' && message.currentUserId === currentId
+							message.requesterType === 'Admin'
 							?
 							<div>
-							<Tag color="success">{message.requesterType}</Tag> 
-							<br/>{'Your call for the shift named '+ message.shiftName + ' has been swapped'}
-							<Tag color="default">{message.regDate}</Tag>
-							</div> :
+								{
+									message.currentUserId === currentId
+									?
+									<div>
+										<div className="row">
+											<div className="col-8">
+											<Tag color="success">{message.requesterType}</Tag> 
+											</div>
+											<div className="col-4"><Tag color="default">{message.regDate}</Tag></div>
+										</div>
+									{'Your call for the shift named '+ message.shiftName + ' has been swapped'}
+									
+									</div>
+									:
+									<div>
+										<div className="row">
+											<div className="col-6">
+											<Tag color="success">{message.requesterType}</Tag> 
+											</div>
+											<div className="col-2"><Tag color="default">{message.shiftName}</Tag></div>
+											<div className="col-2"><Tag color="default">{message.regDate}</Tag></div>
+										</div>
+										{message.message}
+									</div>
+								}
+							</div>
+							:
 							
 							<div>
 							{
-								message.from === currentId || message.to === currentId 
+								message.requesterType === 'User'
 								?
-								<div>
-								<Tag color="green">{message.requesterType}</Tag><br/> {message.message}
-								<Tag color="default">{message.regDate}</Tag>
+								<div className="">
+									{
+										message.from === currentId || message.to === currentId 
+										?
+										<div>
+										<Tag color="green">{message.requesterType}</Tag><br/> {message.message}
+										<Tag color="default">{message.regDate}</Tag>
+										</div>
+										:
+										<div>
+										{/* <Tag color="green">{message.requesterType}</Tag> <br/>{message.message}
+										<Tag color="default">{message.regDate}</Tag> */}
+										</div>
+									}
 								</div>
 								:
-								<div>
-								<Tag color="green">{message.requesterType}</Tag> <br/>{message.message}
-								<Tag color="default">{message.regDate}</Tag>
-								</div>
+								<div className=""></div>
 						  }
 	
 						</div> 
@@ -209,7 +259,21 @@ const Admin = ({ admin }) => {
 	
 		</Menu>
 	  );
-
+	  const refresh = () => {
+		window.location.reload();
+	  }
+	  const updateNotification = () => {
+		const notificationId =  dsplayMessage[index]._id  
+		console.log(dsplayMessage[index]._id)
+		  axios.put("user/updateResponsesandDelete/"+notificationId)
+		  .then((res) => {
+			refresh();
+			})
+		  .catch((err) =>{
+			console.log(err)
+		  })
+		  window.location.reload();
+	  }
 	 
 	return (
 		<div>
@@ -312,7 +376,7 @@ const Admin = ({ admin }) => {
                   // onOk={handleOk}
                   >
                     <Row>
-                      <Col xs={24} sm={24} md={24} lg={24} xl={24}>
+                      {/* <Col xs={24} sm={24} md={24} lg={24} xl={24}>
                       {shifts.map((dat,index) => (
                           <div>
                               {
@@ -321,30 +385,74 @@ const Admin = ({ admin }) => {
                               
                                   <div>
                                     <b>Assigned Doctor Details</b><br/>
-                                      {'Name:'+' '+dat.firstName+' '+dat.lastName}<br/>
-                                      {'Email:'+' '+dat.email}<br/>
- 
+									<div className="row">
+										<div className="col-2">
+										Name:
+										</div>
+										<div className="col-6">
+										{dat.firstName+' '+dat.lastName}
+										</div>
+									</div>
+									<div className="row">
+										<div className="col-2">
+										Email:
+										</div>
+										<div className="col-6">
+										{dat.email}
+										</div>
+									</div>
                                   </div>
                                   </Card>
                                   :
-                                  <div>
-                                    <br/>
-                                    <Card type="inner">
-                              
-                              <div>
-                                  <b>Assigned Shift Details</b><br/>
-                                  {'Date:'+' '+dat.start}<br/>
-                                  {'Shift Name:'+' '+dat.shifname}
+                                  (
+									  index === 1
+									  ?
+											<div>
+											<br/>
+											<Card type="inner">
+									
+									<div>
+										<b>Assigned Shift Details</b><br/>
+										<div className="row">
+											<div className="col-3">Date:</div>
+											<div className="col-6"> {dat.start} </div>
+										</div>
+										<div className="row">
+											<div className="col-3">Shift Name:</div>
+											<div className="col-6"> {dat.shifname} </div>
+										</div>
 
-                              </div>
-                              </Card>
-                                    </div>
+									</div>
+									</Card>
+											</div>
+										 :
+										 <Card>
+										 <div className="row">
+										<div className="col-2">
+										Name:
+										</div>
+										<div className="col-6">
+										{dat.firstName+' '+dat.lastName}
+										</div>
+									</div>
+									<div className="row">
+										<div className="col-2">
+										Email:
+										</div>
+										<div className="col-6">
+										{dat.email}
+										</div>
+									</div>
+                                  
+                                  </Card> 
+								  )
                                   
                             }
                           </div>
                         ))}
                       </Col>
-                      
+                       */}
+					   <div>Swapping{' '} <b>{shiftname+' '}</b> calls for <b> {date+' '}</b> from <b>{user1+' '}</b> to {' '} <b>{user2}</b></div>
                     </Row>
                     
                 </Modal>
@@ -354,11 +462,11 @@ const Admin = ({ admin }) => {
                   maskClosable={true}
                   onCancel={() => set2Visible(false)}
                   // onOk={handleOk}
-                  footer={[
-					<Button key="1" onClick={deleteNotification}>Ignore</Button>,
-					<Button key="2" type="primary" onClick={swapShift}>Exchange</Button>
-				  ]}
-				
+                //   footer={[
+				// 	<Button key="1" onClick={deleteNotification}>Ignore</Button>,
+				// 	<Button key="2" type="primary" onClick={swapShift}>Exchange</Button>
+				//   ]}
+					footer={null}
                 >
                   <Row>
                       <Col xs={24} sm={24} md={24} lg={24} xl={24}>
@@ -376,20 +484,30 @@ const Admin = ({ admin }) => {
                                   </div>
                                   </Card>
                                   :
-                                  <div>
-                              <br/>
-                                    <Card type="inner">
-                              
-                              <div>
-                                <b>Shift Details</b><br/>
-                                  {'Current Doctor:'+' '+dat.title}<br/>
-                                  {'Date:'+' '+dat.start}<br/>
-                                  {'Shift Name:'+' '+dat.shifname}
-
-                              </div>
-                              </Card>
-                              
-                                  </div>
+                                (
+									<div>
+										{
+											index === 1
+											?
+											<div>
+											<br/>
+												  <Card type="inner">
+											
+											<div>
+											  <b>Shift Details</b><br/>
+												{'Current Doctor:'+' '+dat.title}<br/>
+												{'Date:'+' '+dat.start}<br/>
+												{'Shift Name:'+' '+dat.shifname}
+			  
+											</div>
+											</Card>
+											
+												</div>
+												:
+												<div></div>
+										}
+									</div>
+								)
                             }
                           </div>
                         ))}
@@ -398,6 +516,19 @@ const Admin = ({ admin }) => {
                       
                     </Row>
                             <br/>
+							<br/>
+                    <Row>
+                    <Col lg={6} xs={6} xl={6} sm={6}>
+                      <Button onClick={deleteNotification}>Delete this notification</Button>
+                    </Col>
+                    <Col lg={10} xs={10} xl={10} sm={10}></Col>
+                    <Col lg={4} xs={4} xl={4} sm={4}>
+                      <Button onClick={updateNotification}>Reject</Button>
+					  {/* <Button>Reject</Button> */}
+                    </Col>
+                      <Col lg={4} xs={4} xl={4} sm={4}><Button type="primary" onClick={swapShift}>Exchange</Button>
+                        </Col>
+                    </Row>
                     <Row>
                     {/* <Col lg={16} xs={16} xl={16} sm={16}></Col>
                     <Col lg={4} xs={4} xl={4} sm={4}>

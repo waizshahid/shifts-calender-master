@@ -37,7 +37,8 @@ const ManageShiftTypes = () => {
 				})
 				.then((res) => {
 					setVisible(false);
-					console.log(res.data);
+					// console.log(res.data);
+					window.location.reload()
 				})
 				.catch((err) => {
 					console.log(err.response);
@@ -155,6 +156,7 @@ const ManageShiftTypes = () => {
 			.delete("shift/deleteshift", { params: { id: targetShift } })
 			.then((response) => {
 				setDelVisible(false);
+				window.location.reload()
 			});
 		
 	};

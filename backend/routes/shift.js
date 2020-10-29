@@ -114,9 +114,11 @@ router.delete('/deletetypes', (req,res) => {
 //@access Public
 router.delete("/deleteshift", (req, res) => {
   Shift.findOneAndDelete({ _id: req.query.id }).then((resp) => {
-    console.log(resp);
     res.send(resp);
-  });
+  })
+  .catch((err) => {
+    res.send(err)
+  })
 });
 
 router.delete("/deleteMyshift/:id", (req, res) => {

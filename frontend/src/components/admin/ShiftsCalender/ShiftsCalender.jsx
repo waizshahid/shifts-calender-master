@@ -338,11 +338,23 @@ const settingEvent = (event) => {
 
   const filterShift = (e) => {
     console.log(e.target.value)
-    if(e.target.value === "All Shifts"){
+    if(e.target.value === "View All"){
      axios.get("shift/currentShifts").then((res) => {
        console.log(res.data.shifts);
        setEvents(res.data.shifts);
      });
+    }else if (e.target.value === "My Shifts") {
+      console.log('User Logged In');
+      console.log('User Id:'+currentId);
+      axios
+        .get("shift/currentUserShifts/"+currentId)
+        .then((res) => {
+          if (res.data !== null) {
+            setEvents(res.data);
+          } else {
+            setEvents([]);
+          }
+        });
     }else{
      axios.get("shift/filterShift/"+e.target.value)
      .then((res) => {
@@ -395,13 +407,15 @@ const settingEvent = (event) => {
              onChange={filterShift}
           >
             <option defaultValue="All Users">
-              All Shifts
+            View All
             </option>
+            <option value="My Shifts">My Shifts Only</option>
             {filderedData.map((dat) => (
               <option value={dat._id} key={dat._id}>
-                Shifts without {dat.shiftname} 
+                Shifts Only 
               </option>
             ))}
+            {/* <option value="Shifts Offered">Shifts Offered </option> */}
             </select>
           </div>
           {/* <div className="col-5"></div>

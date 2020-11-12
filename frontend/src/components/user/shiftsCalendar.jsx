@@ -23,6 +23,7 @@ const ShiftsCalendar = () => {
   const [dateVisible, setDateVisible] = useState(false);
   const [data, setData] = useState([]);
   const [login,setLoginUserShift] = useState([]);
+  const [filderedData, setFData] = useState([]);
   const [off, setOff] = useState([]);
   const [assign, setAssign] = useState("");
   const [shiftType, setShiftType] = useState("");
@@ -230,7 +231,15 @@ const ShiftsCalendar = () => {
             setEvents([]);
           }
         });
-    }
+    }else{
+      axios.get("shift/filterShift/"+e.target.value)
+      .then((res) => {
+        setEvents(res.data.shifts)
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+     }
   };
 
   useEffect(() => {
@@ -291,7 +300,18 @@ const ShiftsCalendar = () => {
       
       setData(temp);
     });
-
+    
+    axios(options).then((res) => {
+      console.log('Shift Ids:');
+      console.log(res.data);
+      let arr = []
+      for(let i = 0 ; i < res.data.length ; i++){
+        if(res.data[i].shiftname === 'Off'){
+            arr.push(res.data[i])
+        }
+      }
+      setFData(arr);
+    });
   }, [visible]);
   function onChange(date, dateString) {
     console.log(dateString);
@@ -397,10 +417,17 @@ const ShiftsCalendar = () => {
               className="custom-select bg-light m-2 shadow-sm float-right w-25"
               onChange={handelSelect}
             >
-              <option defaultValue="All Shifts">All Shifts</option>
-              <option value="My Shifts">My Shifts </option>
-              <option value="Off">Off </option>
-              <option value="Shifts Offered">Shifts Offered </option>
+              <option value="All Shifts">View All </option>
+              <option value="Off">My Off's Only </option>
+              <option value="My Shifts">My Shifts Only</option>
+              {filderedData.map((dat) => (
+              <option value={dat._id} key={dat._id}>
+                {/* Shifts without {' '}{dat.shiftname} */}
+                Shifts Only
+              </option>
+            ))}
+              {/* <option value="Shifts Offered">Shifts Offered </option> */}
+              
             </select>
           </div>
            </div>

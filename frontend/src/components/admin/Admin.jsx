@@ -13,7 +13,7 @@ import EditUser from '../user/editUser'
 import { Layout, Menu, Avatar, Tag, Dropdown, Badge, Modal, Col, Row, Card, Button } from "antd";
 import {
 	BellFilled,
-	UserOutlined,
+	EditOutlined,
 	LogoutOutlined,
 	MenuOutlined,
 	CalendarOutlined,
@@ -286,8 +286,11 @@ const Admin = ({ admin }) => {
 								{/* <Menu.Item key="1" icon={<UserOutlined />}>
 									<Link to="/admin/profile">Profile</Link>
 								</Menu.Item> */}
-								<Menu.Item key="2" icon={<CalendarOutlined />}>
+								<Menu.Item key="1" icon={<CalendarOutlined />}>
 									<Link to="/admin/shifts-calender">Shifts Calender</Link>
+								</Menu.Item>
+								<Menu.Item key="2" icon={<EditOutlined />} onClick={editingProfile}>
+									Edit Profile
 								</Menu.Item>
 								{/* <Menu.Item key="4" icon={<UsergroupAddOutlined />}>
 									<Link to="/admin/manage-users">Manage Users</Link>
@@ -318,19 +321,35 @@ const Admin = ({ admin }) => {
 					/>
 					<a className="navbar-brand">ShiftsCalender</a>
 					<div>
-					<span>
-              <Dropdown overlay={menu} placement="bottomCenter">
-                <Badge dot>
-                  <BellFilled style = {{
-                    color: 'white',
-                     cursor: 'pointer'
-                  }} />
-                </Badge>  
-              </Dropdown>
-                
-            </span>  
+					{
+						dsplayMessage.length === 0
+						?
+						<span>
+						<Dropdown overlay={menu} placement="bottomCenter">
+							<BellFilled style = {{
+								color: 'white',
+								cursor: 'pointer',
+								fontSize: '20px',
+							}} />
+						</Dropdown>
+							
+						</span>  
+						:
+						<span>
+						<Dropdown overlay={menu} placement="bottomCenter">
+							<Badge color="geekblue">
+							<BellFilled style = {{
+								color: 'white',
+								cursor: 'pointer',
+								fontSize: '20px',
+							}} />
+							</Badge>  
+						</Dropdown>
+							
+						</span>  
+					}
 						
-							<span className="ml-2"  onClick={editingProfile}>
+							<span className="ml-2">
 								<Avatar style={{ backgroundColor: "#001529", verticalAlign: "middle", cursor: 'pointer' }} size="large">
 									{console.log(admin)}
 									{admin.firstName.split(" ")[0].charAt(0).toUpperCase()+admin.lastName.split(" ")[0].charAt(0).toUpperCase()}

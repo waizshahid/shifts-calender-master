@@ -132,10 +132,23 @@ const ShiftsCalender = () => {
    
    const filterShift = (e) => {
      console.log(e.target.value)
-     if(e.target.value === "All Shifts"){
+     if(e.target.value === "View All"){
       axios.get("shift/currentShifts").then((res) => {
         console.log(res.data.shifts);
         setEvents(res.data.shifts);
+      });
+     }else if(e.target.value === "Off"){
+      axios.get("shift/currentShifts").then((res) => {
+        console.log(res.data.shifts);
+        let array = []
+
+        for(let i = 0 ; i < res.data.shifts.length; i++){
+          if(res.data.shifts[i].shiftname === 'Off'){
+            array.push(res.data.shifts[i])
+          }
+        }
+        console.log(array)
+        setEvents(array);
       });
      }else{
       axios.get("shift/filterShift/"+e.target.value)
@@ -405,14 +418,19 @@ const updateShift = (e) => {
              onChange={filterShift}
           >
             <option defaultValue="All Users">
-            All Shifts
+            View All
             </option>
             {filderedData.map((dat) => (
               <option value={dat._id} key={dat._id}>
-                Shifts without {' '}{dat.shiftname}
+                {/* Shifts without {' '}{dat.shiftname} */}
+                Shifts Only
               </option>
             ))}
+            <option value="Off">
+              Off's Only
+            </option>
             </select>
+            
           </div>
           {/* <div className="col-5"></div>
           <div className="col-4"> */}

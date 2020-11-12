@@ -22,6 +22,7 @@ import {
 	BellFilled,
 	MenuOutlined,
 	CalendarOutlined,
+	EditOutlined,
 	MinusCircleOutlined,
 	FileExcelOutlined,
 	UsergroupAddOutlined,
@@ -227,11 +228,11 @@ const SuperAdmin = ({ superAdmin }) => {
 						<Sider style={{ height: "100vh" }}>
 							<h5 className="pt-4 pb-2 text-center text-muted">{superAdmin.username}</h5>
 							<Menu theme="dark" mode="inline" defaultSelectedKeys={[]}>
-								{/* <Menu.Item key="1" icon={<UserOutlined />}>
-									<Link to="/superadmin/profile">Profile</Link>
-								</Menu.Item> */}
-								<Menu.Item key="2" icon={<CalendarOutlined />}>
+								<Menu.Item key="1" icon={<CalendarOutlined />}>
 									<Link to="/superadmin/shifts-calender">Shifts Calender</Link>
+								</Menu.Item>
+								<Menu.Item key="2" icon={<EditOutlined />} onClick={editingProfile}>
+									Edit Profile
 								</Menu.Item>
 								<Menu.Item key="3" icon={<FormOutlined />}>
 									<Link to="/superadmin/manage-shift-types">Manage Shift Types</Link>
@@ -268,19 +269,38 @@ const SuperAdmin = ({ superAdmin }) => {
 					/>
 					<a className="navbar-brand">ShiftsCalender</a>
 					<div>
-					<span>
-					<Dropdown overlay={menu} placement="bottomCenter">
-						<Badge dot>
-						<BellFilled style = {{
-							color: 'white',
-							cursor: 'pointer'
-						}} />
-						</Badge>  
-					</Dropdown>
+					{
+						dsplayMessage.length === 0
+						?
+						<span>
+							<Dropdown overlay={menu} placement="bottomCenter">
+								<BellFilled style = {{
+									color: 'white',
+									cursor: 'pointer',
+									fontSize: '20px',
+									
+								}} />
+							</Dropdown>
+								
+							</span>
+					:
+							<span>
+							<Dropdown overlay={menu} placement="bottomCenter">
+								<Badge color="geekblue" >
+								<BellFilled style = {{
+									color: 'white',
+									cursor: 'pointer',
+									fontSize: '20px',
+									
+								}} />
+								</Badge>  
+							</Dropdown>
+								
+							</span>
+					}
 						
-					</span>
-						
-							<span className="ml-2" onClick={editingProfile} >
+							{/* <span className="ml-2" onClick={editingProfile} > */}
+							<span className="ml-2">
 								<Avatar style={{ backgroundColor: "#001529", verticalAlign: "middle", cursor: "pointer" }} size="large">
 									{console.log(superAdmin)}
 									{superAdmin.first_name.split(" ")[0].charAt(0).toUpperCase()+superAdmin.last_name.split(" ")[0].charAt(0).toUpperCase()}

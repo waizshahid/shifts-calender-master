@@ -13,7 +13,7 @@ import axios from 'axios'
 import jwt_decode from 'jwt-decode'
 
 import {
-  UserOutlined,
+  EditOutlined,
   PullRequestOutlined,
   LogoutOutlined,
   MenuOutlined,
@@ -362,11 +362,12 @@ console.log(dsplayMessage[message.key].shiftFrom)
             <Sider style={{ height: "100vh" }}>
               <h5 className="pt-4 pb-2 text-center text-muted">{user.firstName}{user.lastName}</h5>
               <Menu theme="dark" mode="inline" defaultSelectedKeys={[]}>
-                {/* <Menu.Item key="1" icon={<UserOutlined />}>
-                  <Link to="/user/profile">Profile</Link>
-                </Menu.Item> */}
-                <Menu.Item key="2" icon={<CalendarOutlined />}>
+                {/*  */}
+                <Menu.Item key="1" icon={<CalendarOutlined />}>
                   <Link to="/user/shifts-calender">Shifts Calender</Link>
+                </Menu.Item>
+                <Menu.Item key="2" icon={<EditOutlined />} onClick={editingProfile}>
+                  Edit Profile
                 </Menu.Item>
                 <Menu.Item key="3" icon={<SwapOutlined />}>
                   <Link to="/user/user-shifts/my-shifts">My Shifts</Link>
@@ -403,7 +404,7 @@ console.log(dsplayMessage[message.key].shiftFrom)
 
 
           <div>
-            <span>
+            {/* <span>
               <Dropdown overlay={menu} placement="bottomCenter">
                 <Badge dot>
                   <BellFilled style = {{
@@ -413,9 +414,36 @@ console.log(dsplayMessage[message.key].shiftFrom)
                 </Badge>  
               </Dropdown>
                 
-            </span>  
+            </span> */}
+              {
+                dsplayMessage.length === 0
+                ?
+                <span>
+              <Dropdown overlay={menu} placement="bottomCenter">
+                  <BellFilled style = {{
+                    color: 'white',
+                     cursor: 'pointer',
+                     fontSize: '20px',
+                  }} />
+              </Dropdown>
+                
+            </span>
+            :
+            <span>
+              <Dropdown overlay={menu} placement="bottomCenter">
+                <Badge color="geekblue">
+                  <BellFilled style = {{
+                    color: 'white',
+                     cursor: 'pointer',
+                     fontSize: '20px',
+                  }} />
+                </Badge>  
+              </Dropdown>
+                
+            </span>
+              }
             {/* <Link to="/user/profile"> */}
-              <span className="ml-2" onClick={editingProfile}>
+              <span className="ml-2">
                 <Avatar
                   style={{
                     backgroundColor: "#001529",

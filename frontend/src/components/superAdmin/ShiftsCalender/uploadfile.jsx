@@ -91,7 +91,7 @@ class uploadfile extends Component {
         let newRows=[];
         resp.rows.map((rows, index) => {
           if(rows.length >2)
-          newRows.push(rows)
+            newRows.push(rows)
         })
         this.setState({
           cols: resp.cols,
@@ -245,8 +245,17 @@ class uploadfile extends Component {
     axios.get('shift/getEventsBetweenTwoDates/'+start+'/'+end)
     .then((resp) => {
      console.log(start,end)
+
+     let arr= []
+     for(let i = 0 ; i < resp.data.shifts.length ; i++){
+        if(resp.data.shifts[i] !== null)
+        {
+        arr.push(resp.data.shifts[i])
+        }
+     }
+
       this.setState({
-        dateRangeArray: resp.data.shifts
+        dateRangeArray: arr
       })
 
       // console.log(JSON.stringify(this.state.dateRangeArray))
@@ -433,7 +442,7 @@ class uploadfile extends Component {
                                   <th>3rd</th>
                                   <th>Day</th>
                                   <th>4th</th>
-                                </tr>
+                                 </tr>
                               </thead>       
                                         { this.state.exportExcelArr.map(value => {
                                             return(

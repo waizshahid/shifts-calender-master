@@ -1,0 +1,78 @@
+.custEvent .button {
+  background-color: #232323 !important;
+  color: #fff !important;
+  width: 100% !important;
+  text-align: center !important;
+  height: 35px !important;
+  border-radius: 0 !important;
+  display: -webkit-box !important;
+  display: -ms-flexbox !important;
+  display: flex !important;
+  -webkit-box-pack: center !important;
+      -ms-flex-pack: center !important;
+          justify-content: center !important;
+  -webkit-box-align: center !important;
+      -ms-flex-align: center !important;
+          align-items: center !important;
+  text-transform: uppercase !important;
+  font-size: 12px !important;
+  letter-spacing: 0.02em !important;
+  position: relative;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.custEvent .button::before {
+  content: "";
+  display: block;
+  width: 0%;
+  height: 100%;
+  background-color: #fb383c;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  -webkit-transition: 0.5s;
+  transition: 0.5s;
+}
+
+.custEvent .button:hover::before {
+  width: 100%;
+  -webkit-transition: 0.5s;
+  transition: 0.5s;
+}
+
+.custEvent .button span {
+  z-index: 15;
+}
+
+.custEvent small {
+  color: #fff;
+  text-transform: none;
+  display: block;
+}
+
+@media only screen and (max-width: 1024px) {
+  .custEvent small {
+    font-size: 10px;
+  }
+  .custEvent .button {
+    font-size: 10px !important;
+  }
+}
+
+@media only screen and (max-width: 575px) {
+  .custEvent small {
+    font-size: 7px;
+    word-break: break-word;
+    white-space: break-spaces;
+  }
+  .custEvent .button {
+    font-size: 8px !important;
+    white-space: break-spaces;
+    text-align: center !important;
+    height: 30px !important;
+  }
+}
+/*# sourceMappingURL=CustomEvents.css.map */

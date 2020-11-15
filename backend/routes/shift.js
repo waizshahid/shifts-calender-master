@@ -182,7 +182,15 @@ router.post("/createShiftsFromExcel", (req, res) => {
 
 })
 
-
+router.get('/currentAll', (req,res) => {
+  createShift.find()
+  .then((resp) => {
+    res.send(resp)
+  })
+  .catch((err) => {
+    res.send(err)
+  })
+})
 
 router.get('/getEventsBetweenTwoDates/:start/:end', (req, res) => {
   const startDate = req.params.start;
@@ -266,6 +274,13 @@ router.get('/getEventsBetweenTwoDates/:start/:end', (req, res) => {
               Date: shift.start,
               // shiftname: shift.shiftTypeId.shiftname,
               '4th': shift.userId.username
+            }
+          } else if (shift.shiftTypeId.shiftname === 'Off') {
+            return {
+              // _id: shift._id,
+              Date: shift.start,
+              // shiftname: shift.shiftTypeId.shiftname,
+              Off: shift.userId.username
             }
           } else;
 

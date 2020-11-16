@@ -182,7 +182,37 @@ router.post("/createShiftsFromExcel", (req, res) => {
 
 })
 
+router.get('/currentAll', (req,res) => {
+  createShift.find()
+  .populate('shiftTypeId')
+  .populate('userId')
+  .exec()
+  .then((resp) => {
+    res.send(resp)
+  })
+  .catch((err) => {
+    res.send(err)
+  })
+})
 
+
+router.get('/getTwoDates/:start/:end', (req, res) => {
+  const startDate = req.params.start;
+  const endDate = req.params.end;
+
+  // const start1 = startDate.substring
+
+  createShift.find({
+    'end': { $lte: endDate },
+    'start': { $gte: startDate }
+  })
+  .then((resp) => {
+    res.send(resp)
+  })
+  .catch((err) => {
+    res.send(err)
+  })
+})
 
 router.get('/getEventsBetweenTwoDates/:start/:end', (req, res) => {
   const startDate = req.params.start;
@@ -260,6 +290,13 @@ router.get('/getEventsBetweenTwoDates/:start/:end', (req, res) => {
               // shiftname: shift.shiftTypeId.shiftname,
               Day: shift.userId.username
             }
+          }else if (shift.shiftTypeId.shiftname == 'Off') {
+            return {
+              // _id: shift._id,
+              Date: shift.start,
+              // shiftname: shift.shiftTypeId.shiftname,
+              Off: shift.userId.username
+            }
           } else if (shift.shiftTypeId.shiftname === '4th') {
             return {
               // _id: shift._id,
@@ -267,7 +304,14 @@ router.get('/getEventsBetweenTwoDates/:start/:end', (req, res) => {
               // shiftname: shift.shiftTypeId.shiftname,
               '4th': shift.userId.username
             }
-          } else;
+          }else if (shift.shiftTypeId.shiftname === 'Request') {
+            return {
+              // _id: shift._id,
+              Date: shift.start,
+              // shiftname: shift.shiftTypeId.shiftname,
+              Request: shift.userId.username
+            }
+          }  else;;
 
         })
       })

@@ -150,15 +150,30 @@ const ShiftsCalender = () => {
         console.log(array)
         setEvents(array);
       });
-     }else{
-      axios.get("shift/filterShift/"+e.target.value)
-      .then((res) => {
-        setEvents(res.data.shifts)
-      })
-      .catch((err) => {
-        console.log(err)
-      })
+     }else if(e.target.value === "Shifts Only")
+     {
+      axios.get("shift/currentShifts").then((res) => {
+        console.log(res.data.shifts);
+        let array = []
+
+        for(let i = 0 ; i < res.data.shifts.length; i++){
+          if(res.data.shifts[i].shiftname !== 'Off'){
+            array.push(res.data.shifts[i])
+          }
+        }
+        console.log(array)
+        setEvents(array);
+      });
      }
+    //  else{
+    //   axios.get("shift/filterShift/"+e.target.value)
+    //   .then((res) => {
+    //     setEvents(res.data.shifts)
+    //   })
+    //   .catch((err) => {
+    //     console.log(err)
+    //   })
+    //  }
      
    }
 
@@ -221,7 +236,7 @@ const ShiftsCalender = () => {
     .catch((err) => {
       console.log(err)
     })
-  },[])
+  },[data])
   const setDataAndUser = () => {
     const options = {
       url: "shift/getshifts",
@@ -420,12 +435,9 @@ const updateShift = (e) => {
             <option defaultValue="All Users">
             View All
             </option>
-            {filderedData.map((dat) => (
-              <option value={dat._id} key={dat._id}>
-                {/* Shifts without {' '}{dat.shiftname} */}
+              <option value="Shifts Only">
                 Shifts Only
               </option>
-            ))}
             <option value="Off">
               Off's Only
             </option>

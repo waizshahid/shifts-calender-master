@@ -246,16 +246,16 @@ class uploadfile extends Component {
     .then((resp) => {
      console.log(start,end)
 
-     let arr= []
-     for(let i = 0 ; i < resp.data.shifts.length ; i++){
-        if(resp.data.shifts[i] !== null)
-        {
-        arr.push(resp.data.shifts[i])
-        }
-     }
+    //  let arr= []
+    //  for(let i = 0 ; i < resp.data.shifts.length ; i++){
+    //     if(resp.data.shifts[i] !== null)
+    //     {
+    //     arr.push(resp.data.shifts[i])
+    //     }
+    //  }
 
       this.setState({
-        dateRangeArray: arr
+        dateRangeArray: resp.data.shifts
       })
 
       // console.log(JSON.stringify(this.state.dateRangeArray))
@@ -442,6 +442,8 @@ class uploadfile extends Component {
                                   <th>3rd</th>
                                   <th>Day</th>
                                   <th>4th</th>
+                                  <th>Off</th>
+                                  <th>Request</th>
                                  </tr>
                               </thead>       
                                         { this.state.exportExcelArr.map(value => {
@@ -457,6 +459,8 @@ class uploadfile extends Component {
                                               <td>{value['3rd']}</td>
                                               <td>{value.Day}</td>
                                               <td>{value['4th']}</td>
+                                              <td>{value.Off}</td>
+                                              <td>{value.Request}</td>
                                           </tr>
                                             )
                                         })}

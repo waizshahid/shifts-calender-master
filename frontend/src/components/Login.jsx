@@ -50,9 +50,9 @@ const Login = (props) => {
 		setError(" ");
 		
 
-		axios.get("superadminauth/getType/"+email)
+		axios.get("superadminauth/getType/"+email.toLowerCase())
 			.then((response) => {
-				submitLogin(response.data.type,email,pass)
+				submitLogin(response.data.type,email.toLowerCase(),pass)
 			})
 			.catch((err) => {
 				console.log(err);

@@ -394,7 +394,7 @@ const settingEvent = (event) => {
             </option>
             {users.map((dat) => (
               <option value={dat._id} key={dat._id}>
-                {dat.firstName+' '+dat.lastName}
+                {dat.lastName+' '+dat.firstName}
               </option>
             ))}
             </select>
@@ -495,7 +495,7 @@ const settingEvent = (event) => {
           </option>
           {users.map((dat) => (
             <option value={dat._id} key={dat._id}>
-              {dat.firstName+' '+dat.lastName}
+              {dat.lastName+' '+dat.firstName}
             </option>
           ))}
         </select>

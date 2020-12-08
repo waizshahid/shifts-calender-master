@@ -260,7 +260,7 @@ class uploadfile extends Component {
 
       // console.log(JSON.stringify(this.state.dateRangeArray))
       // console.log(this.state.data)
-      // console.log(this.state.dateRangeArray)
+      console.log(this.state.dateRangeArray)
       let shortArr = []
       for(var i = 0; i < this.state.dateRangeArray.length; i++){
         this.state.dateRangeArray[i].Date = this.JSDateToExcelDate(new Date(this.state.dateRangeArray[i].Date))

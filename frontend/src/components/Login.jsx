@@ -48,11 +48,13 @@ const Login = (props) => {
 	const onFinish = (values) => {
 		const { email, pass} = values;
 		setError(" ");
+		// console.log(email)
 		
+		console.log(email.replace(/\s/g, '').toLowerCase())
 
-		axios.get("superadminauth/getType/"+email.toLowerCase())
+		axios.get("superadminauth/getType/"+email.replace(/\s/g, '').toLowerCase())
 			.then((response) => {
-				submitLogin(response.data.type,email.toLowerCase(),pass)
+				submitLogin(response.data.type,email.replace(/\s/g, '').toLowerCase(),pass)
 			})
 			.catch((err) => {
 				console.log(err);

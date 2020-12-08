@@ -3,12 +3,12 @@ import FullCalendar from "@fullcalendar/react";
 import interactionPlugin from "@fullcalendar/interaction"; // needed for dayClick
 import dayGridPlugin from "@fullcalendar/daygrid";
 import axios from "axios";
-import { Modal,Card,Select,Button,Row,Col } from "antd";
+import { Modal,Card,Select,Button,message } from "antd";
 import jwt_decode from 'jwt-decode'
 const { Option } = Select;
 let date = "";
 let shiftNameUser = "";
-
+let currentShift=""
 let name=""
 let day=""
 let sName=""
@@ -160,11 +160,21 @@ const ShiftsCalendar = () => {
     };
     axios(options)
     .then((res) => {
-      alert("Shift Created Successfully");
-      window.location.reload();
+      setTimeout(() => {
+        message.success("Shift Created Successfully");
+      },1000)
+
+      setTimeout(() => {
+        axios.get("shift/currentShifts").then((res) => {
+          setEvents(res.data.shifts);
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+      },1500)
     })
-    .catch((err)=> {
-      console.log('Failed to make user event')
+    .catch((err) => {
+      message.error('Shift creation failed')
     })
   }
   
@@ -204,8 +214,7 @@ const ShiftsCalendar = () => {
         // console.log(res.data.shifts)
         setEvents(res.data.shifts);
       });
-    }
-    if (e.target.value === "My Shifts") {
+    }else if (e.target.value === "My Shifts") {
       console.log('User Logged In');
       console.log('User Id:'+currentId);
       axios
@@ -217,69 +226,64 @@ const ShiftsCalendar = () => {
             setEvents([]);
           }
         });
-    }
-    if (e.target.value === "Off") {
-      console.log('User Logged In OFF');
-          console.log('User Id:'+currentId);
-      axios
-        .get("shift/currentUserOffShifts/"+currentId)
+    }else if (e.target.value === "Off") {
+      axios.get("shift/currentShifts")
         .then((res) => {
-          
-          if (res.data !== null) {
-            setEvents(res.data);
-          } else {
-            setEvents([]);
+          let offArr = []
+          for(let i = 0 ; i < res.data.shifts.length ; i++)
+          {
+            if(res.data.shifts[i].shiftname === 'Off')
+            {
+              offArr.push(res.data.shifts[i])
+            }
           }
-        });
-    }else{
-      axios.get("shift/filterShift/"+e.target.value)
-      .then((res) => {
-        setEvents(res.data.shifts)
-      })
-      .catch((err) => {
-        console.log(err)
-      })
-     }
+          setEvents(offArr)
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    }else;
+    
   };
 
   useEffect(() => {
     axios.get("shift/currentShifts").then((res) => {
-      let temp1 = []
-      let temp2 = []
-      let count = 0;
-      console.log(off.length)
-      let temp = []
-      for(let i = 0 ; i < res.data.shifts.length ; i++){
-        if(res.data.shifts[i].shiftname === 'Request' || res.data.shifts[i].shiftname === 'Off'){
-          if(res.data.shifts[i].shiftname === 'Request'){
-            if(res.data.shifts[i].requestApprovalStatus === 'approved'){
-              temp1.push(res.data.shifts[i])
-            }
-          }else if(res.data.shifts[i].shiftname === 'Off'){
-            count++;
-            console.log(count)
-            if(res.data.shifts[i].offApprovalStatus === 'Approved'){
-              temp1.push(res.data.shifts[i])
-            }else if(res.data.shifts[i].offApprovalStatus === 'Unapproved' && count <= 8){
-              res.data.shifts[i].offApprovalStatus = 'Approved'
-              temp1.push(res.data.shifts[i])
-            }else if(res.data.shifts[i].offApprovalStatus === 'Unapproved' && count >= 8){
+      // let temp1 = []
+      // let temp2 = []
+      // let count = 0;
+      // console.log(off.length)
+      // let temp = []
+      // for(let i = 0 ; i < res.data.shifts.length ; i++){
+      //   if(res.data.shifts[i].shiftname === 'Request' || res.data.shifts[i].shiftname === 'Off'){
+      //     if(res.data.shifts[i].shiftname === 'Request'){
+      //       if(res.data.shifts[i].requestApprovalStatus === 'approved'){
+      //         temp1.push(res.data.shifts[i])
+      //       }
+      //     }else if(res.data.shifts[i].shiftname === 'Off'){
+      //       // count++;
+      //       // console.log(count)
+      //       if(res.data.shifts[i].offApprovalStatus === 'Approved'){
+      //         temp1.push(res.data.shifts[i])
+      //       }else if(res.data.shifts[i].offApprovalStatus === 'Unapproved' && count <= 8){
+      //         res.data.shifts[i].offApprovalStatus = 'Approved'
+      //         temp1.push(res.data.shifts[i])
+      //       }else if(res.data.shifts[i].offApprovalStatus === 'Unapproved' && count >= 8){
 
-            }
-          }
+      //       }
+      //     }
           
-        // }else if(res.data.shifts[i].shiftname === 'Off'){
-        //   if(res.data.shifts[i].offApprovalStatus === 'Approved'){
-        //     temp3.push(res.data.shifts[i])
-        //   }
-        }else{
-          temp2.push(res.data.shifts[i])
-        }
-      }
+      //   // }else if(res.data.shifts[i].shiftname === 'Off'){
+      //   //   if(res.data.shifts[i].offApprovalStatus === 'Approved'){
+      //   //     temp3.push(res.data.shifts[i])
+      //   //   }
+      //   }else{
+      //     temp2.push(res.data.shifts[i])
+      //   }
+      // }
 
-      temp = [...temp1,...temp2]
-      console.log(temp)  
-    setEvents(temp);
+      // temp = [...temp1,...temp2]
+      // console.log(temp)  
+    setEvents(res.data.shifts);
     });
     const options = {
       url: "shift/getshifts",
@@ -344,6 +348,7 @@ const ShiftsCalendar = () => {
     setOneEvent(event)
   }
   const handleEventClick = ({ event, el }) => {
+    currentShift = event._def.extendedProps._id
     date = new Date().toISOString().slice(0,10);
     console.log(event)
     name = event.title.substring(event.title.indexOf(":") + 1)
@@ -407,6 +412,40 @@ const ShiftsCalendar = () => {
         }
     
   }
+
+  const deleteShift = () => {
+    console.log(currentShift)
+  const key = 'updatable';
+  axios.get("shift/deleteThisShift/"+currentShift)
+      .then((res1) => {
+        console.log(res1)
+        console.log(res1.data)
+
+
+        message.loading({ content: 'Deleting...', key });
+        setTimeout(() => {
+          message.success({ content: res1.data, key, duration: 2 });
+        }, 1000);
+       
+        setTimeout(() => {
+          axios.get("shift/currentShifts").then((res) => {
+            console.log(res.data.shifts);
+            setEvents(res.data.shifts);
+          })
+          .catch((err) =>{
+            console.log(err)
+          })
+        }, 3000)
+      })
+      .catch((err => {
+          console.log(err)
+          message.err(err)
+      }))
+
+      setTimeout(() => {
+        setAdminCheck(false)
+      },3200)
+  }
   return (
     <div>
         <div className="container-fluid">
@@ -418,7 +457,7 @@ const ShiftsCalendar = () => {
               onChange={handelSelect}
             >
               <option value="All Shifts">View All </option>
-              <option value="Off">My Off's Only </option>
+              <option value="Off">Off's Only </option>
               <option value="My Shifts">My Shifts Only</option>
               {filderedData.map((dat) => (
               <option value={dat._id} key={dat._id}>
@@ -493,16 +532,28 @@ const ShiftsCalendar = () => {
                     visible={adminCheck}
                     maskClosable={true}
                     onCancel={() => setAdminCheck(false)}
-                    footer={[
-                      <Button key="1" onClick={() => setAdminCheck(false)}>Cancel</Button>,
-                      
-                    ]}
+                    footer={null}
                   >
                     <div>
                     <Card type="inner">
                         You can't request your own shift
                     </Card>
-                  </div></Modal>
+                    <br/>
+                  </div>
+
+
+                  <div className="container">
+                  <div className="row">
+                    <div className="col-2">
+                      <Button key="1" type="primary" danger onClick={deleteShift} >Delete</Button>
+                    </div>
+                    <div className="col-8"></div>
+                    <div className="col-2">
+                      <Button key="1" onClick={() => setAdminCheck(false)}>Cancel</Button>
+                    </div>
+                  </div>
+                  </div>
+                  </Modal>
 
 
 

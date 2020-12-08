@@ -59,7 +59,7 @@ router.get("/getlastNameUser", (req, res) => {
 router.get("/getusers", (req, res) => {
 	User.find()
 	.sort({
-		firstName: 1
+		lastName: 1
 	})
 	.then((allUsers) => {
 		res.send(allUsers);

@@ -415,7 +415,7 @@ console.log(dsplayMessage[message.key].shiftFrom)
               </Dropdown>
                 
             </span> */}
-              {
+              {/* {
                 dsplayMessage.length === 0
                 ?
                 <span>
@@ -441,9 +441,32 @@ console.log(dsplayMessage[message.key].shiftFrom)
               </Dropdown>
                 
             </span>
-              }
+              } */}
             {/* <Link to="/user/profile"> */}
-              <span className="ml-2">
+              {/* <span className="ml-2" onClick={editingProfile} > */}
+
+              {
+                dsplayMessage.length === 0
+                ?
+                <span className="ml-2">
+              <Dropdown overlay={menu} trigger={["click"]} placement="bottomCenter">
+              <Avatar
+                  style={{
+                    backgroundColor: "#001529",
+                    verticalAlign: "middle",
+                    cursor: 'pointer'
+                  }}
+                  size="large"
+                >
+                  {user.firstName.split(" ")[0].charAt(0).toUpperCase()}{user.lastName.split(" ")[0].charAt(0).toUpperCase()}
+                </Avatar>
+              </Dropdown>
+                
+            </span>
+            :
+            <span className="ml-2">
+              <Dropdown overlay={menu} trigger={["click"]} placement="bottomCenter">
+                <Badge color="geekblue">
                 <Avatar
                   style={{
                     backgroundColor: "#001529",
@@ -454,7 +477,23 @@ console.log(dsplayMessage[message.key].shiftFrom)
                 >
                   {user.firstName.split(" ")[0].charAt(0).toUpperCase()}{user.lastName.split(" ")[0].charAt(0).toUpperCase()}
                 </Avatar>
-              </span>
+                </Badge>  
+              </Dropdown>
+                
+            </span>
+              }
+              {/* <span className="ml-2" >
+                <Avatar
+                  style={{
+                    backgroundColor: "#001529",
+                    verticalAlign: "middle",
+                    cursor: 'pointer'
+                  }}
+                  size="large"
+                >
+                  {user.firstName.split(" ")[0].charAt(0).toUpperCase()}{user.lastName.split(" ")[0].charAt(0).toUpperCase()}
+                </Avatar>
+              </span> */}
             {/* </Link> */}
           </div>
         </nav>

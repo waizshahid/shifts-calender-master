@@ -86,7 +86,11 @@ const SuperAdmin = ({ superAdmin }) => {
 		{
 			dsplayMessage.length === 0
 			?
-			<div>No notification right now</div>
+			<div style={{
+				color : 'black',
+				padding : '5px 5px 5px 5px',
+				fontSize : '14px'
+			}}>No notification right now</div>
 			:
 			<div>
 				
@@ -269,7 +273,7 @@ const SuperAdmin = ({ superAdmin }) => {
 					/>
 					<a className="navbar-brand">ShiftsCalender</a>
 					<div>
-					{
+					{/* {
 						dsplayMessage.length === 0
 						?
 						<span>
@@ -297,15 +301,50 @@ const SuperAdmin = ({ superAdmin }) => {
 							</Dropdown>
 								
 							</span>
+					} */}
+
+
+{
+						dsplayMessage.length === 0
+						?
+						<span className="ml-2">
+								<Dropdown overlay={menu} trigger={["click"]} placement="bottomCenter">
+										<Avatar style={{ backgroundColor: "#001529", verticalAlign: "middle", cursor: "pointer" }} size="large">
+											{console.log(superAdmin)}
+											{superAdmin.first_name.split(" ")[0].charAt(0).toUpperCase()+superAdmin.last_name.split(" ")[0].charAt(0).toUpperCase()}
+										</Avatar>
+								</Dropdown>
+								
+							</span>
+					:
+							<span>
+							<span className="ml-2">
+								<Dropdown overlay={menu} trigger={["click"]} placement="bottomCenter">
+									<Badge color="geekblue" >
+										<Avatar style={{ backgroundColor: "#001529", verticalAlign: "middle", cursor: "pointer" }} size="large">
+											{console.log(superAdmin)}
+											{superAdmin.first_name.split(" ")[0].charAt(0).toUpperCase()+superAdmin.last_name.split(" ")[0].charAt(0).toUpperCase()}
+										</Avatar>
+									</Badge>
+								</Dropdown>
+								
+							</span>
+								
+							</span>
 					}
 						
 							{/* <span className="ml-2" onClick={editingProfile} > */}
-							<span className="ml-2">
-								<Avatar style={{ backgroundColor: "#001529", verticalAlign: "middle", cursor: "pointer" }} size="large">
-									{console.log(superAdmin)}
-									{superAdmin.first_name.split(" ")[0].charAt(0).toUpperCase()+superAdmin.last_name.split(" ")[0].charAt(0).toUpperCase()}
-								</Avatar>
-							</span>
+							{/* <span className="ml-2">
+								<Dropdown overlay={menu} placement="bottomCenter">
+									<Badge color="geekblue" >
+										<Avatar style={{ backgroundColor: "#001529", verticalAlign: "middle", cursor: "pointer" }} size="large">
+											{console.log(superAdmin)}
+											{superAdmin.first_name.split(" ")[0].charAt(0).toUpperCase()+superAdmin.last_name.split(" ")[0].charAt(0).toUpperCase()}
+										</Avatar>
+									</Badge>
+								</Dropdown>
+								
+							</span> */}
 						
 					</div>
 				</nav>

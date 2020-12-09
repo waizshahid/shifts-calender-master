@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Calendar, momentLocalizer, Views } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import { Modal, Card, Select, Tabs, Divider, Button } from "antd";
+import { Modal, Card, Select, Tabs, Divider, Button, message } from "antd";
 import FullCalendar from "@fullcalendar/react";
 import { HistoryOutlined,EditOutlined } from '@ant-design/icons';
 import UploadShiftFile from './uploadfile'
@@ -122,9 +122,22 @@ const ShiftsCalender = () => {
       },
     };
     axios(options).then((res) => {
-      alert("Shift Created Successfully");
-       window.location.reload();
-    });
+      setTimeout(() => {
+        message.success("Shift Created Successfully");
+      },1000)
+
+      setTimeout(() => {
+        axios.get("shift/currentShifts").then((res) => {
+          setEvents(res.data.shifts);
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+      },1500)
+    })
+    .catch((err) => {
+      message.error('Shift creation failed')
+    })
   };
   const handleCancel = (e) => {
     setVisible(false);
@@ -263,43 +276,43 @@ const ShiftsCalender = () => {
   }
   const setEventAtRender = () => {
     axios.get("shift/currentShifts").then((res) => {
-      let temp1 = []
-      let temp2 = []
-      let temp = []
-      let count = 0;
-      for(let i = 0 ; i < res.data.shifts.length ; i++){
-        if(res.data.shifts[i].shiftname === 'Request' || res.data.shifts[i].shiftname === 'Off'){
-          if(res.data.shifts[i].shiftname === 'Request'){
-            if(res.data.shifts[i].requestApprovalStatus === 'approved'){
-              temp1.push(res.data.shifts[i])
-            }
-          }
-          if(res.data.shifts[i].shiftname === 'Off'){
-            count++;
-            console.log(count)
-            if(res.data.shifts[i].offApprovalStatus === 'Approved'){
-              temp1.push(res.data.shifts[i])
-            }else if(res.data.shifts[i].offApprovalStatus === 'Unapproved' && count <= 8){
-              res.data.shifts[i].offApprovalStatus = 'Approved'
-              temp1.push(res.data.shifts[i])
-            }else if(res.data.shifts[i].offApprovalStatus === 'Unapproved' && count >= 8){
+      // let temp1 = []
+      // let temp2 = []
+      // let temp = []
+      // let count = 0;
+      // for(let i = 0 ; i < res.data.shifts.length ; i++){
+      //   if(res.data.shifts[i].shiftname === 'Request' || res.data.shifts[i].shiftname === 'Off'){
+      //     if(res.data.shifts[i].shiftname === 'Request'){
+      //       if(res.data.shifts[i].requestApprovalStatus === 'approved'){
+      //         temp1.push(res.data.shifts[i])
+      //       }
+      //     }
+      //     if(res.data.shifts[i].shiftname === 'Off'){
+      //       count++;
+      //       console.log(count)
+      //       if(res.data.shifts[i].offApprovalStatus === 'Approved'){
+      //         temp1.push(res.data.shifts[i])
+      //       }else if(res.data.shifts[i].offApprovalStatus === 'Unapproved' && count <= 8){
+      //         res.data.shifts[i].offApprovalStatus = 'Approved'
+      //         temp1.push(res.data.shifts[i])
+      //       }else if(res.data.shifts[i].offApprovalStatus === 'Unapproved' && count >= 8){
 
-            }
-          }
+      //       }
+      //     }
           
-        // }else if(res.data.shifts[i].shiftname === 'Off'){
-        //   if(res.data.shifts[i].offApprovalStatus === 'Approved'){
-        //     temp3.push(res.data.shifts[i])
-        //   }
-        }
-        else{
-          temp2.push(res.data.shifts[i])
-        }
-      }
+      //   // }else if(res.data.shifts[i].shiftname === 'Off'){
+      //   //   if(res.data.shifts[i].offApprovalStatus === 'Approved'){
+      //   //     temp3.push(res.data.shifts[i])
+      //   //   }
+      //   }
+      //   else{
+      //     temp2.push(res.data.shifts[i])
+      //   }
+      // }
 
-      temp = [...temp1,...temp2]
-      console.log(temp)  
-    setEvents(temp);
+      // temp = [...temp1,...temp2]
+      // console.log(temp)  
+    setEvents(res.data.shifts);
     });
   }
   const handleEventClick = ({ event }) => {
@@ -333,6 +346,40 @@ const ShiftsCalender = () => {
     })
     
   },[updateVisible])
+
+const deleteShift = (e) => {
+  console.log(currentShift)
+  const key = 'updatable';
+  axios.get("shift/deleteThisShift/"+currentShift)
+      .then((res1) => {
+        console.log(res1)
+        console.log(res1.data)
+
+
+        message.loading({ content: 'Deleting...', key });
+        setTimeout(() => {
+          message.success({ content: res1.data, key, duration: 2 });
+        }, 1000);
+       
+        setTimeout(() => {
+          axios.get("shift/currentShifts").then((res) => {
+            console.log(res.data.shifts);
+            setEvents(res.data.shifts);
+          })
+          .catch((err) =>{
+            console.log(err)
+          })
+        }, 3000)
+      })
+      .catch((err => {
+          console.log(err)
+          message.err(err)
+      }))
+
+      setTimeout(() => {
+        setupdateVisible(false)
+      },3200)
+}
 
 const updateShift = (e) => {
         setupdateVisible(false)
@@ -584,7 +631,10 @@ const updateShift = (e) => {
                     </Card>
                     <br/>
                     <div className="row">
-                      <div className="col-7"></div>
+                      <div className="col-2">
+                        <Button type="primary" danger onClick={deleteShift} >Delete</Button>
+                      </div>
+                      <div className="col-5"></div>
                       <div className="col-2">
                       <Button onClick={() => setupdateVisible(false)}>Cancel</Button></div>
                       <div className="col-2">

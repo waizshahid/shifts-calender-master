@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Calendar, momentLocalizer, Views } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import { Modal, Button, Select, Card, Tabs, Divider  } from "antd";
+import { Modal, Button, Select, Card, Tabs, Divider, message  } from "antd";
 import { HistoryOutlined,EditOutlined } from '@ant-design/icons';
 import CustomeEvents from "./components/customEvents/CustomeEvents";
 import FullCalendar from "@fullcalendar/react";
@@ -23,6 +23,7 @@ const { Option } = Select;
 const { TabPane } = Tabs;
 let date = ""
 let title= ""
+let currentShift = ""
 let shiftUserName = ""
 let shiftNameUser = ""
 const ShiftsCalender = () => {
@@ -145,9 +146,24 @@ const ShiftsCalender = () => {
       },
     };
     axios(options).then((res) => {
-      alert("Shift Created Successfully");
-      window.location.reload();
-    });
+      
+      setTimeout(() => {
+        message.success("Shift Created Successfully");
+      },1000)
+
+      setTimeout(() => {
+        axios.get("shift/currentShifts").then((res) => {
+          setEvents(res.data.shifts);
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+      },1500)
+      
+    })
+    .catch((err) => {
+      message.error('Shift creation failed')
+    })
   };
   const handleCancel = (e) => {
     setVisible(false);
@@ -200,29 +216,29 @@ const ShiftsCalender = () => {
   }
   const setEventAtRender = () => {
     axios.get("shift/currentShifts").then((res) => {
-      let temp1 = []
-      let temp2 = []
-      let temp = []
-      for(let i = 0 ; i < res.data.shifts.length ; i++){
-        if(res.data.shifts[i].shiftname === 'Request'){
-          if(res.data.shifts[i].requestApprovalStatus === 'approved'){
-              temp1.push(res.data.shifts[i])
-          }
-        }
-        else{
-          temp2.push(res.data.shifts[i])
-        }
-      }
+      // let temp1 = []
+      // let temp2 = []
+      // let temp = []
+      // for(let i = 0 ; i < res.data.shifts.length ; i++){
+      //   if(res.data.shifts[i].shiftname === 'Request'){
+      //     if(res.data.shifts[i].requestApprovalStatus === 'approved'){
+      //         temp1.push(res.data.shifts[i])
+      //     }
+      //   }
+      //   else{
+      //     temp2.push(res.data.shifts[i])
+      //   }
+      // }
 
-      temp = [...temp1,...temp2]
-      console.log(temp)  
-    setEvents(temp);
+      // temp = [...temp1,...temp2]
+      // console.log(temp)  
+    setEvents(res.data.shifts);
     
     });
   }
   const handleEventClick = ({ event, el }) => {
     title = event.title
-    
+    currentShift = event._def.extendedProps._id
     
     if(event._def.extendedProps.userId !== currentId){
       console.log(event._def)
@@ -286,6 +302,61 @@ const settingEvent = (event) => {
       console.log(err)
     })  
   },[oneEvent])
+
+  const deleteShift = () => {
+    console.log(currentShift)
+    const key = 'updatable';
+    axios.get("shift/deleteThisShift/"+currentShift)
+        .then((res1) => {
+          console.log(res1)
+          console.log(res1.data)
+  
+          // message.loading({
+          //       content: 'Deleting...',
+          //       style: {
+          //         marginTop: '20vh',
+          //       },
+              
+          //     });
+          // setTimeout(() => {
+          //   // message.success({ content: 'Loaded!', key, duration: 2 });
+          //   message.success({
+          //     content: res1.data,
+          //     className: 'custom-class',
+          //     // key,
+          //     duration: 2,
+          //     style: {
+          //       marginTop: '20vh',
+          //     },
+          //   })
+            
+          // }, 2000);
+  
+          message.loading({ content: 'Deleting...', key });
+          setTimeout(() => {
+            message.success({ content: res1.data, key, duration: 2 });
+          }, 1000);
+         
+          setTimeout(() => {
+            axios.get("shift/currentShifts").then((res) => {
+              console.log(res.data.shifts);
+              setEvents(res.data.shifts);
+              
+            })
+            .catch((err) =>{
+              console.log(err)
+            })
+          }, 3000)
+        })
+        .catch((err => {
+            console.log(err)
+            message.err(err)
+        }))
+        setTimeout(() => {
+          setexchangeVisible(false)
+        },3200)
+  }
+
   const passNotification = () => {
     // console.log(oneEvent.userId)
         const userId1 = oneEvent.userId;
@@ -343,6 +414,23 @@ const settingEvent = (event) => {
        console.log(res.data.shifts);
        setEvents(res.data.shifts);
      });
+    }else if(e.target.value === "Off"){
+       
+        axios.get("shift/currentShifts")
+        .then((res) => {
+          let offArr = []
+          for(let i = 0 ; i < res.data.shifts.length ; i++)
+          {
+            if(res.data.shifts[i].shiftname === 'Off')
+            {
+              offArr.push(res.data.shifts[i])
+            }
+          }
+          setEvents(offArr)
+        })
+        .catch((err) => {
+          console.log(err)
+        })
     }else if (e.target.value === "My Shifts") {
       console.log('User Logged In');
       console.log('User Id:'+currentId);
@@ -354,7 +442,7 @@ const settingEvent = (event) => {
           } else {
             setEvents([]);
           }
-        });
+        })
     }else{
      axios.get("shift/filterShift/"+e.target.value)
      .then((res) => {
@@ -415,6 +503,9 @@ const settingEvent = (event) => {
                 Shifts Only 
               </option>
             ))}
+            <option value="Off">
+              OFF Shifts
+            </option>
             {/* <option value="Shifts Offered">Shifts Offered </option> */}
             </select>
           </div>
@@ -606,7 +697,10 @@ const settingEvent = (event) => {
                     </Card>
                     <br/>
                     <div className="row">
-                      <div className="col-7"></div>
+                    <div className="col-2">
+                        <Button type="primary" danger onClick={deleteShift} >Delete</Button>
+                      </div>
+                      <div className="col-5"></div>
                       <div className="col-2">
                       <Button onClick={() => setexchangeVisible(false)}>Cancel</Button></div>
                       <div className="col-2">

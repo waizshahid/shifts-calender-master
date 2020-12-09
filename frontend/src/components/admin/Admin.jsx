@@ -321,7 +321,7 @@ const Admin = ({ admin }) => {
 					/>
 					<a className="navbar-brand">ShiftsCalender</a>
 					<div>
-					{
+					{/* {
 						dsplayMessage.length === 0
 						?
 						<span>
@@ -347,14 +347,40 @@ const Admin = ({ admin }) => {
 						</Dropdown>
 							
 						</span>  
-					}
-						
-							<span className="ml-2">
+					} */}
+
+{
+						dsplayMessage.length === 0
+						?
+						<span>
+						<Dropdown overlay={menu} trigger={["click"]} placement="bottomCenter">
 								<Avatar style={{ backgroundColor: "#001529", verticalAlign: "middle", cursor: 'pointer' }} size="large">
 									{console.log(admin)}
 									{admin.firstName.split(" ")[0].charAt(0).toUpperCase()+admin.lastName.split(" ")[0].charAt(0).toUpperCase()}
 								</Avatar>
-							</span>
+						</Dropdown>
+							
+						</span>  
+						:
+						<span>
+						<Dropdown overlay={menu} trigger={["click"]} placement="bottomCenter">
+							<Badge color="geekblue">
+							<Avatar style={{ backgroundColor: "#001529", verticalAlign: "middle", cursor: 'pointer' }} size="large">
+									{console.log(admin)}
+									{admin.firstName.split(" ")[0].charAt(0).toUpperCase()+admin.lastName.split(" ")[0].charAt(0).toUpperCase()}
+								</Avatar>
+							</Badge>  
+						</Dropdown>
+							
+						</span>  
+					}
+						
+							{/* <span className="ml-2" onClick={editingProfile}>
+								<Avatar style={{ backgroundColor: "#001529", verticalAlign: "middle", cursor: 'pointer' }} size="large">
+									{console.log(admin)}
+									{admin.firstName.split(" ")[0].charAt(0).toUpperCase()+admin.lastName.split(" ")[0].charAt(0).toUpperCase()}
+								</Avatar>
+							</span> */}
 						
 					</div>
 				</nav>

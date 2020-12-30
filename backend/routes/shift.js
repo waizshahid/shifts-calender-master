@@ -1157,6 +1157,18 @@ async function sendMail(user1, user2, title_1, title_2) {
   });
 }
 
+router.get("/getShiftId/:name" , (req,res) => {
+  Shift.findOne({
+    shiftname : req.params.name
+  })
+  .then((resp) => {
+    res.send(resp)
+  })
+  .catch((err) => {
+    res.send(err)
+  })
+})
+
 //@route  PUT api/shift/updateshift
 //@desc   Update shift by id
 //@access Public
@@ -1244,6 +1256,45 @@ router.post(
 
 module.exports = router;
 
+router.get('/deleteAllNotify' , (req,res) => {
+  Notifications.deleteMany()
+  .then((resp) => {
+    res.send(resp)
+  })
+  .catch((err) => {
+    res.send(err)
+  })
+})
+
+router.get("/getNotification" , (req,res) => {
+  Notifications.find()
+  .then((resp) => {
+    res.send(resp)
+  })
+  .catch((err) => {
+    res.send(err)
+  })
+})
+
+router.get("/findCurrentShiftNotification/:userId/:shiftId", (req,res) => {
+  console.log(req.params.userId)
+  Notifications.find({
+    $and : [ 
+      {
+        shiftFrom : req.params.shiftId
+      },
+      {
+        currentUserId : req.params.userId
+      }
+    ]
+  })
+  .then((resp) => {
+    res.send(resp)
+  })
+  .catch((err) => {
+    res.send(err)
+  })
+})
 
 router.get("/swapShift/:id1/:id2", (req, res, next) => {
   const id1 = req.params.id1;

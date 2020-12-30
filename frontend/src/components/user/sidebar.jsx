@@ -29,11 +29,12 @@ let user1 = ""
 let user2 = ""
 let date = ""
 let shiftname = ""
-
+ let users = []
 const Side = ({ user }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [dsplayMessage, setMessage] = useState([]);
   const [shifts, setShifts] = useState([]);
+  const [notiUser, setNotiUser] = useState([])
   const token = localStorage.usertoken
   const decoded = jwt_decode(token)
   const currentId = decoded.id
@@ -74,9 +75,7 @@ const Side = ({ user }) => {
 		},
   ])
 
-  useEffect(() => {
-    
-  })
+  
   const editingProfile = () => {
     setEditProfile(true)
   }
@@ -182,13 +181,36 @@ const Side = ({ user }) => {
       axios.get("user/getCurrentUserNotificationsFrom/"+currentId).then((res2) => {
       let array = [...res1.data,...res2.data];
       // console.log(currentId)
-      // console.log(array)  
+      
+     console.log(array) 
+     console.log(array[0].currentUserId) 
+     for(let i = 0 ; i < array.length ; i++){
+       users.push(array[i].currentUserId)
+     }
       setMessage(array)
       })})
       .catch((err) => {
         console.log(err)
       })
   }
+
+//   useEffect(() => {
+   
+//     // for(let i = 0 ; i < dsplayMessage.length ; i++){
+//     //   console.log(dsplayMessage[i].currentUserId)
+//     //   users.push(dsplayMessage[i].currentUserId)
+//     // }
+//     let i = 0
+//     console.log(i++)
+//     // setNotiUser(users)
+// },[dsplayMessage])
+
+  // useEffect(() => {
+  //   console.log(notiUser)
+  // },[notiUser])
+
+
+
   const showShiftModal = (message) => {
    console.log(message.key)
    settingIndex(message.key)
@@ -259,14 +281,15 @@ console.log(dsplayMessage[message.key].shiftFrom)
               <div style={{
 					  width: '400',
 					  borderRadius: '6px',
-					  margin: '10px'
+            margin: '10px',
+            textAlign:'end'
 				}}>
                   {
                     message.requesterType === 'Super Admin' ?
                     <div>
                       <div className="row">
                         <div className="col-6">
-                        <Tag color="success">{message.requesterType}</Tag>
+                        <Tag color="success">{"Super Admin"}</Tag>
                         </div>
                         <div className="col-6">
                         <Tag color="default">{message.shiftName}</Tag>
@@ -287,7 +310,7 @@ console.log(dsplayMessage[message.key].shiftFrom)
                           <div>
                             <div className="row">
                               <div className="col-6">
-                              <Tag color="success">{message.requesterType}</Tag>
+                              <Tag color="success">{users[index].firstName+' '+users[index].lastName}</Tag>
                               </div>
                               <div className="col-6">
                               <Tag color="default">{message.shiftName}</Tag><Tag color="default">{message.regDate}</Tag>
@@ -305,7 +328,7 @@ console.log(dsplayMessage[message.key].shiftFrom)
                             message.from === currentId ?
                             <div>
                               <div className="row">
-                                <div className="col-6"><Tag color="green">{message.requesterType}</Tag></div>
+                                <div className="col-6"><Tag color="green">{users[index].firstName+' '+users[index].lastName}</Tag></div>
                                 <div className="col-6"><Tag color="default">{message.shiftName}</Tag><Tag color="default">{message.regDate}</Tag></div>
                               </div>
                               <div className="row">
@@ -318,7 +341,7 @@ console.log(dsplayMessage[message.key].shiftFrom)
                               :
                             <div>
                               <div className="row">
-                                <div className="col-6"><Tag color="green">{message.requesterType}</Tag></div>
+                                <div className="col-6"><Tag color="green">{users[index].firstName+' '+users[index].lastName}</Tag></div>
                                 <div className="col-6"><Tag color="default">{message.shiftName}</Tag><Tag color="default">{message.regDate}</Tag></div>
                                 
                               </div>
@@ -466,7 +489,7 @@ console.log(dsplayMessage[message.key].shiftFrom)
             :
             <span className="ml-2">
               <Dropdown overlay={menu} trigger={["click"]} placement="bottomCenter">
-                <Badge color="geekblue">
+                <Badge color="red">
                 <Avatar
                   style={{
                     backgroundColor: "#001529",

@@ -99,6 +99,7 @@ const SuperAdmin = ({ superAdmin }) => {
 			  {dsplayMessage.map((message,index) => (
 				  <Menu.Item key = {index}>
 				  <div style={{
+					  textAlign:'end'
 				  }} 
 				  >
 							<div>
@@ -320,7 +321,7 @@ const SuperAdmin = ({ superAdmin }) => {
 							<span>
 							<span className="ml-2">
 								<Dropdown overlay={menu} trigger={["click"]} placement="bottomCenter">
-									<Badge color="geekblue" >
+									<Badge color="red" >
 										<Avatar style={{ backgroundColor: "#001529", verticalAlign: "middle", cursor: "pointer" }} size="large">
 											{console.log(superAdmin)}
 											{superAdmin.first_name.split(" ")[0].charAt(0).toUpperCase()+superAdmin.last_name.split(" ")[0].charAt(0).toUpperCase()}

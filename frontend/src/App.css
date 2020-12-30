@@ -35,6 +35,48 @@
     color: white;
 }
 
+.MuiCircularProgress-colorPrimary{
+    animation-timing-function: ease-in-out;
+    color: #282c34;
+}
+
+.spinner{
+    display: flex;
+    justify-content: center;
+    margin-top: inherit;
+}
+.ant-badge-status-red {
+    color: red;
+    background: red !important;
+    animation: blinker 2s linear infinite;
+    width: 10px;
+    height: 10px;
+}
+
+@keyframes blinker {
+    50% {
+      opacity: 0;
+    }
+  }
+  .ant-dropdown-menu-item ant-dropdown-menu-item-only-child{
+      text-align: end;
+  }
+  .loading {
+    position: absolute;
+    top: 50%;
+    left: 45%;
+    /* width: 120px;
+    height: 120px; */
+    /* margin:-60px 0 0 -60px; */
+    -webkit-animation:spin 3s linear infinite;
+    -moz-animation:spin 3s linear infinite;
+    animation:spin 3s ease-out infinite;
+    
+}
+@-moz-keyframes spin { 100% { -moz-transform: rotate(360deg); } }
+@-webkit-keyframes spin { 100% { -webkit-transform: rotate(360deg); } }
+@keyframes spin { 100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); } }
+
 .App-link {
     color: #61dafb;
 }

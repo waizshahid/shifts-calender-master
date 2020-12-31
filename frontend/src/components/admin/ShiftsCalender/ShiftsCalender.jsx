@@ -8,7 +8,10 @@ import CustomeEvents from "./components/customEvents/CustomeEvents";
 import FullCalendar from "@fullcalendar/react";
 import interactionPlugin from "@fullcalendar/interaction"; // needed for dayClick
 import dayGridPlugin from "@fullcalendar/daygrid";
+import Spinner from '../../download.png'
+import CircularProgress from '@material-ui/core/CircularProgress';
 import axios from "axios";
+// import Loader from 'react-loader-spinner'
 import "antd/dist/antd.css";
 import jwt_decode from 'jwt-decode'
 import ShowHistory from './showHistory'
@@ -35,7 +38,7 @@ const ShiftsCalender = () => {
   const [assign, setAssign] = useState("");
   const [shiftType, setShiftType] = useState("");
   const [start, setStart] = useState("");
-  
+  const [loading, setLoading] = useState(true)
   const [filderedData, setFData] = useState([]);
   const [end, setEnd] = useState("");
   const [users, setUsers] = useState([]);
@@ -43,6 +46,7 @@ const ShiftsCalender = () => {
   const [stop, setStop] = useState(0);
   const [adminCheck, setAdminCheck] = useState("")
   const [exchangeVisible, setexchangeVisible] = useState(false);
+  const [createShiftID , setCreateShiftId] = useState("")
   const [id2, setTargetId] = useState("");
   const token = localStorage.admintoken
   const [commentVisible, setcommentVisible] = useState("");
@@ -75,15 +79,32 @@ const ShiftsCalender = () => {
   useEffect((e) => {
     setShiftType(shiftNameUser);
   }, [commentVisible]);
-  const handelShift = (e) => {
+
+
+  
+  const handelShift = async(e) => {
+    setId(e)
     if(e.target.value.substring(e.target.value.indexOf(":") + 1) === 'Request'){
       setRequestEvent(e)
     }else{
-      setcommentVisible(false);
-      setShiftType(e.target.value);
+      await setcommentVisible(false);
+      setComment(" ")
+      // setShiftType(e.target.value);
     }
     
   };
+
+  const setId = (e) => {
+    console.log(e.target.value)
+    axios.get('shift/getShiftId/'+e.target.value)
+    .then((res) => {
+      setCreateShiftId(res.data._id)
+      console.log(res.data)
+    })
+    .catch((err) =>{
+      message.error("Cannot find the shift type from database")
+    })
+  }
   const handleComment = (e) => {
     setComment(e.target.value);
   };
@@ -95,8 +116,9 @@ const ShiftsCalender = () => {
     setEnd(e.target.value);
   };
 
-  const handleOk = (e) => {
-    setVisible(false);
+  const handleOk = async (e) => {
+    await setVisible(false);
+    setLoading(true)
     const userId = assign;
     // const title = shiftType;
     // let color = "";
@@ -111,12 +133,12 @@ const ShiftsCalender = () => {
     //   }
     // }
 
-    for (let i = 0; i < data.length; i++) {
-      if (shiftType === data[i].shiftname) {
-        shiftTypeId = data[i]._id;
-        break;
-      }
-    }
+    // for (let i = 0; i < data.length; i++) {
+    //   if (shiftType === data[i].shiftname) {
+    //     shiftTypeId = data[i]._id;
+    //     break;
+    //   }
+    // }
 
     // for (let i = 0; i < data.length; i++) {
     //   if (shiftType === data[i].shiftname) {
@@ -140,28 +162,27 @@ const ShiftsCalender = () => {
         comment: comment,
         offApprovalStatus: 'Approved',
         requestApprovalStatus: 'approved',
-        shiftTypeId: shiftTypeId,
+        shiftTypeId: createShiftID,
         swapable: swapable,
 
       },
     };
     axios(options).then((res) => {
       
-      setTimeout(() => {
-        message.success("Shift Created Successfully");
-      },1000)
-
-      setTimeout(() => {
-        axios.get("shift/currentShifts").then((res) => {
-          setEvents(res.data.shifts);
+      
+         axios.get("shift/currentShifts").then(async (res) => {
+          await setEvents(res.data.shifts);
+          setLoading(false)
+          message.success("Shift Created Successfully");
         })
         .catch((err) => {
+          setLoading(false)
           console.log(err)
         })
-      },1500)
-      
+       
     })
     .catch((err) => {
+      setLoading(false)
       message.error('Shift creation failed')
     })
   };
@@ -233,6 +254,7 @@ const ShiftsCalender = () => {
       // temp = [...temp1,...temp2]
       // console.log(temp)  
     setEvents(res.data.shifts);
+    setLoading(false)
     
     });
   }
@@ -303,58 +325,42 @@ const settingEvent = (event) => {
     })  
   },[oneEvent])
 
-  const deleteShift = () => {
+ const deleteShift = async () => {
     console.log(currentShift)
     const key = 'updatable';
+    await setLoading(true)
+    await setexchangeVisible(false)
+    await setAdminCheck(false)
     axios.get("shift/deleteThisShift/"+currentShift)
         .then((res1) => {
           console.log(res1)
           console.log(res1.data)
   
-          // message.loading({
-          //       content: 'Deleting...',
-          //       style: {
-          //         marginTop: '20vh',
-          //       },
-              
-          //     });
-          // setTimeout(() => {
-          //   // message.success({ content: 'Loaded!', key, duration: 2 });
-          //   message.success({
-          //     content: res1.data,
-          //     className: 'custom-class',
-          //     // key,
-          //     duration: 2,
-          //     style: {
-          //       marginTop: '20vh',
-          //     },
-          //   })
+          // message.loading({ content: 'Deleting...', key });
+          setTimeout(() => {
             
-          // }, 2000);
-  
-          message.loading({ content: 'Deleting...', key });
-          setTimeout(() => {
-            message.success({ content: res1.data, key, duration: 2 });
-          }, 1000);
-         
-          setTimeout(() => {
-            axios.get("shift/currentShifts").then((res) => {
+            axios.get("shift/currentShifts").then(async (res) => {
               console.log(res.data.shifts);
-              setEvents(res.data.shifts);
               
+              await setEvents(res.data.shifts);
+              
+              setLoading(false)
+              message.success({ content: res1.data, key, duration: 2 });
             })
             .catch((err) =>{
               console.log(err)
             })
-          }, 3000)
+          }, 2000);
+          
+          
+
+          
         })
         .catch((err => {
             console.log(err)
             message.err(err)
         }))
-        setTimeout(() => {
-          setexchangeVisible(false)
-        },3200)
+       
   }
 
   const passNotification = () => {
@@ -482,7 +488,7 @@ const settingEvent = (event) => {
             </option>
             {users.map((dat) => (
               <option value={dat._id} key={dat._id}>
-                {dat.lastName+' '+dat.firstName}
+                {dat.lastName+','+dat.firstName}
               </option>
             ))}
             </select>
@@ -516,37 +522,58 @@ const settingEvent = (event) => {
       </div>
         <br/>
         <br/>
-      <FullCalendar
-        defaultView="dayGridMonth"
-        plugins={[dayGridPlugin, interactionPlugin]}
-        weekNumberCalculation = 'ISO'
-        dateClick={showModal}
-        eventClick={handleEventClick}
-        titleFormat={{ month: 'long', year: 'numeric' }}
-        headerToolbar={{
-          left: '',
-          end:'',
-          center:  'prev,title,next'
-        }}
-        eventOrder="priority"
-        // eventClick={handelModal}
-        events={events}
-      />
+          {
+            loading === false
+            ?
+            <FullCalendar
+            defaultView="dayGridMonth"
+            plugins={[dayGridPlugin, interactionPlugin]}
+            weekNumberCalculation = 'ISO'
+            dateClick={showModal}
+            eventClick={handleEventClick}
+            titleFormat={{ month: 'long', year: 'numeric' }}
+            headerToolbar={{
+              left: '',
+              end:'',
+              center:  'prev,title,next'
+            }}
+            eventOrder="priority"
+            // eventClick={handelModal}
+            events={events}
+          />
+          : 
+          <div className="row" className="spinner">
+            <img src={Spinner}  className="loading" alt="" />
+          </div>
+          }
       <Modal
         title="Swap Request Failed"
         visible={adminCheck}
         maskClosable={true}
         onCancel={() => setAdminCheck(false)}
-        footer={[
-          <Button key="1" onClick={() => setAdminCheck(false)}>Cancel</Button>,
-          
-        ]}
+        footer={null}
       >
         <div>
         <Card type="inner">
             You can't request your own shift
         </Card>
-                  </div></Modal>
+        <br/>
+                  </div>
+
+            
+          <div className="container">
+          <div className="row">
+              <div className="col-3">
+              <Button key="1" danger type="primary" onClick={deleteShift}>Delete</Button>
+              </div>
+              <div className="col-6"></div>
+              <div className="col-3">
+              <Button key="2" onClick={() => setAdminCheck(false)}>Cancel</Button>
+              </div>
+            </div>
+          </div>
+                  
+                  </Modal>
 
       {/* <Calendar
         selectable

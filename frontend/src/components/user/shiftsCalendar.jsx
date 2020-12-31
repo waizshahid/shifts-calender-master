@@ -4,7 +4,9 @@ import interactionPlugin from "@fullcalendar/interaction"; // needed for dayClic
 import dayGridPlugin from "@fullcalendar/daygrid";
 import axios from "axios";
 import { Modal,Card,Select,Button,message } from "antd";
+import Spinner from '../download.png'
 import jwt_decode from 'jwt-decode'
+import CircularProgress from '@material-ui/core/CircularProgress';
 const { Option } = Select;
 let date = "";
 let shiftNameUser = "";
@@ -28,6 +30,7 @@ const ShiftsCalendar = () => {
   const [assign, setAssign] = useState("");
   const [shiftType, setShiftType] = useState("");
   const [adminCheck, setAdminCheck] = useState("")
+  const [loading, setLoading] = useState(false)
   const [start, setStart] = useState("");
   const [end, setEnd] = useState("");
   const [approval, setApproval] = useState("");
@@ -65,14 +68,16 @@ const ShiftsCalendar = () => {
     setcommentVisible("true")
   }
 
-  function setOffEvent(e){
+  async function setOffEvent(e){
     shiftNameUser = e.target.value.substring(0,e.target.value.indexOf(":"))
+    await setComment(" ")
     setcommentVisible("false")
   }
   const handelShift = (e) => {
     if(e.target.value.substring(e.target.value.indexOf(":") + 1) === 'Request'){
         setRequestEvent(e)
     }else{
+        
         setOffEvent(e)
     }
 
@@ -160,26 +165,29 @@ const ShiftsCalendar = () => {
     };
     axios(options)
     .then((res) => {
-      setTimeout(() => {
-        message.success("Shift Created Successfully");
-      },1000)
+      // setTimeout(() => {
+      //   message.success("Shift Created Successfully");
+      // },1000)
 
-      setTimeout(() => {
-        axios.get("shift/currentShifts").then((res) => {
-          setEvents(res.data.shifts);
+        axios.get("shift/currentShifts").then(async (res) => {
+          await setEvents(res.data.shifts);
+          setLoading(false)
+          message.success("Shift Created Successfully");
         })
         .catch((err) => {
+          message.error('Error getting shifts from database')
           console.log(err)
         })
-      },1500)
+    
     })
     .catch((err) => {
       message.error('Shift creation failed')
     })
   }
   
-  const handleOk = (e) => {
-    setVisible(false);
+  const handleOk = async(e) => {
+    await setVisible(false);
+    setLoading(true)
   let tempArray = []
     axios.get("shift/currentShifts")
     .then((res) => {
@@ -336,16 +344,40 @@ const ShiftsCalendar = () => {
         console.log(oneEvent.userId)
         console.log(oneEvent._id)
         console.log(currentId)
-        {
-          oneEvent.userId === undefined && oneEvent._id === undefined ?
-          setexchangeVisible(false)
-          :
-          setexchangeVisible(true)
-        }
         
+            {
+              oneEvent.userId === undefined && oneEvent._id === undefined ?
+              setexchangeVisible(false)
+              :
+              axios.get('shift/findCurrentShiftNotification/'+currentId+'/'+oneEvent._id)
+              .then((res) => {
+                if(res.data.length === 0)
+                {
+                  console.log(res.data.length)
+                  setexchangeVisible(true)
+                }else{
+                  message.error('You have already requested for this shift');
+                }
+              })
+              
+            }
+        
+        
+        // axios.get('shift/findCurrentShiftNotification/'+userId1+'/'+shiftId1)
   },[oneEvent]);
   const settingEvent = (event) => {
     setOneEvent(event)
+  }
+
+  function convertUTCDateToLocalDate(date) {
+    var newDate = new Date(date.getTime()+date.getTimezoneOffset()*60*1000);
+
+    var offset = date.getTimezoneOffset() / 60;
+    var hours = date.getHours();
+
+    newDate.setHours(hours - offset);
+
+    return newDate;   
   }
   const handleEventClick = ({ event, el }) => {
     currentShift = event._def.extendedProps._id
@@ -354,6 +386,9 @@ const ShiftsCalendar = () => {
     name = event.title.substring(event.title.indexOf(":") + 1)
     sName = event.title.substring(0, event.title.indexOf(':'))
     day = new Date(event.startStr).toLocaleString('default', { month: 'short', day: 'numeric', year: 'numeric' })
+    // day = convertUTCDateToLocalDate(new Date(event.startStr))
+    // console.log(day.substring(0, day.indexOf('(')))
+    
     if(event.startStr >= date){
       if(event._def.extendedProps.userId !== currentId){
         settingEvent(event._def.extendedProps)
@@ -413,38 +448,39 @@ const ShiftsCalendar = () => {
     
   }
 
-  const deleteShift = () => {
+  const deleteShift = async () => {
     console.log(currentShift)
   const key = 'updatable';
+  await setAdminCheck(false)
+  await setLoading(true)
+ 
   axios.get("shift/deleteThisShift/"+currentShift)
       .then((res1) => {
         console.log(res1)
         console.log(res1.data)
 
 
-        message.loading({ content: 'Deleting...', key });
-        setTimeout(() => {
-          message.success({ content: res1.data, key, duration: 2 });
-        }, 1000);
+        // message.loading({ content: 'Deleting...', key });
+        // setTimeout(() => {
+        //   message.success({ content: res1.data, key, duration: 2 });
+        // }, 1000);
        
-        setTimeout(() => {
-          axios.get("shift/currentShifts").then((res) => {
+          axios.get("shift/currentShifts").then(async(res) => {
             console.log(res.data.shifts);
-            setEvents(res.data.shifts);
+            await setEvents(res.data.shifts);
+            setLoading(false)
+            message.success({ content: res1.data, key, duration: 2 });
           })
           .catch((err) =>{
             console.log(err)
           })
-        }, 3000)
       })
       .catch((err => {
           console.log(err)
           message.err(err)
       }))
 
-      setTimeout(() => {
-        setAdminCheck(false)
-      },3200)
+    
   }
   return (
     <div>
@@ -471,6 +507,9 @@ const ShiftsCalendar = () => {
           </div>
            </div>
         <br/>
+        {
+            loading === false
+            ?
         <FullCalendar
           defaultView="dayGridMonth"
           plugins={[dayGridPlugin, interactionPlugin]}
@@ -486,6 +525,11 @@ const ShiftsCalendar = () => {
           eventOrder="priority"
           weekNumberCalculation = 'ISO'
         />
+        : 
+          <div className="row" className="spinner">
+            <img src={Spinner}  className="loading" alt="" />
+          </div>
+        }
         <Modal
         title="Create Shift"
         visible={visible}

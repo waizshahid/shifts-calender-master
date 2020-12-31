@@ -89,6 +89,8 @@ router.get("/getCurrentUserNotificationsTo/:id", (req,res) => {
 		.sort({
 			regDate: 1
 		})
+		.populate('currentUserId')
+		.exec()
 	.then((notifcations)=> {
 		res.send(notifcations)
 	})
@@ -104,6 +106,8 @@ router.get("/getCurrentUserNotificationsFrom/:id", (req,res) => {
 		.sort({
 			regDate: 1
 		})
+		.populate('currentUserId')
+		.exec()
 	.then((notifcations)=> {
 		res.send(notifcations)
 	})
@@ -387,6 +391,17 @@ router.delete("/deleteAndUpdateUsers", (req, res) => {
 
 	  
   });
+
+
+  router.get("/getCurrenUserNotificationName/:id", (req,res) => {
+	  User.findById(req.params.id)
+	  .then((resp) => {
+		  res.send(resp)
+	  })
+	  .catch((err) => {
+		  res.send(err)
+	  })
+  })
 
 //@route  DELETE api/user/deleteuser
 //@desc   Delete user by id

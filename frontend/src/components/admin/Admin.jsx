@@ -184,7 +184,8 @@ const Admin = ({ admin }) => {
 				  <div style={{
 					  width: '400',
 					  borderRadius: '6px',
-					  marginRight: '10px'
+					  marginRight: '10px',
+					  textAlign:'end'
 				  }} 
 				  >
 					  {
@@ -364,7 +365,7 @@ const Admin = ({ admin }) => {
 						:
 						<span>
 						<Dropdown overlay={menu} trigger={["click"]} placement="bottomCenter">
-							<Badge color="geekblue">
+							<Badge color="red">
 							<Avatar style={{ backgroundColor: "#001529", verticalAlign: "middle", cursor: 'pointer' }} size="large">
 									{console.log(admin)}
 									{admin.firstName.split(" ")[0].charAt(0).toUpperCase()+admin.lastName.split(" ")[0].charAt(0).toUpperCase()}

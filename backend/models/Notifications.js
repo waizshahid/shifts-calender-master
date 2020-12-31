@@ -2,7 +2,9 @@ const mongoose = require("mongoose");
 
 const notificationSchema = new mongoose.Schema({
 	currentUserId: {
-		type: String
+		type: mongoose.Schema.Types.ObjectId,
+		required: true,
+		ref: 'users'
 	},
 	adminresponse: {
 		type:String,  

@@ -115,8 +115,11 @@ const Admin = ({ admin }) => {
 		.then((res1) => {
 			let array = []
 			for(let i = 0 ; i < res1.data.length ; i++){
-				if(res1.data[i].requesterType === 'Admin' || res1.data[i].requesterType === 'Super Admin' || res1.data[i].requesterType === 'User')
+				if(res1.data[i].requesterType === 'Super Admin'){
 					array.push(res1.data[i])
+				}else if(res1.data[i].requesterType === 'Admin' && res1.data[i].currentUserId === currentId){
+					array.push(res1.data[i])
+				}
 			}
 			console.log(array)
 			setMessage(array)
@@ -191,8 +194,20 @@ const Admin = ({ admin }) => {
 					  {
 						message.requesterType === 'Super Admin' ?
 							<div>
-							<Tag color="success">{message.requesterType}</Tag> <br/>{message.message}
-							<Tag color="default">{message.regDate}</Tag>
+								<div className="row">
+									<div className="col-8" style={{
+										display: 'flex'
+									}}>
+										<Tag color="success">{message.requesterType}</Tag> 
+									</div>
+									<div className="col-4">
+									<Tag color="default">{message.regDate}</Tag>
+									</div>
+								</div>
+								<div className="row">
+								{message.message}
+								</div>
+							
 							</div>
 							:
 							message.requesterType === 'Admin'
@@ -203,12 +218,16 @@ const Admin = ({ admin }) => {
 									?
 									<div>
 										<div className="row">
-											<div className="col-8">
-											<Tag color="success">{message.requesterType}</Tag> 
+											<div className="col-8" style={{
+											display : 'flex'
+										}}>
+											<Tag color="success">{"Mine"}</Tag> 
 											</div>
 											<div className="col-4"><Tag color="default">{message.regDate}</Tag></div>
 										</div>
+									<div className="row">
 									{'Your call for the shift named '+ message.shiftName + ' has been swapped'}
+									</div>
 									
 									</div>
 									:
@@ -220,7 +239,9 @@ const Admin = ({ admin }) => {
 											<div className="col-2"><Tag color="default">{message.shiftName}</Tag></div>
 											<div className="col-2"><Tag color="default">{message.regDate}</Tag></div>
 										</div>
+										<div className="row">
 										{message.message}
+										</div>
 									</div>
 								}
 							</div>

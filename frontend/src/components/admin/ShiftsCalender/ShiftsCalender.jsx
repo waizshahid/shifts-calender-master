@@ -29,6 +29,7 @@ let title= ""
 let currentShift = ""
 let shiftUserName = ""
 let shiftNameUser = ""
+let users = []
 const ShiftsCalender = () => {
   const [visible, setVisible] = useState(false);
   const [data, setData] = useState([]);
@@ -613,7 +614,7 @@ const settingEvent = (event) => {
           </option>
           {users.map((dat) => (
             <option value={dat._id} key={dat._id}>
-              {dat.lastName+' '+dat.firstName}
+              {dat.lastName+','+dat.firstName}
             </option>
           ))}
         </select>

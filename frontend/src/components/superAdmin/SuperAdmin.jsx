@@ -104,12 +104,19 @@ const SuperAdmin = ({ superAdmin }) => {
 				  >
 							<div>
 							<div className="row">
-				  					<div className="col-12"><Tag color="success">{message.requesterType}</Tag></div>
+				  					<div className="col-8" style={{
+										  display : 'flex'
+									  }}>
+										  <Tag color="success">{message.requesterType}</Tag>
+									</div>
+									<div className="col-4">
+										<Tag color="default">{message.regDate}</Tag>
+									</div>
 									  
 							</div>
 							  {/* {message.adminresponse} */}
 							  {'Your call for the shift named '+ message.shiftName + ' has been swapped'}
-							  <Tag color="default">{message.regDate}</Tag>
+							  
 							</div>
 							
 						</div> 

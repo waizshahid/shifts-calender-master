@@ -69,7 +69,13 @@ router.get("/getusers", (req, res) => {
 	})
 });
 router.get("/getNotifcations", (req, res) => {
-	Notification.find().then((allUsers) => {
+	Notification.find()
+	.sort({
+		regDate: 1
+	})
+	// .populate('currentUserId')
+	// .exec()
+	.then((allUsers) => {
 		res.send(allUsers);
 	});
 });
@@ -80,6 +86,22 @@ router.get("/getuser", (req, res) => {
 		res.send(user);
 	});
 });
+
+router.get("/getCurrentNotifications/:id" , (req,res) => {
+	const Id = req.params.id;
+	Notification.find({
+		currentUserId : Id
+	})
+	.sort({
+		regDate: 1
+	})
+	.then((notifcations)=> {
+		res.send(notifcations)
+	})
+	.catch((err)=> {
+		console.log(err);
+	})
+})
 
 router.get("/getCurrentUserNotificationsTo/:id", (req,res) => {
 	const Id = req.params.id;

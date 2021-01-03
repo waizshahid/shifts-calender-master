@@ -501,6 +501,13 @@ const updateShift = (e) => {
         defaultView="dayGridMonth"
         plugins={[dayGridPlugin, interactionPlugin]}
         dateClick={showModal}
+        // dateC
+        // // navLinkDayClick={showModal}
+        // navLinkDayClick={function(date, jsEvent) {
+        //   console.log('day', date.toISOString());
+        //   console.log('coords', jsEvent.pageX, jsEvent.pageY);
+        // }}
+        // allDay={false}
         weekNumberCalculation= 'ISO'
         eventOrder="priority"
         eventClick={handleEventClick}

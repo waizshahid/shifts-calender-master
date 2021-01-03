@@ -308,7 +308,7 @@ router.get('/getEventsBetweenTwoDates/:start/:end', (req, res) => {
             return {
               // _id: shift._id,
               Date: shift.start,
-              // shiftname: shift.shiftTypeId.shiftname,
+              // // shiftname: shift.shiftTypeId.shiftname,
               Request: shift.userId.username
             }
           } else;;

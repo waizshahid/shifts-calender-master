@@ -53,6 +53,21 @@
     height: 10px;
 }
 
+.buttonsetting {
+    margin-top: 20px;
+}
+
+.textsetting {
+    padding-top: 11px;
+    margin-left: 18px;
+}
+
+.button2setting{
+    margin-right: 11px;
+    margin-left: 20px;
+}
+
+.rejectbutton {margin-left: 32px;}
 @keyframes blinker {
     50% {
       opacity: 0;

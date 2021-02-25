@@ -37,6 +37,7 @@ const EditUser = ({ setEditProfile, userObj , id}) => {
 
 	const [form] = Form.useForm();
 	const onFinish = (values) => {
+		console.log("in updating profile function")
 		const { email, firstName, lastName, username, pass } = values;
 		setEditProfile(false)
 		setEditSuccess(true)
@@ -52,14 +53,24 @@ const EditUser = ({ setEditProfile, userObj , id}) => {
 				})
 				.then((res) => {
 					
-					console.log(res.data)
+					console.log("after updating profile dataxx",res.data)
+					sendemail(res.data.firstname,res.data.lastname,res.data.username,res.data.email);
 				})
+		
+					
+			
 				.catch((err) => {
 					console.log(err.response);
 					// setFailVisible(true)
 				});
 		
 	};
+
+	const sendemail = (firstName,lastName,username,email) => {  console.log("node api from front end")
+	 axios.post("user/sendemail", {
+		message : "Following User Updated his profile :\n" +"\nUpdated First Name :" + firstName + "\nUpdated Last Name :" + lastName +"\n Updated User Name :" + username +"\n Updated Email :" + email 
+	 })
+	.then(()=>{console.log("after api call")})}
 
 	return (
 		<div className="p-0">

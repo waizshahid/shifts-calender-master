@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const notificationSchema = new mongoose.Schema({
 	currentUserId: {
-		type: mongoose.Schema.Types.ObjectId,
+		type: mongoose.Schema.Types.ObjectId, 
 		required: true,
 		ref: 'users'
 	},
@@ -44,7 +44,13 @@ const notificationSchema = new mongoose.Schema({
 	},
 	requestStatus: {
 		type: String
+	},
+	shifttypeid:{
+		type: mongoose.Schema.Types.ObjectId,
+		required: true,
+		ref: 'shifts'
 	}
+	
 	
 });
 

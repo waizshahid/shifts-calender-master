@@ -13,6 +13,7 @@ var nodemailer = require("nodemailer");
 var bodyParser = require('body-parser');
 var multer = require('multer');
 const { eventNames } = require("../models/Shift");
+const { assign } = require("nodemailer/lib/shared");
 router.use(bodyParser.json());
 //@route  GET api/shift/getshift
 //@desc   Get all shift
@@ -175,10 +176,6 @@ router.post("/createShiftsFromExcel", (req, res) => {
   res.status(201).json({
     message: "users added successfully"
   })
-
-
-
-
 
 })
 
@@ -897,13 +894,62 @@ router.get("/getShiftName/:id", (req, res) => {
       })
     })
 })
+router.get("/pendingShifts/:myid", (req, res) => {
+  console.log("req.params in api",req.params.myid)
+  Notifications.find({message: "One of the User wants to swap his shift with you. Click for the details", to:req.params.myid})
+  .populate('from')
+  .populate('shifttypeid')
+  .populate('shiftFrom')
+  .select({
+    _id:0,
+    shiftFrom: 1,
+  })
+  .then((pendings) => {
+    res.status(200).json({
+      pendings: pendings.map(pending => {
+        return {
+          _id: pending.shiftFrom._id,
+          start: pending.shiftFrom.start,
+          priority: pending.shifttypeid.priority,
+          end: pending.shiftFrom.end,
+          shiftname: pending.shifttypeid.shiftname,
+          requestApprovalStatus: pending.shiftFrom.requestApprovalStatus,
+          title: pending.shifttypeid.shiftname + ":" + " " + pending.from.lastName + ' (' + pending.shiftFrom.comment.substring(0, 14) + '...' + ')',
+          color: pending.shifttypeid.color,
+          swapable: pending.shiftFrom.swapable,
+          userId: pending.from._id,
+          userType: pending.from.type,
+          comment: pending.shiftFrom.comment,
+          offApprovalStatus: pending.shiftFrom.offApprovalStatus
+        }
 
+        
+    // const fetchedGames = [];
+    // for (let key in pending) {
+    // fetchedGames.push(pending[key].shiftFrom);
+    //  }
+    //  let assignarray = []
+    //  res.status(200).json({
+    //    pending : pending.map(pending => {createShift.findOne(pending.shiftFrom)
+    //     .then(
+    //       (res)=>{ assignarray.push(res)
+    //     })
+    //     .then(
+    //       () =>{console.log("assign",assignarray)
+         }
+         )
+       })
+     
+    })
+  
+})
 
 router.get("/currentShifts", (req, res) => {
   console.log('shifts')
   createShift.find()
     .populate('userId')
     .populate('shiftTypeId')
+    
     .sort({ start: -1 })
     .exec()
     .then(shifts => {
@@ -1349,3 +1395,5 @@ router.get("/swapShift/:id1/:id2", (req, res, next) => {
 
 
 })
+
+module.exports = router

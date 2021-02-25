@@ -443,6 +443,7 @@ class uploadfile extends Component {
                                   <th>Day</th>
                                   <th>4th</th>
                                   <th>Off</th>
+                                  <th>Request</th>
                                  </tr>
                               </thead>       
                                         { this.state.exportExcelArr.map(value => {
@@ -459,6 +460,7 @@ class uploadfile extends Component {
                                               <td>{value.Day}</td>
                                               <td>{value['4th']}</td>
                                               <td>{value.Off}</td>
+                                              <td> {value.Request} </td>
                                           </tr>
                                             )
                                         })}

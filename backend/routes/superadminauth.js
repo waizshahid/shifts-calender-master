@@ -13,7 +13,7 @@ const User = require("../models/User");
 //@desc   Register New Super Admin
 //@access Public
 
-router.post(
+router.post(  
     "/register", [
         check("username", "Please enter a valid username.").not().isEmpty(),
         check("firstName", "Please enter a valid firstname.").not().isEmpty(),

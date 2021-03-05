@@ -1,47 +1,43 @@
 function Workbook() {
-    if (!(this instanceof Workbook))
-        return new Workbook()
+	if (!(this instanceof Workbook)) return new Workbook();
 
-    this.SheetNames = []
+	this.SheetNames = [];
 
-    this.Sheets = {}
+	this.Sheets = {};
 }
 
 const download = (url, name) => {
-    let a = document.createElement('a')
-    a.href = url
-    a.download = name
-    a.click()
+	let a = document.createElement('a');
+	a.href = url;
+	a.download = name;
+	a.click();
 
-    window.URL.revokeObjectURL(url)
-}
-
+	window.URL.revokeObjectURL(url);
+};
 
 function s2ab(s) {
-    const buf = new ArrayBuffer(s.length)
+	const buf = new ArrayBuffer(s.length);
 
-    const view = new Uint8Array(buf)
+	const view = new Uint8Array(buf);
 
-    for (let i=0; i !== s.length; ++i)
-        view[i] = s.charCodeAt(i) & 0xFF
+	for (let i = 0; i !== s.length; ++i) view[i] = s.charCodeAt(i) & 0xff;
 
-    return buf
+	return buf;
 }
 
-export default  data => {
-    import('xlsx').then(XLSX => {
-        const wb = new Workbook()
-        const ws = XLSX.utils.json_to_sheet(data)
+export default (data) => {
+	import('xlsx').then((XLSX) => {
+		console.log(data);
+		const wb = new Workbook();
+		const ws = XLSX.utils.json_to_sheet(data);
 
-        wb.SheetNames.push('')
-        wb.Sheets[''] = ws
+		wb.SheetNames.push('');
+		wb.Sheets[''] = ws;
 
+		const wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: true, type: 'binary' });
 
-        const wbout = XLSX.write(wb, {bookType:'xlsx', bookSST:true, type: 'binary'})
+		let url = window.URL.createObjectURL(new Blob([s2ab(wbout)], { type: 'application/octet-stream' }));
 
-
-        let url = window.URL.createObjectURL(new Blob([s2ab(wbout)], {type:'application/octet-stream'}))
-
-        download(url, 'import.xlsx')
-    })
-}
+		download(url, 'import.xlsx');
+	});
+};

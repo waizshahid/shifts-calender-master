@@ -1,87 +1,81 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const bcrypt = require("bcrypt");
-const gravatar = require("gravatar");
-const userauth = require("../middleware/userauth");
-const { check, validationResult } = require("express-validator");
-const User = require("../models/User");
-const createShift = require("../models/createShift");
-const Notification = require("../models/Notifications");
-const History = require("../models/notificationsHistory")
-const Admin = require("../models/Admin");
-const SuperAdmin = require("../models/SuperAdmin")
+const bcrypt = require('bcrypt');
+const gravatar = require('gravatar');
+const userauth = require('../middleware/userauth');
+const { check, validationResult } = require('express-validator');
+const User = require('../models/User');
+const createShift = require('../models/createShift');
+const Notification = require('../models/Notifications');
+const History = require('../models/notificationsHistory');
+const Admin = require('../models/Admin');
+const SuperAdmin = require('../models/SuperAdmin');
 const saltRounds = 10;
-const nodemailer = require("nodemailer");
+const nodemailer = require('nodemailer');
 //@route  GET api/user/test
 //@desc   Test User Route
 //@access Private
-router.get("/test", userauth, (req, res) => {
-	res.send("User works!");
+router.get('/test', userauth, (req, res) => {
+	res.send('User works!');
 });
 
 //@route  GET api/user
 //@desc   Test Loggen In User Data
 //@access Private
-router.get("/", userauth, async (req, res) => {
+router.get('/', userauth, async (req, res) => {
 	try {
 		User.findById(req.user.id).then((user) => {
 			res.json(user);
 		});
 	} catch (err) {
 		console.log(err.message);
-		res.status(500).send("Server Error");
+		res.status(500).send('Server Error');
 	}
 });
 
-
-router.put("/updatingshift" , async(req,res) => {
-	console.log("iddsss 111" ,req.body.id )
-	console.log("idsss in " , req.body.shiftid)
+router.put('/updatingshift', async (req, res) => {
+	console.log('iddsss 111', req.body.id);
+	console.log('idsss in ', req.body.shiftid);
 	try {
-		createShift.findByIdAndUpdate(req.body.id,{shiftTypeId:req.body.shiftid})
-		.then((data) => {
-			console.log("afterupdate", data);
-			res.send( "confirm" );
+		createShift.findByIdAndUpdate(req.body.id, { shiftTypeId: req.body.shiftid }).then((data) => {
+			console.log('afterupdate', data);
+			res.send('confirm');
 			// const token = jwt.sign({userid: User._id}, jwtkey);
 			// res.send({token});
-		  })
+		});
 	} catch (error) {
-		res.send("error while updating")
+		res.send('error while updating');
 	}
-})
+});
 
-
-router.put("/editshift12" , async(req,res) => {
+router.put('/editshift12', async (req, res) => {
 	try {
-		createShift.findByIdAndUpdate(req.body.id,{shiftTypeId:req.body.shiftid})
-		.then((data) => {
-			console.log("afterupdate", data);
-			res.send( "confirm" );
+		createShift.findByIdAndUpdate(req.body.id, { shiftTypeId: req.body.shiftid }).then((data) => {
+			console.log('afterupdate', data);
+			res.send('confirm');
 			// const token = jwt.sign({userid: User._id}, jwtkey);
 			// res.send({token});
-		  })
+		});
 	} catch (error) {
-		res.send("error while updating")
+		res.send('error while updating');
 	}
-})
+});
 
-
-
-router.post("/sendemail", async (req, res) => {
-	console.log("nodemailer api from front end")
-let message = req.body.message
+router.post('/sendemail', async (req, res) => {
+	console.log('nodemailer api from front end');
+	let message = req.body.message;
 	// create reusable transporter object using the default SMTP transport
 	let transporter = nodemailer.createTransport({
-		host: "smtp.gmail.com",
+		host: 'smtp.gmail.com',
 		port: 465,
 		secure: true,
-		service: "gmail", // true for 465, false for other ports
+		service: 'gmail', // true for 465, false for other ports
 
 		ignoreTLS: false,
 		secure: false,
 		auth: {
-			user: "hassanahmedleo786@gmail.com", // generated ethereal user
-			pass: "hassanjamil786", // generated ethereal password
+			user: 'softthrivetest@gmail.com', // generated ethereal user
+			pass: 'strong12345678', // generated ethereal password
 		},
 		tls: {
 			// do not fail on invalid certs
@@ -90,22 +84,22 @@ let message = req.body.message
 	});
 
 	const mesage = {
-		from: "smartautomechanicfinder@gmail.com", // sender address
-		to: "hassanahmedleo786@gmail.com", // list of receivers
-		subject: "Information updated", // Subject line
+		from: 'smartautomechanicfinder@gmail.com', // sender address
+		to: 'softthrivetest@gmail.com', // list of receivers
+		subject: 'Information updated', // Subject line
 		text: message, // plain text body
 	};
 
 	// send mail with defined transport object
 	let info = await transporter.sendMail(mesage);
 
-	console.log("Message sent: %s", info.messageId);
+	console.log('Message sent: %s', info.messageId);
 	// Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
 
 	// Preview only available when sending through an Ethereal account
-	console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+	console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
 	// Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
-	res.send("Email Sent");
+	res.send('Email Sent');
 });
 
 //@route  GET api/user/getusers
@@ -119,34 +113,34 @@ let message = req.body.message
 // 		});
 // 	});
 // });
-router.get("/getlastNameUser", (req, res) => {
+router.get('/getlastNameUser', (req, res) => {
 	User.find()
 		.sort({
-			lastName: 1
+			lastName: 1,
 		})
 		.then((allUsers) => {
 			res.send(allUsers);
 		})
 		.catch((err) => {
-			res.send(err)
-		})
+			res.send(err);
+		});
 });
-router.get("/getusers", (req, res) => {
+router.get('/getusers', (req, res) => {
 	User.find()
 		.sort({
-			lastName: 1
+			lastName: 1,
 		})
 		.then((allUsers) => {
 			res.send(allUsers);
 		})
 		.catch((err) => {
-			res.send(err)
-		})
+			res.send(err);
+		});
 });
-router.get("/getNotifcations", (req, res) => {
+router.get('/getNotifcations', (req, res) => {
 	Notification.find()
 		.sort({
-			regDate: 1
+			regDate: 1,
 		})
 		// .populate('currentUserId')
 		// .exec()
@@ -154,7 +148,7 @@ router.get("/getNotifcations", (req, res) => {
 			res.send(allUsers);
 		});
 });
-router.get("/getuser", (req, res) => {
+router.get('/getuser', (req, res) => {
 	const { email, pass } = req.body;
 	console.log(email);
 	User.find({ email: email }).then((user) => {
@@ -162,128 +156,122 @@ router.get("/getuser", (req, res) => {
 	});
 });
 
-router.get("/getCurrentNotifications/:id", (req, res) => {
+router.get('/getCurrentNotifications/:id', (req, res) => {
 	const Id = req.params.id;
 	Notification.find({
-		currentUserId: Id
+		currentUserId: Id,
 	})
 		.sort({
-			regDate: 1
+			regDate: 1,
 		})
 		.then((notifcations) => {
-			res.send(notifcations)
+			res.send(notifcations);
 		})
 		.catch((err) => {
 			console.log(err);
-		})
-})
-
-router.get("/getCurrentUserNotificationsTo/:id", (req, res) => {
-	const Id = req.params.id;
-	Notification.find({
-		to: Id
-	})
-		.sort({
-			regDate: 1
-		})
-		.populate('currentUserId')
-		.exec()
-		.then((notifcations) => {
-			res.send(notifcations)
-		})
-		.catch((err) => {
-			console.log(err);
-		})
-})
-router.get("/getCurrentUserNotificationsFrom/:id", (req, res) => {
-	const Id = req.params.id;
-	Notification.find({
-		from: Id
-	})
-		.sort({
-			regDate: 1
-		})
-		.populate('currentUserId')
-		.exec()
-		.then((notifcations) => {
-			res.send(notifcations)
-		})
-		.catch((err) => {
-			console.log(err);
-		})
-})
-
-router.delete("/deleteAllNotifications", (req, res) => {
-	Notification.remove().then((resp) => {
-		console.log(resp);
-		res.send(resp);
-	})
-		.catch((err) => {
-			console.log(err)
-		})
-});
-
-router.put(
-	"/updateResponses/:id",
-	async (req, res) => {
-		try {
-			let newPerson = {
-				message: 'Your shift has been exchanged. View Details',
-				messageFrom: 'Your swap request for the shift has been accepted'
-			};
-
-			Notification.update({ _id: req.params.id }, { $set: newPerson })
-				.then((resp) => {
-					res.send(resp);
-				})
-				.catch((err) => {
-					res.send(err)
-				})
-		} catch (err) {
-			console.error(err.message);
-			res.status(500).send("Server error");
-		}
-	}
-);
-
-router.put(
-	"/updateResponsesandDelete/:id",
-	async (req, res) => {
-		try {
-			let newPerson = {
-				message: 'Your rejection response has been sent to the swap requester',
-				messageFrom: 'Your swap request for the shift has been rejected'
-			};
-
-			Notification.update({ _id: req.params.id }, { $set: newPerson }).then((resp) => {
-				console.log(resp);
-			});
-		} catch (err) {
-			console.error(err.message);
-			res.status(500).send("Server error");
-		}
-	}
-);
-
-router.delete("/deleteCurrentNotification/:id", (req, res) => {
-	Notification.findByIdAndDelete({ _id: req.params.id })
-		.then((resp) => {
-			console.log(resp);
-			res.send(resp);
 		});
 });
 
-router.get('/getShiftTo/:id', (req, res) => {
-	const userId = req.params.id
-	User.find({
-		_id: userId
+router.get('/getCurrentUserNotificationsTo/:id', (req, res) => {
+	const Id = req.params.id;
+	Notification.find({
+		to: Id,
 	})
-		.then((resp) => {
-			res.send(resp)
+		.sort({
+			regDate: 1,
+		})
+		.populate('currentUserId')
+		.exec()
+		.then((notifcations) => {
+			res.send(notifcations);
 		})
 		.catch((err) => {
-			console.log(err)
+			console.log(err);
+		});
+});
+router.get('/getCurrentUserNotificationsFrom/:id', (req, res) => {
+	const Id = req.params.id;
+	Notification.find({
+		from: Id,
+	})
+		.sort({
+			regDate: 1,
 		})
+		.populate('currentUserId')
+		.exec()
+		.then((notifcations) => {
+			res.send(notifcations);
+		})
+		.catch((err) => {
+			console.log(err);
+		});
+});
+
+router.delete('/deleteAllNotifications', (req, res) => {
+	Notification.remove()
+		.then((resp) => {
+			console.log(resp);
+			res.send(resp);
+		})
+		.catch((err) => {
+			console.log(err);
+		});
+});
+
+router.put('/updateResponses/:id', async (req, res) => {
+	try {
+		let newPerson = {
+			message: 'Your shift has been exchanged. View Details',
+			messageFrom: 'Your swap request for the shift has been accepted',
+		};
+
+		Notification.update({ _id: req.params.id }, { $set: newPerson })
+			.then((resp) => {
+				res.send(resp);
+			})
+			.catch((err) => {
+				res.send(err);
+			});
+	} catch (err) {
+		console.error(err.message);
+		res.status(500).send('Server error');
+	}
+});
+
+router.put('/updateResponsesandDelete/:id', async (req, res) => {
+	try {
+		let newPerson = {
+			message: 'Your rejection response has been sent to the swap requester',
+			messageFrom: 'Your swap request for the shift has been rejected',
+		};
+
+		Notification.update({ _id: req.params.id }, { $set: newPerson }).then((resp) => {
+			console.log(resp);
+		});
+	} catch (err) {
+		console.error(err.message);
+		res.status(500).send('Server error');
+	}
+});
+
+router.delete('/deleteCurrentNotification/:id', (req, res) => {
+	Notification.findByIdAndDelete({ _id: req.params.id }).then((resp) => {
+		console.log(resp);
+		res.send(resp);
+	});
+});
+
+router.get('/getShiftTo/:id', (req, res) => {
+	const userId = req.params.id;
+	User.find({
+		_id: userId,
+	})
+		.then((resp) => {
+			res.send(resp);
+		})
+		.catch((err) => {
+			console.log(err);
+		});
 
 	//   Notification.find({
 	// 	  _id: req.params.id
@@ -320,63 +308,60 @@ router.get('/getShiftTo/:id', (req, res) => {
 	//         error : err
 	//       })
 	// })
-
-
-})
+});
 
 router.get('/getShiftFrom/:id', (req, res) => {
-	createShift.find({
-		_id: req.params.id
-	})
+	createShift
+		.find({
+			_id: req.params.id,
+		})
 		.sort({ _id: -1 })
 		.populate('userId')
 		.populate('shiftTypeId')
 		.exec()
-		.then(shifts => {
+		.then((shifts) => {
 			res.status(200).json({
-				shifts: shifts.map(shift => {
+				shifts: shifts.map((shift) => {
 					return {
 						_id: shift._id,
 						start: shift.start,
 						priority: shift.shiftTypeId.priority,
 						//shiftTypeId: shift.shiftTypeId,
 						end: shift.end,
-						title: shift.userId.firstName + " " + shift.userId.lastName,
+						title: shift.userId.firstName + ' ' + shift.userId.lastName,
 						color: shift.shiftTypeId.color,
 						swapable: shift.swapable,
 						shifname: shift.shiftTypeId.shiftname,
 						comment: shift.comment,
-						status: shift.offApprovalStatus
-					}
-
-				})
-			})
+						status: shift.offApprovalStatus,
+					};
+				}),
+			});
 		})
-		.catch(err => {
+		.catch((err) => {
 			res.status(500).json({
-				error: err
-			})
-		})
-})
+				error: err,
+			});
+		});
+});
 
-router.get("/getSpecificNotification/:id", (req, res) => {
+router.get('/getSpecificNotification/:id', (req, res) => {
 	Notification.find({
-		_id: req.params.id
+		_id: req.params.id,
 	})
-		.populate("to")
-		.populate("from")
-		.populate("shiftFrom")
+		.populate('to')
+		.populate('from')
+		.populate('shiftFrom')
 		.exec()
 		// .then((notifions) => {
 		// 	res.send(notifions)
 		// })
 		.then((shifts) => {
-
 			// console.log(shifts);
 
 			// userId, start, end, title, color
 			res.status(200).json({
-				shifts: shifts.map(shift => {
+				shifts: shifts.map((shift) => {
 					return {
 						_id: shift._id,
 						shiftId: shift.shiftFrom._id,
@@ -387,10 +372,9 @@ router.get("/getSpecificNotification/:id", (req, res) => {
 						user2Email: shift.to.email,
 						user1Type: shift.from.type,
 						user2Type: shift.to.type,
-					}
-
-				})
-			})
+					};
+				}),
+			});
 		})
 		// .then(notifications => {
 		// 	res.status(200).json({
@@ -412,14 +396,12 @@ router.get("/getSpecificNotification/:id", (req, res) => {
 
 		// })
 
-		.catch(err => {
+		.catch((err) => {
 			res.status(500).json({
-				error: err
-			})
-		})
-
+				error: err,
+			});
+		});
 });
-
 
 // router.get('/getSuperNotifcations/:id', (req,res)=> {
 // 	console.log(req.params.id)
@@ -436,22 +418,21 @@ router.get("/getSpecificNotification/:id", (req, res) => {
 // })
 // })
 
-
 router.get('/AllNotifications', (req, res) => {
 	Notification.find()
 		.sort({ _id: -1 })
 		.then((resp) => {
 			//   console.log(res)
-			res.send(resp)
+			res.send(resp);
 		})
 		.catch((err) => {
-			res.send(err)
-		})
-})
+			res.send(err);
+		});
+});
 
-router.post("/userNotification", (req, res) => {
+router.post('/userNotification', (req, res) => {
 	console.log(req.body);
-	if (req.body === null) res.status(400).send("Bad Request");
+	if (req.body === null) res.status(400).send('Bad Request');
 	let newNotification = new Notification({
 		shiftFrom: req.body.shiftId1,
 		currentUserId: req.body.currentUserId,
@@ -464,46 +445,41 @@ router.post("/userNotification", (req, res) => {
 		messageFrom: req.body.messageFrom,
 		shiftName: req.body.shiftName,
 		requestStatus: req.body.requestStatus,
-		 shifttypeid:req.body.shiftIdforn
+		shifttypeid: req.body.shiftIdforn,
 	});
 
-	console.log("Notification created as: " + newNotification)
+	console.log('Notification created as: ' + newNotification);
 	newNotification
 		.save()
 		.then((newShift) => res.send(newShift))
 		.catch((err) => console.log(err));
 });
 
-router.delete("/deleteAndUpdateUsers", (req, res) => {
+router.delete('/deleteAndUpdateUsers', (req, res) => {
 	User.remove()
 		.then((resp) => {
 			console.log('All Users and Admins deleted');
-			res.send(resp)
+			res.send(resp);
 		})
 		.catch((err) => {
-			console.log('User delete failed: ' + err)
-		}
-		)
-
-
-
+			console.log('User delete failed: ' + err);
+		});
 });
 
-
-router.get("/getCurrenUserNotificationName/:id", (req, res) => {
+router.get('/getCurrenUserNotificationName/:id', (req, res) => {
 	User.findById(req.params.id)
 		.then((resp) => {
-			res.send(resp)
+			res.send(resp);
 		})
 		.catch((err) => {
-			res.send(err)
-		})
-})
+			res.send(err);
+		});
+});
 
 //@route  DELETE api/user/deleteuser
 //@desc   Delete user by id
 //@access Public
-router.delete("/deleteuser", (req, res) => {
+router.delete('/deleteuser', (req, res) => {
 	User.findOneAndDelete({ _id: req.query.id })
 		.then((resp) => {
 			console.log(resp);
@@ -517,29 +493,29 @@ router.delete("/deleteuser", (req, res) => {
 		});
 });
 
-
-router.get("/getUserDetail/:id", (req, res) => {
-	const userDate = req.params.id
+router.get('/getUserDetail/:id', (req, res) => {
+	const userDate = req.params.id;
 	User.findOne({
-		_id: userDate
+		_id: userDate,
 	})
 		.then((resp) => {
-			res.send(resp)
+			res.send(resp);
 		})
 		.catch((err) => {
-			console.log(err)
-		})
-})
+			console.log(err);
+		});
+});
 
-router.get("/deleteShiftForOneUser/:id", (req, res) => {
-	const removedUserId = req.params.id
-	createShift.deleteMany({ userId: removedUserId })
+router.get('/deleteShiftForOneUser/:id', (req, res) => {
+	const removedUserId = req.params.id;
+	createShift
+		.deleteMany({ userId: removedUserId })
 		.then((resp) => {
-			res.send(resp)
+			res.send(resp);
 		})
 		.catch((err) => {
-			res.send(err)
-		})
+			res.send(err);
+		});
 	// createShift.findByIdAndDelete({ userId: req.params.id })
 	// 	.then((resp) => {
 	// 		console.log(resp);
@@ -552,13 +528,13 @@ router.get("/deleteShiftForOneUser/:id", (req, res) => {
 });
 
 router.put(
-	"/updateMe",
+	'/updateMe',
 	[
-		check("email", "Please enter a valid email.").not().isEmpty(),
-		check("firstName", "Please enter a first name.").not().isEmpty(),
-		check("lastName", "Please enter a last name.").not().isEmpty(),
-		check("username", "Please enter a Username.").not().isEmpty(),
-		check("pass", "Please enter a Password.").not().isEmpty(),
+		check('email', 'Please enter a valid email.').not().isEmpty(),
+		check('firstName', 'Please enter a first name.').not().isEmpty(),
+		check('lastName', 'Please enter a last name.').not().isEmpty(),
+		check('username', 'Please enter a Username.').not().isEmpty(),
+		check('pass', 'Please enter a Password.').not().isEmpty(),
 	],
 	async (req, res) => {
 		try {
@@ -567,7 +543,7 @@ router.put(
 				firstName: req.body.newData.firstName,
 				lastName: req.body.newData.lastName,
 				username: req.body.newData.username,
-				pass: req.body.newData.pass
+				pass: req.body.newData.pass,
 			};
 
 			bcrypt.genSalt(10, (err, salt) => {
@@ -576,11 +552,8 @@ router.put(
 					newPerson.pass = hash;
 					// Admin.findOneAndUpdate({ _id: req.body.id }, req.body.newData);
 					// console.log(newPerson);
-					  User.update({ _id: req.body.id }, { $set: newPerson }).then((user) => {
-						res.send({email:req.body.newData.email
-							,firstname:req.body.newData.firstName
-							,lastname:req.body.newData.lastName
-							,username:req.body.newData.username});
+					User.update({ _id: req.body.id }, { $set: newPerson }).then((user) => {
+						res.send({ email: req.body.newData.email, firstname: req.body.newData.firstName, lastname: req.body.newData.lastName, username: req.body.newData.username });
 					});
 					// newPerson
 					// 	.save()
@@ -588,22 +561,21 @@ router.put(
 					// 	.catch((err) => console.log(err));
 				});
 			});
-
 		} catch (err) {
 			console.error(err.message);
-			res.status(500).send("Server error");
+			res.status(500).send('Server error');
 		}
-	}
+	},
 );
 
 router.put(
-	"/updateSuperAdmin",
+	'/updateSuperAdmin',
 	[
-		check("email", "Please enter a valid email.").not().isEmpty(),
+		check('email', 'Please enter a valid email.').not().isEmpty(),
 		//   check("firstName", "Please enter a first name.").not().isEmpty(),
 		//   check("lastName", "Please enter a last name.").not().isEmpty(),
 		//   check("username", "Please enter a Username.").not().isEmpty(),
-		check("pass", "Please enter a Password.").not().isEmpty(),
+		check('pass', 'Please enter a Password.').not().isEmpty(),
 	],
 	async (req, res) => {
 		try {
@@ -612,7 +584,7 @@ router.put(
 				// firstName: req.body.newData.firstName,
 				// lastName: req.body.newData.lastName,
 				// username: req.body.newData.username,
-				pass: req.body.newData.pass
+				pass: req.body.newData.pass,
 			};
 
 			bcrypt.genSalt(10, (err, salt) => {
@@ -630,49 +602,48 @@ router.put(
 					// 	.catch((err) => console.log(err));
 				});
 			});
-
 		} catch (err) {
 			console.error(err.message);
-			res.status(500).send("Server error");
+			res.status(500).send('Server error');
 		}
-	}
+	},
 );
 
 router.get('/getMyDetails/:id', (req, res) => {
 	User.findOne({
-		_id: req.params.id
+		_id: req.params.id,
 	})
 		.then((resp) => {
-			res.send(resp)
+			res.send(resp);
 		})
 		.catch((err) => {
-			res.send(err)
-		})
-})
+			res.send(err);
+		});
+});
 router.get('/getSuperAdminDetails/:id', (req, res) => {
 	SuperAdmin.findOne({
-		_id: req.params.id
+		_id: req.params.id,
 	})
 		.then((resp) => {
-			res.send(resp)
+			res.send(resp);
 		})
 		.catch((err) => {
-			res.send(err)
-		})
-})
+			res.send(err);
+		});
+});
 //@route  PUT api/user/updateuser
 //@desc   Update user by id
 //@access Public
 router.put(
-	"/updateuser",
+	'/updateuser',
 	[
-		check("username", "Please enter a valid username.").not().isEmpty(),
-		check("firstName", "Please enter a valid firstname.").not().isEmpty(),
-		check("lastName", "Please enter a valid lastname.").not().isEmpty(),
+		check('username', 'Please enter a valid username.').not().isEmpty(),
+		check('firstName', 'Please enter a valid firstname.').not().isEmpty(),
+		check('lastName', 'Please enter a valid lastname.').not().isEmpty(),
 		// username must be an email
-		check("email", "Please enter a valid email.").isEmail(),
+		check('email', 'Please enter a valid email.').isEmail(),
 		// password must be at least 5 chars long
-		check("pass", "Enter password of atleast 6 characters.").isLength({
+		check('pass', 'Enter password of atleast 6 characters.').isLength({
 			min: 6,
 		}),
 	],
@@ -703,12 +674,11 @@ router.put(
 					// 	.catch((err) => console.log(err));
 				});
 			});
-
 		} catch (err) {
 			console.error(err.message);
-			res.status(500).send("Server error");
+			res.status(500).send('Server error');
 		}
-	}
+	},
 	// let newPerson = {
 	// 	username: req.body.newData.username,
 	// 	firstName: req.body.newData.firstName,
@@ -731,31 +701,29 @@ router.put(
 	// 		});
 	// 	});
 	// });
-
 );
 
-router.post("/createUserFromExcel", async (req, res) => {
+router.post('/createUserFromExcel', async (req, res) => {
 	var hasheduserArray = [];
 	const userArray = req.body;
-	console.log(userArray)
+	console.log(userArray);
 	var hashArray = [];
 	// console.log(userArray)
 	// console.log('Array recieved to backend')
 
 	for (const user of userArray) {
-
 		await bcrypt.hash(user.pass, saltRounds, function (err, hash) {
 			if (err) {
 				return res.status(500).json({
-					error: err
-				})
+					error: err,
+				});
 			} else {
 				user.pass = hash;
-				hashArray.push(user)
+				hashArray.push(user);
 				if (hashArray.length == userArray.length) {
 					// console.log("hashArray");
 					// console.log(hashArray);
-					hashArray.forEach(tempObj => {
+					hashArray.forEach((tempObj) => {
 						var user = new User({
 							username: tempObj.username,
 							firstName: tempObj.firstName,
@@ -765,39 +733,33 @@ router.post("/createUserFromExcel", async (req, res) => {
 							pass: tempObj.pass,
 							avatar: tempObj.avatar,
 							regDate: tempObj.regDate,
-							partener: tempObj.partener
+							partener: tempObj.partener,
 						});
 						hasheduserArray.push(user);
-
 					});
 
 					if (userArray.length == hasheduserArray.length) {
 						// console.log(hasheduserArray)
 						var i = 0;
-						hasheduserArray.forEach(user => {
+						hasheduserArray.forEach((user) => {
 							user.save();
 							i++;
 							if (i == hasheduserArray.length) {
-								res.status(201).json({ message: "users added successfully" })
+								res.status(201).json({ message: 'users added successfully' });
 							}
-						})
-
+						});
 					}
 				}
 			}
-		})
-
-
+		});
 	}
-
-})
-
+});
 
 ////////////////Notifications History API'S
 
-router.post("/createNotificationHistory", (req, res) => {
+router.post('/createNotificationHistory', (req, res) => {
 	console.log(req.body);
-	if (req.body === null) res.status(400).send("Bad Request");
+	if (req.body === null) res.status(400).send('Bad Request');
 	let newNotification = new History({
 		shiftFrom: req.body.shiftId1,
 		currentUserId: req.body.currentUserId,
@@ -809,16 +771,16 @@ router.post("/createNotificationHistory", (req, res) => {
 		requesterType: req.body.requester,
 		messageFrom: req.body.messageFrom,
 		shiftName: req.body.shiftName,
-		requestStatus: req.body.requestStatus
-	})
-	console.log("Notification created as: " + newNotification)
+		requestStatus: req.body.requestStatus,
+	});
+	console.log('Notification created as: ' + newNotification);
 	newNotification
 		.save()
 		.then((newShift) => res.send(newShift))
 		.catch((err) => console.log(err));
-})
+});
 
-router.get("/getHistory", (req, res) => {
+router.get('/getHistory', (req, res) => {
 	History.find().then((allUsers) => {
 		res.send(allUsers);
 	});
@@ -836,11 +798,10 @@ router.get("/getHistory", (req, res) => {
 // 	})
 // });
 
-
-router.get("/getEventHistory/:id", async (req, res) => {
+router.get('/getEventHistory/:id', async (req, res) => {
 	const id = req.params.id;
 	History.find({
-		shiftFrom: id
+		shiftFrom: id,
 	})
 		.populate('currentUserId')
 		.populate('from')
@@ -853,7 +814,7 @@ router.get("/getEventHistory/:id", async (req, res) => {
 		.then(async (shifts) => {
 			console.log(shifts);
 			res.status(200).json({
-				shifts: shifts.map(shift => {
+				shifts: shifts.map((shift) => {
 					// console.log(shift.title)
 					if (shift.requesterType === 'Super Admin') {
 						return {
@@ -862,8 +823,8 @@ router.get("/getEventHistory/:id", async (req, res) => {
 							shiftName: shift.shiftName,
 							swappingDate: shift.regDate,
 							shiftDate: shift.shiftFrom.start,
-							modifiedBy: 'soondubu@gmail.com'
-						}
+							modifiedBy: 'soondubu@gmail.com',
+						};
 					} else {
 						return {
 							_id: shift._id,
@@ -871,12 +832,11 @@ router.get("/getEventHistory/:id", async (req, res) => {
 							shiftName: shift.shiftName,
 							swappingDate: shift.regDate,
 							shiftDate: shift.shiftFrom.start,
-							modifiedBy: shift.currentUserId.email
-						}
+							modifiedBy: shift.currentUserId.email,
+						};
 					}
-
-				})
-			})
+				}),
+			});
 		})
 		//   .then(async (history) => {
 		// 	console.log(history);
@@ -889,26 +849,24 @@ router.get("/getEventHistory/:id", async (req, res) => {
 		// 		  shiftName: shift.shiftName,
 		// 		  swappingDate: shift.regDate,
 		// 		  shiftDate: shift.shiftFrom.start,
-		// 		  email: shift.currentUserId.email   
+		// 		  email: shift.currentUserId.email
 		// 		}
 		// 	  })
 		// 	})
 		//   })
 		.catch((err) => {
-			res.send(err)
-		})
+			res.send(err);
+		});
+});
 
-
-})
-
-router.get("/deleteEventHistory", (req, res) => {
+router.get('/deleteEventHistory', (req, res) => {
 	History.deleteMany()
 		.then((allUsers) => {
 			res.send(allUsers);
 		})
 		.catch((err) => {
-			res.send(err)
-		})
+			res.send(err);
+		});
 });
 
 module.exports = router;

@@ -365,8 +365,8 @@ const Side = ({ user }) => {
 							}
 							console.log('temp ka data', temp);
 						}
-						let user2firstName = temp[2].firstName ? temp[2].firstName : temp[1].firstName;
-						let user2lastName = temp[2].lastName ? temp[2].lastName : temp[1].lastName;
+						let user2firstName = temp[2] && temp[2].firstName ? temp[2].firstName : temp[1].firstName;
+						let user2lastName = temp[2] && temp[2].lastName ? temp[2].lastName : temp[1].lastName;
 						user1 = temp[0].lastName + ' ' + temp[0].firstName;
 						user2 = user2lastName + ' ' + user2firstName;
 						date = new Date(temp[1].start).toLocaleString('default', { month: 'short', day: 'numeric', year: 'numeric' });

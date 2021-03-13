@@ -965,7 +965,7 @@ const ShiftsCalender = ({ userObj }) => {
 											<Select defaultValue='Select Any User' style={{ width: 280 }} onChange={handelFrom}>
 												{lastNameUsers.map((dat) => (
 													<Option value={dat._id} key={dat._id}>
-														{dat.firstName + ' ' + dat.lastName}
+														{dat.lastName + ', ' + dat.firstName}
 													</Option>
 												))}
 											</Select>

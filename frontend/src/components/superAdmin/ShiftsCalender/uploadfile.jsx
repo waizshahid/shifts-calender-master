@@ -28,6 +28,7 @@ class uploadfile extends Component {
 		downloadToExcel: false,
 		dateRangeArray: [],
 		exportExcelArr: [],
+		excelHeading: [],
 		visible: false,
 		visibleFail: false,
 		showDateRange: false,
@@ -138,13 +139,16 @@ class uploadfile extends Component {
 								if (col[index] !== undefined) {
 									// console.log(col[index]);
 									if (col[index].split(' & ').length > 0) {
-										col[index].split(' & ').map((name) => name.trim()).map((usr, id) => {
-											console.log(usr, id);
-											if (user.username === usr.toLowerCase()) {
-												Obj = { name: usr.toLowerCase(), userId: user._id, shiftTypeId: shift.id, start: JSdate, end: JSdate, swappable: true };
-												Arr.push(Obj);
-											}
-										});
+										col[index]
+											.split(' & ')
+											.map((name) => name.trim())
+											.map((usr, id) => {
+												console.log(usr, id);
+												if (user.username === usr.toLowerCase()) {
+													Obj = { name: usr.toLowerCase(), userId: user._id, shiftTypeId: shift.id, start: JSdate, end: JSdate, swappable: true };
+													Arr.push(Obj);
+												}
+											});
 									} else {
 										if (user.username === col[index].toLowerCase()) {
 											Obj = { name: col[index].toLowerCase(), userId: user._id, shiftTypeId: shift.id, start: JSdate, end: JSdate, swappable: true };
@@ -257,17 +261,17 @@ class uploadfile extends Component {
 
 				// console.log(JSON.stringify(this.state.dateRangeArray))
 				// console.log(this.state.data)
-				console.log(this.state.dateRangeArray);
+				// console.log(this.state.dateRangeArray);
 				let shortArr = [];
 				for (var i = 0; i < this.state.dateRangeArray.length; i++) {
-					console.log(this.state.dateRangeArray[i]);
+					// console.log(this.state.dateRangeArray[i]);
 					if (this.state.dateRangeArray[i]) {
 						this.state.dateRangeArray[i].Date = this.JSDateToExcelDate(new Date(this.state.dateRangeArray[i].Date));
 						//this.state.dateRangeArray[i].Date = this.state.dateRangeArray[i].Date.substring(0, this.state.dateRangeArray[i].Date.indexOf(','));
 						shortArr.push(this.state.dateRangeArray[i]);
 					}
 				}
-				console.log(shortArr);
+				// console.log(shortArr);
 				var obj = {};
 				for (var i = 0; i < this.state.dateRangeArray.length; i++) {
 					if (this.state.dateRangeArray[i]) {
@@ -275,7 +279,7 @@ class uploadfile extends Component {
 						// Get previous date saved inside the result
 
 						var p_date = obj[date] || {};
-						console.log(p_date);
+						// console.log(p_date);
 						// Merge the previous date with the next date
 						obj[date] = Object.assign(p_date, this.state.dateRangeArray[i]);
 					}
@@ -292,8 +296,23 @@ class uploadfile extends Component {
 				//   result[i].Date = this.toShort(result[i].Date)
 				// }
 				console.log(result);
+				let heading = [];
+				let items = result.map((item) => Object.keys(item));
+
+				if (items && items.length > 0) {
+					items.forEach((item) => {
+						item.forEach((i) => {
+							if (!heading.includes(i)) {
+								heading.push(i);
+							}
+						});
+					});
+				}
+				console.log(items);
+
 				this.setState({
 					exportExcelArr: result,
+					excelHeading: heading,
 				});
 				console.log(this.state.exportExcelArr);
 			})
@@ -415,7 +434,10 @@ class uploadfile extends Component {
 				<table id='download-event' class='table'>
 					<thead>
 						<tr>
-							<th>Date</th>
+							{this.state.excelHeading.map((heading, id) => (
+								<th key={id}>{heading}</th>
+							))}
+							{/*<th>Date</th>
 							<th>Heart</th>
 							<th>Peds</th>
 							<th>Night</th>
@@ -426,13 +448,16 @@ class uploadfile extends Component {
 							<th>Day</th>
 							<th>4th</th>
 							<th>Off</th>
-							<th>Request</th>
+							<th>Request</th> */}
 						</tr>
 					</thead>
 					{this.state.exportExcelArr.map((value) => {
 						return (
 							<tr>
-								<td>{value.Date}</td>
+								{this.state.excelHeading.map((heading) => (
+									<td>{value[heading]}</td>
+								))}
+								{/* <td>{value.Date}</td>
 								<td>{value.Heart}</td>
 								<td>{value.Peds}</td>
 								<td>{value.Night}</td>
@@ -443,7 +468,7 @@ class uploadfile extends Component {
 								<td>{value.Day}</td>
 								<td>{value['4th']}</td>
 								<td>{value.Off}</td>
-								<td> {value.Request} </td>
+								<td>{value.Request} </td> */}
 							</tr>
 						);
 					})}

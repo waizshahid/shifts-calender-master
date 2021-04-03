@@ -566,11 +566,17 @@ const ShiftsCalender = ({ userObj }) => {
 		const currentUserId = currentId;
 		console.log('helo123', userId1, userId2, shiftId1);
 		let shiftName = '';
-
+		let shiftIdforn = '';
 		axios
 			.get('shift/getShiftName/' + shiftId1)
 			.then((res) => {
 				shiftName = res.data.shiftname;
+				for (let i = 0; i < data.length; i++) {
+					if (shiftName === data[i].shiftname) {
+						shiftIdforn = data[i]._id;
+						break;
+					}
+				}
 				axios
 					.post('user/userNotification', {
 						currentUserId,
@@ -582,6 +588,7 @@ const ShiftsCalender = ({ userObj }) => {
 						date,
 						requester,
 						shiftName,
+						shiftIdforn,
 					})
 					.then((res) => {
 						axios
@@ -597,15 +604,20 @@ const ShiftsCalender = ({ userObj }) => {
 								shiftName,
 							})
 							.then((resp) => {
-								axios
-									.get('shift/swapShiftUser/' + shiftId1 + '/' + userId2)
-									.then((res1) => {
-										console.log(res1);
-										window.location.reload();
-									})
-									.catch((err) => {
-										console.log(err);
-									});
+								if (userId2 !== '') {
+									axios
+										.get('shift/swapShiftUser/' + shiftId1 + '/' + userId2)
+										.then((res1) => {
+											console.log(res1);
+											window.location.reload();
+										})
+										.catch((err) => {
+											console.log(err);
+										});
+								} else {
+									console.log(resp);
+									window.location.reload();
+								}
 							})
 							.catch((err) => {
 								console.log(err);

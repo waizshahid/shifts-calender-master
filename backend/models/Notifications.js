@@ -1,33 +1,33 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const notificationSchema = new mongoose.Schema({
 	currentUserId: {
-		type: mongoose.Schema.Types.ObjectId, 
+		type: mongoose.Schema.Types.ObjectId,
 		required: true,
-		ref: 'users'
+		ref: 'users',
 	},
 	adminresponse: {
-		type:String,  
+		type: String,
 	},
-	shiftFrom:{
+	shiftFrom: {
 		type: mongoose.Schema.Types.ObjectId,
-		required: true,
-		ref: 'shiftAssigned'
-	},	
+		// required: true,
+		ref: 'shiftAssigned',
+	},
 	to: {
 		type: mongoose.Schema.Types.ObjectId,
-		required: true,
-		ref: 'users'
+		// required: true,
+		ref: 'users',
 	},
-	shiftName:{
-		type: String
+	shiftName: {
+		type: String,
 	},
-    from: {
+	from: {
 		type: mongoose.Schema.Types.ObjectId,
-		required: true,
-		ref: 'users'
-    },
-    message: {
+		// required: true,
+		ref: 'users',
+	},
+	message: {
 		type: String,
 		required: true,
 	},
@@ -37,21 +37,19 @@ const notificationSchema = new mongoose.Schema({
 	},
 	requesterType: {
 		type: String,
-		required: true
+		required: true,
 	},
 	messageFrom: {
-		type: String
+		type: String,
 	},
 	requestStatus: {
-		type: String
+		type: String,
 	},
-	shifttypeid:{
+	shifttypeid: {
 		type: mongoose.Schema.Types.ObjectId,
-		required: true,
-		ref: 'shifts'
-	}
-	
-	
+		// required: true,
+		ref: 'shifts',
+	},
 });
 
-module.exports = mongoose.model("notifications", notificationSchema);
+module.exports = mongoose.model('notifications', notificationSchema);

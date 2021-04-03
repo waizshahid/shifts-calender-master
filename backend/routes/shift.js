@@ -235,7 +235,7 @@ router.get('/getEventsBetweenTwoDates/:start/:end', (req, res) => {
 							// _id: shift._id,
 							Date: shift.start,
 							// shiftname: shift.shiftTypeId.shiftname,
-							// Heart: shift.userId.username,
+							Heart: shift.userId.username,
 							// Name: shift.userId.lastName + ' ' + shift.userId.firstName,
 						};
 					} else if (shift.shiftTypeId.shiftname === 'Peds') {
@@ -243,7 +243,7 @@ router.get('/getEventsBetweenTwoDates/:start/:end', (req, res) => {
 							// _id: shift._id,
 							Date: shift.start,
 							// shiftname: shift.shiftTypeId.shiftname,
-							// Peds: shift.userId.username,
+							Peds: shift.userId.username,
 							// Name: shift.userId.lastName + ' ' + shift.userId.firstName,
 						};
 					} else if (shift.shiftTypeId.shiftname === 'Night') {
@@ -251,7 +251,7 @@ router.get('/getEventsBetweenTwoDates/:start/:end', (req, res) => {
 							// _id: shift._id,
 							Date: shift.start,
 							// shiftname: shift.shiftTypeId.shiftname,
-							// Night: shift.userId.username,
+							Night: shift.userId.username,
 							// Name: shift.userId.lastName + ' ' + shift.userId.firstName,
 						};
 					} else if (shift.shiftTypeId.shiftname === 'OB Day') {
@@ -259,7 +259,7 @@ router.get('/getEventsBetweenTwoDates/:start/:end', (req, res) => {
 							// _id: shift._id,
 							Date: shift.start,
 							// shiftname: shift.shiftTypeId.shiftname,
-							// 'OB Day': shift.userId.username,
+							'OB Day': shift.userId.username,
 							// Name: shift.userId.lastName + ' ' + shift.userId.firstName,
 						};
 					} else if (shift.shiftTypeId.shiftname === 'OB Night') {
@@ -267,7 +267,7 @@ router.get('/getEventsBetweenTwoDates/:start/:end', (req, res) => {
 							// _id: shift._id,
 							Date: shift.start,
 							// shiftname: shift.shiftTypeId.shiftname,
-							// 'OB Night': shift.userId.username,
+							'OB Night': shift.userId.username,
 							// Name: shift.userId.lastName + ' ' + shift.userId.firstName,
 						};
 					} else if (shift.shiftTypeId.shiftname === '2nd') {
@@ -275,7 +275,7 @@ router.get('/getEventsBetweenTwoDates/:start/:end', (req, res) => {
 							// _id: shift._id,
 							Date: shift.start,
 							// shiftname: shift.shiftTypeId.shiftname,
-							// '2nd': shift.userId.username,
+							'2nd': shift.userId.username,
 							// Name: shift.userId.lastName + ' ' + shift.userId.firstName,
 						};
 					} else if (shift.shiftTypeId.shiftname === '3rd') {
@@ -283,7 +283,7 @@ router.get('/getEventsBetweenTwoDates/:start/:end', (req, res) => {
 							// _id: shift._id,
 							Date: shift.start,
 							// shiftname: shift.shiftTypeId.shiftname,
-							// '3rd': shift.userId.username,
+							'3rd': shift.userId.username,
 							// Name: shift.userId.lastName + ' ' + shift.userId.firstName,
 						};
 					} else if (shift.shiftTypeId.shiftname === 'Day') {
@@ -291,7 +291,7 @@ router.get('/getEventsBetweenTwoDates/:start/:end', (req, res) => {
 							// _id: shift._id,
 							Date: shift.start,
 							// shiftname: shift.shiftTypeId.shiftname,
-							// Day: shift.userId.username,
+							Day: shift.userId.username,
 							// Name: shift.userId.lastName + ' ' + shift.userId.firstName,
 						};
 					} else if (shift.shiftTypeId.shiftname == 'Off') {
@@ -305,7 +305,7 @@ router.get('/getEventsBetweenTwoDates/:start/:end', (req, res) => {
 							// _id: shift._id,
 							Date: shift.start,
 							// shiftname: shift.shiftTypeId.shiftname,
-							// Off: shift.userId.username,
+							Off: shift.userId.username,
 							// Off: offUsers,
 							// Name: shift.userId.lastName + ' ' + shift.userId.firstName,
 						};
@@ -314,7 +314,7 @@ router.get('/getEventsBetweenTwoDates/:start/:end', (req, res) => {
 							// _id: shift._id,
 							Date: shift.start,
 							// shiftname: shift.shiftTypeId.shiftname,
-							// '4th': shift.userId.username,
+							'4th': shift.userId.username,
 							// Name: shift.userId.lastName + ' ' + shift.userId.firstName,
 						};
 					} else if (shift.shiftTypeId.shiftname === 'Request') {
@@ -327,11 +327,16 @@ router.get('/getEventsBetweenTwoDates/:start/:end', (req, res) => {
 							// _id: shift._id,
 							Date: shift.start,
 							// // shiftname: shift.shiftTypeId.shiftname,
-							// Request: shift.userId.username,
+							Request: shift.userId.username,
 							// Request: requestUsers,
 							// Name: shift.userId.lastName + ' ' + shift.userId.firstName,
 						};
-					} else;
+					} else {
+						console.log('***************');
+						console.log({ Date: shift.start, [shift.shiftTypeId.shiftname.trim()]: shift.userId.username });
+						console.log('***************');
+						return { Date: shift.start, [shift.shiftTypeId.shiftname]: shift.userId.username };
+					}
 				}),
 			});
 		})
@@ -1057,8 +1062,8 @@ router.get('/currentShifts', (req, res) => {
 							end: shift.end,
 							shiftname: shift.shiftTypeId.shiftname,
 							requestApprovalStatus: shift.requestApprovalStatus,
-							// title: shift.shiftTypeId.shiftname + ':' + ' ' + shift.userId.lastName.charAt(0) + ' ' + shift.userId.firstName,
-							title: shift.shiftTypeId.shiftname + ':' + ' ' + shift.userId.lastName + ',' + shift.userId.firstName,
+							title: shift.shiftTypeId.shiftname + ':' + ' ' + shift.userId.firstName.charAt(0) + ' ' + shift.userId.lastName,
+							// title: shift.shiftTypeId.shiftname + ':' + ' ' + shift.userId.lastName + ',' + shift.userId.firstName,
 							color: count > 8 ? 'red' : shift.shiftTypeId.color,
 							swapable: shift.swapable,
 							userId: shift.userId._id,

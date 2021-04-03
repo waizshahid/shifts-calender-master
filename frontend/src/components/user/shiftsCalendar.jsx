@@ -391,7 +391,7 @@ const ShiftsCalendar = () => {
 	const handleEventClick = ({ event, el }) => {
 		currentShift = event._def.extendedProps._id;
 		date = new Date().toISOString().slice(0, 10);
-		console.log(event);
+		console.log(event.startStr);
 		name = event.title.substring(event.title.indexOf(':') + 1);
 		sName = event.title.substring(0, event.title.indexOf(':'));
 		day = new Date(event.startStr).toLocaleString('default', {
@@ -399,6 +399,8 @@ const ShiftsCalendar = () => {
 			day: 'numeric',
 			year: 'numeric',
 		});
+		day = new Date(event.startStr).toUTCString().split(' ')[2] + ' ' + new Date(event.startStr).toUTCString().split(' ')[1] + ', ' + new Date(event.startStr).toUTCString().split(' ')[3];
+		console.log(day);
 		// day = convertUTCDateToLocalDate(new Date(event.startStr))
 		// console.log(day.substring(0, day.indexOf('(')))
 
@@ -538,9 +540,10 @@ const ShiftsCalendar = () => {
 			{loading === false ? (
 				<FullCalendar
 					defaultView='dayGridMonth'
-					timeZone='America/Chicago'
+					// timeZone='America/Chicago'
 					defaultDate='2021-06-01'
 					editable={false}
+					defaultAllDay={true}
 					plugins={[dayGridPlugin, interactionPlugin]}
 					events={events}
 					titleFormat={{ month: 'long', year: 'numeric' }}
@@ -608,7 +611,9 @@ const ShiftsCalendar = () => {
 				maskClosable={true}
 				onCancel={() => setexchangeVisible(false)}
 				footer={[
-					<Button key='1'>Cancel</Button>,
+					<Button key='1' onClick={() => setexchangeVisible(false)}>
+						Cancel
+					</Button>,
 					<Button onClick={passNotification} key='2' type='primary'>
 						Confirm
 					</Button>,

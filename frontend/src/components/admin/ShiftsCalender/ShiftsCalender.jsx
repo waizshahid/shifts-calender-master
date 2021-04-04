@@ -99,10 +99,15 @@ const ShiftsCalender = ({ userObj }) => {
 
 	function settingshiftinbackend() {
 		//console.log("id in frontend" , idhere)
-		axios.put('/user/updatingshift', { id: idhere._id, shiftid: editshift12 }).then(() => {
-			console.log('update ho gai');
-			window.location.reload();
-		});
+		console.log('==========>', editshift12);
+		if (editshift12 === '') {
+			alert('Please select shift');
+		} else {
+			axios.put('/user/updatingshift', { id: idhere._id, shiftid: editshift12 }).then(() => {
+				console.log('update ho gai');
+				window.location.reload();
+			});
+		}
 	}
 
 	function setRequestEvent(e) {
@@ -545,11 +550,16 @@ const ShiftsCalender = ({ userObj }) => {
 
 	const prepassnotification = () => {
 		console.log('in pre pass notification');
-		console.log('ccccc', id21);
-		axios.put('/user/updatingshift', { id: oneEvent._id, shiftid: id21 }).then(() => {
-			passNotification();
-			console.log('update ho gai');
-		});
+		console.log('ccccc', oneEvent.shiftname, oneEvent);
+		console.log(data.filter((s) => s.shiftname === oneEvent.shiftname)[0]);
+		if (data.filter((s) => s.shiftname === oneEvent.shiftname).length > 0) {
+			axios.put('/user/updatingshift', { id: oneEvent._id, shiftid: data.filter((s) => s.shiftname === oneEvent.shiftname)[0]._id }).then(() => {
+				passNotification();
+				console.log('update ho gai');
+			});
+		} else {
+			alert('Please select shift');
+		}
 	};
 
 	const passNotification = () => {

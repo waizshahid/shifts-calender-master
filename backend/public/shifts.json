@@ -1,0 +1,14 @@
+{"_id":{"$oid":"5f90557eb9cbed5a4a24c3bd"},"shiftname":"Off","color":"#757070","editable":"true","priority":150,"__v":0}
+{"_id":{"$oid":"5f905593b9cbed5a4a24c3be"},"shiftname":"Request","color":"#0439fb","editable":"true","priority":160,"__v":0}
+{"_id":{"$oid":"5f9a8173e27f685ea1752044"},"shiftname":"Heart","color":"#dad09b","editable":"true","priority":10,"__v":0}
+{"_id":{"$oid":"5f9a81dae27f685ea1752045"},"shiftname":"Peds","color":"#d9b19e","editable":"false","priority":20,"__v":0}
+{"_id":{"$oid":"5f9a81fde27f685ea1752046"},"shiftname":"Night","color":"#99cccd","editable":"false","priority":30,"__v":0}
+{"_id":{"$oid":"5f9a8212e27f685ea1752047"},"shiftname":"OB Day","color":"#dec65b","editable":"false","priority":40,"__v":0}
+{"_id":{"$oid":"5f9a8228e27f685ea1752048"},"shiftname":"OB Night","color":"#f089d0","editable":"false","priority":50,"__v":0}
+{"_id":{"$oid":"5f9a8241e27f685ea1752049"},"shiftname":"2nd","color":"#aa89f0","editable":"false","priority":60,"__v":0}
+{"_id":{"$oid":"5f9a8257e27f685ea175204a"},"shiftname":"3rd","color":"#5ecc7f","editable":"false","priority":70,"__v":0}
+{"_id":{"$oid":"5f9a8277e27f685ea175204b"},"shiftname":"Day","color":"#f0a989","editable":"false","priority":100,"__v":0}
+{"_id":{"$oid":"5f9a829ee27f685ea175204c"},"shiftname":"4th","color":"#f089d0","editable":"false","priority":120,"__v":0}
+{"_id":{"$oid":"5fa9e20020cd1460edb87509"},"shiftname":"Pain","color":"#9bc4d8","editable":"true","priority":80,"__v":0}
+{"_id":{"$oid":"5fd30d71fded523e276191aa"},"shiftname":"AIC","color":"#ab12ac","editable":"false","priority":90,"__v":0}
+{"_id":{"$oid":"5fd30dc1fded523e276191ab"},"shiftname":"HASC ","color":"#35ab11","editable":"true","priority":110,"__v":0}

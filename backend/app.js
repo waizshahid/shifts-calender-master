@@ -22,7 +22,7 @@ app.use("/api/adminauth", adminAuthRouter);
 app.use("/api/user", userRouter);
 app.use("/api/userauth", userAuthRouter);
 app.use("/api/shift", shiftRouter);
-
+app.use('/public', express.static('public'));
 //Server Config
 const port = process.env.PORT || 4000;
 app.listen(port, () => {

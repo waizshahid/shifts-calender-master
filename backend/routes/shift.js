@@ -1239,7 +1239,7 @@ router.put(
 	'/updateshift',
 	[
 		check('shiftname', 'Please enter a valid name.').not().isEmpty(),
-		check('editable', 'Please enter an editable option.').not().isEmpty(),
+		// check('editable', 'Please enter an editable option.').not().isEmpty(),
 		check('priority', 'Please enter an priority option.').not().isEmpty(),
 		// shiftname must be an email
 		check('color', 'Please enter a valid color.').not().isEmpty(),
@@ -1249,7 +1249,7 @@ router.put(
 			let newPerson = {
 				shiftname: req.body.newData.shiftname,
 				color: req.body.newData.color,
-				editable: req.body.newData.editable,
+				// editable: req.body.newData.editable,
 				priority: req.body.newData.priority,
 			};
 
@@ -1263,6 +1263,28 @@ router.put(
 	},
 );
 
+//@route POST api/shift/changeEditable
+//@desc temp route to change editable true for all
+//@access public
+
+router.post('/changeEditable', async (req, res) => {
+	try{
+		let shifts = await Shift.find()
+		if(shifts.length > 0){
+			for(let i =0; i<shifts.length; i++){
+				let shift = shifts[i]
+				shift.editable = true
+				await shift.save()
+			}
+			return res.json({
+				shifts: shifts
+			})
+		}
+	}catch(err){
+		console.log(err)
+	}
+})
+
 //@route  POST api/shift/register
 //@desc   Register New Shift
 //@access Public
@@ -1270,7 +1292,7 @@ router.post(
 	'/register',
 	[
 		check('shiftname', 'Please enter a valid name.').not().isEmpty(),
-		check('editable', 'Select for editable option').not().isEmpty(),
+		// check('editable', 'Select for editable option').not().isEmpty(),
 		check('priority', 'Select for priority option').not().isEmpty(),
 		// shiftname must be an color
 		check('color', 'Please enter a valid color.').not().isEmpty(),
@@ -1291,7 +1313,8 @@ router.post(
 							let newPerson = new Shift({
 								shiftname: req.body.shiftname,
 								color: req.body.color,
-								editable: req.body.editable,
+								// editable: req.body.editable,
+								editable:true,
 								priority: req.body.priority,
 							});
 

@@ -10,10 +10,10 @@ const Register = ({ setEditVisible, id, userObj }) => {
 	const [failVisible, setFailVisible] = useState(false);
 	const [success, setEditSuccess] = React.useState(false)
 	const [fields, setFields] = useState([
-		{
-		  name: ["editable"],
-		  value: userObj.editable,
-		},
+		// {
+		//   name: ["editable"],
+		//   value: userObj.editable,
+		// },
 		{
 			name: ["color"],
 			value: userObj.color,
@@ -41,7 +41,7 @@ const Register = ({ setEditVisible, id, userObj }) => {
 					newData: { 
 						shiftname,
 						color,
-						editable,
+						// editable,
 						priority
 					},
 				})
@@ -129,7 +129,7 @@ const Register = ({ setEditVisible, id, userObj }) => {
 						</Form.Item>
 					</Col>
 					<Col span={4}></Col>
-					<Col span={10}>
+					{/* <Col span={10}>
 							<Form.Item
 							name="editable"
 							>
@@ -139,7 +139,7 @@ const Register = ({ setEditVisible, id, userObj }) => {
 								size="large"
 							/>
 						</Form.Item>
-					</Col>
+					</Col> */}
 				</Row>
 				
 

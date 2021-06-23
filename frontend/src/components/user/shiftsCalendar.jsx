@@ -442,16 +442,23 @@ const ShiftsCalendar = () => {
 				.get('shift/getShiftName/' + shiftId1)
 				.then((res) => {
 					shiftName = res.data.shiftname;
-					console.log(data);
-					for (let i = 0; i < data.length; i++) {
-						console.log(data[i].shiftname);
-						if (shiftName === data[i].shiftname) {
-							shiftIdforn = data[i]._id;
-							break;
-						} else {
+					console.log(data, shiftName);
+					// for (let i = 0; i < data.length; i++) {
+					// 	console.log(data[i].shiftname);
+					// 	if (shiftName === data[i].shiftname) {
+					// 		shiftIdforn = data[i]._id;
+					// 		break;
+					// 	} else {
+					// 		alert('This shift is not editable');
+					// 		return;
+					// 	}
+					// }
+					if(data.length > 0 && data.filter(d => d.shiftname === shiftName).length > 0){
+						shiftIdforn = data.filter(d => d.shiftname === shiftName)[0]._id
+						
+					}else{
 							alert('This shift is not editable');
-							return;
-						}
+					 		return;
 					}
 					console.log(shiftIdforn);
 					axios

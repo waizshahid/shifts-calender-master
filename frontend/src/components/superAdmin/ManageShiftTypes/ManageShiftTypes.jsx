@@ -13,10 +13,10 @@ const ManageShiftTypes = () => {
 	const [defined, setDefined] = useState({})
 	const [error, setError] = React.useState(" ");
 	const [fields, setFields] = React.useState([
-		{
-		  name: ["editable"],
-		  value: false,
-		},
+		// {
+		//   name: ["editable"],
+		//   value: false,
+		// },
 		{
 			name: ["color"],
 			value: "#ab12ac",
@@ -32,7 +32,7 @@ const ManageShiftTypes = () => {
 				.post("shift/register", {
 					shiftname,
 					color,
-					editable,
+					// editable,
 					priority
 				})
 				.then((res) => {
@@ -176,12 +176,12 @@ const ManageShiftTypes = () => {
 			dataIndex: "color",
 			key: "color",
 		},
-		{
-			title: "Editable",
-			dataIndex: "editable",
-			key: "editable",
+		// {
+			// title: "Editable",
+			// dataIndex: "editable",
+			// key: "editable",
 			// sorter: (a, b) => a.editable.localeCompare(b.editable),
-		},
+		// },
 		{
 			title: "Priority",
 			dataIndex: "priority",
@@ -269,7 +269,7 @@ const ManageShiftTypes = () => {
 								</Form.Item>
 							</Col>
 							<Col span={4}></Col>
-							<Col span={10}>
+							{/* <Col span={10}>
 									<Form.Item
 									name="editable"
 									>
@@ -279,7 +279,7 @@ const ManageShiftTypes = () => {
 										size="large"
 									/>
 								</Form.Item>
-							</Col>
+							</Col> */}
 						</Row>
 						
 

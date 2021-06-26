@@ -9,6 +9,7 @@ var adminAuthRouter = require('./routes/adminauth');
 var userRouter = require('./routes/user');
 var userAuthRouter = require('./routes/userauth');
 var shiftRouter = require('./routes/shift');
+var notificationEmail = require('./routes/notificationEmail');
 
 var app = express();
 app.use(cors());
@@ -22,6 +23,7 @@ app.use('/api/adminauth', adminAuthRouter);
 app.use('/api/user', userRouter);
 app.use('/api/userauth', userAuthRouter);
 app.use('/api/shift', shiftRouter);
+app.use('/api/notificationEmail', notificationEmail);
 app.use('/public', express.static('public'));
 //Server Config
 const port = process.env.PORT || 4000;

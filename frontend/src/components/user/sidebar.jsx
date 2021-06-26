@@ -109,7 +109,7 @@ const Side = ({ user }) => {
 					.put('user/updateResponses/' + id)
 					.then((res) => {
 						// console.log(res)
-						updateHistory(currentUserId, userId1, userId2, shiftId1, message, adminresponse, date, requester, shiftName);
+						updateHistory(currentUserId, userId1, userId2, shiftId1, message, adminresponse, date, requester, shiftName, true);
 					})
 					.catch((err) => {
 						console.log(err);
@@ -126,13 +126,13 @@ const Side = ({ user }) => {
 		console.log(dsplayMessage[message]);
 		const id = dsplayMessage[message]._id;
 		const shiftId1 = dsplayMessage[message].shiftFrom;
-		const userToExchange = dsplayMessage[message].to;
+		const userToExchange = dsplayMessage[message].to._id;
 
 		console.log(id);
 		console.log(userToExchange);
 
 		const currentUserId = currentId;
-		const userId1 = dsplayMessage[message].from;
+		const userId1 = dsplayMessage[message].from._id;
 		const userId2 = userToExchange;
 		// const shiftId1 = dsplayMessage[index].shiftFrom
 		const message1 = dsplayMessage[message].message;
@@ -149,7 +149,7 @@ const Side = ({ user }) => {
 					.put('user/updateResponses/' + id)
 					.then((res) => {
 						// console.log(res)
-						updateHistory(currentUserId, userId1, userId2, shiftId1, message1, adminresponse, date, requester, shiftName);
+						updateHistory(currentUserId, userId1, userId2, shiftId1, message1, adminresponse, date, requester, shiftName, true);
 					})
 					.catch((err) => {
 						console.log(err);
@@ -163,7 +163,7 @@ const Side = ({ user }) => {
 	const [form] = Form.useForm();
 	const exchangeAndDelete = () => {};
 
-	const updateHistory = (currentUserId, userId1, userId2, shiftId1, message, adminresponse, date, requester, shiftName) => {
+	const updateHistory = (currentUserId, userId1, userId2, shiftId1, message, adminresponse, date, requester, shiftName, update) => {
 		axios
 			.post('user/createNotificationHistory', {
 				currentUserId,
@@ -175,6 +175,7 @@ const Side = ({ user }) => {
 				date,
 				requester,
 				shiftName,
+				update,
 			})
 			.then((res) => {
 				refresh();
@@ -428,34 +429,41 @@ const Side = ({ user }) => {
 							</div>
 						) : (
 							<div>
-								{message.requesterType === 'Admin' ? (
+								{message.requesterType === 'Admin' && message.adminEdit ? (
 									<div>
 										{' '}
 										{message.message !== 'Your shift has been exchanged. View Details' && message.message !== 'Your rejection response has been sent to the swap requester' ? (
 											<div>
 												<div className='row'>
-													<div onClick={() => showShiftModal1(index)}>
+													{/* <div onClick={() => showShiftModal1(index)}>
 														<Tag color='red'>{'Detail'}</Tag>
-													</div>
+													</div> */}
+													{/*
 													<div className='col-4'>
 														<Tag color='success'>{users[index].firstName + ' ' + users[index].lastName}</Tag>
 													</div>
 													<div className='col-6'>
 														<Tag color='default'>{message.shiftName}</Tag>
 														<Tag color='default'>{message.regDate}</Tag>
-													</div>
+													</div> */}
 												</div>
 												<div className='row'>
-													<div className='col-12'>{message.message}</div>
+													<div className='col-12'>
+														{/* {message.message} */}
+														{message.currentUserId.firstName + ' ' + message.currentUserId.firstName} has Changed {message.regDate} {message.shiftName} from {message.from.firstName + ' ' + message.from.lastName} to {message.to.firstName + ' ' + message.to.lastName}
+													</div>
 												</div>
 												<Row className='buttonsetting'>
-													<Button onClick={() => deleteNotification1(index)}>Delete this notification</Button>
+													<Button onClick={() => deleteNotification1(index)} className='rejectbutton'>
+														OK
+													</Button>
+													{/* <Button onClick={() => deleteNotification1(index)}>Delete this notification</Button>
 													<Button onClick={() => updateNotification1(index)} className='rejectbutton'>
 														Reject
 													</Button>
 													<Button type='primary' className='button2setting' onClick={() => swapShift1(index)}>
 														Exchange
-													</Button>
+													</Button> */}
 												</Row>
 												<hr />
 											</div>
@@ -484,35 +492,42 @@ const Side = ({ user }) => {
 									</div>
 								) : (
 									<div>
-										{message.from === currentId ? (
+										{console.log(message.from._id, currentId)}
+										{message.from._id === currentId ? (
 											<div>
 												{message.message !== 'Your shift has been exchanged. View Details' && message.message !== 'Your rejection response has been sent to the swap requester' ? (
 													<div>
 														<div className='row'>
-															<div onClick={() => showShiftModal1(index)} className='col-2'>
+															{/* <div onClick={() => showShiftModal1(index)} className='col-2'>
 																<Tag color='red'>{'Detail'}</Tag>
-															</div>
-															<div className='col-4'>
+															</div> */}
+															{/* <div className='col-4'>
 																<Tag color='green'>{users[index].firstName + ' ' + users[index].lastName}</Tag>
-															</div>
-															<div className='col-6'>
+															</div> */}
+															{/* <div className='col-6'>
 																<Tag color='default'>{message.shiftName}</Tag>
 																<Tag color='default'>{message.regDate}</Tag>
-															</div>
+															</div> */}
 														</div>
 														<div className='row'>
 															<div style={{ margine: 10 }} className='col-12' className='textsetting'>
-																{message.message}
+																{message.requesterType} {users[index].lastName + ' is requesting ' + message.shiftName + ' call ' + message.regDate}
 															</div>
 														</div>
 														<div>
 															<Row className='buttonsetting'>
-																<Button onClick={() => deleteNotification1(index)}>Delete this notification</Button>
-																<Button onClick={() => updateNotification1(index)} className='rejectbutton'>
+																{/* <Button onClick={() => deleteNotification1(index)}>Delete this notification</Button> */}
+																{/* <Button onClick={() => updateNotification1(index)} className='rejectbutton'>
 																	Reject
 																</Button>
 																<Button type='primary' className='button2setting' onClick={() => swapShift1(index)}>
 																	Exchange
+																</Button> */}
+																<Button type='primary' className='button2setting' onClick={() => swapShift1(index)}>
+																	Accept
+																</Button>
+																<Button onClick={() => deleteNotification1(index, true)} className='rejectbutton'>
+																	Reject
 																</Button>
 															</Row>
 														</div>
@@ -522,24 +537,25 @@ const Side = ({ user }) => {
 													<div>
 														<div>
 															<div className='row'>
-																<div className='col-6'>
+																{/* <div className='col-6'>
 																	<Tag color='green'>{users[index].firstName + ' ' + users[index].lastName}</Tag>
 																</div>
 																<div className='col-6'>
 																	<Tag color='default'>{message.shiftName}</Tag>
 																	<Tag color='default'>{message.regDate}</Tag>
-																</div>
+																</div> */}
 															</div>
+
 															{message.message}
 															<br></br>
-															<div className='row'>
+															{/* <div className='row'>
 																<Button className='col-6' onClick={() => deleteNotification1(index)}>
 																	Delete this notification
 																</Button>
 																<div className='col-6' onClick={() => showShiftModal1(index)}>
 																	<Tag color='red'>{'Detail'}</Tag>
 																</div>
-															</div>
+															</div> */}
 														</div>
 														<hr />
 													</div>
@@ -548,24 +564,40 @@ const Side = ({ user }) => {
 										) : (
 											<div>
 												<div className='row'>
-													<div className='col-6'>
+													{/* <div className='col-6'>
 														<Tag color='green'>{users[index].firstName + ' ' + users[index].lastName}</Tag>
 													</div>
 													<div className='col-6'>
 														<Tag color='default'>{message.shiftName}</Tag>
 														<Tag color='default'>{message.regDate}</Tag>
-													</div>
+													</div> */}
 												</div>
-												{message.messageFrom}
+												{/* {message.messageFrom} */}
+												{message.status === 'pending' ? (
+													<div>
+														Your request has been sent to {message.from.lastName}, {message.from.firstName[0]}
+													</div>
+												) : (
+													<>
+														{message.from.lastName}, {message.from.firstName[0]} has accepted your request,
+														<br />
+														{message.to.lastName} is now {message.shiftName} {message.regDate}. click ok to acknowledge.
+													</>
+												)}
 												<br></br>
-												<div className='row'>
+												{message.status === 'accepted' && (
+													<Button className='col-6' onClick={() => deleteNotification1(index)}>
+														ok
+													</Button>
+												)}
+												{/* <div className='row'>
 													<Button className='col-6' onClick={() => deleteNotification1(index)}>
 														Delete this notification
 													</Button>
 													<div className='col-6' onClick={() => showShiftModal1(index)}>
 														<Tag color='red'>{'Detail'}</Tag>
 													</div>
-												</div>
+												</div> */}
 												<hr />
 											</div>
 										)}

@@ -8,10 +8,20 @@ const User = require('../models/User');
 const createShift = require('../models/createShift');
 const Notification = require('../models/Notifications');
 const History = require('../models/notificationsHistory');
+const NotificationEmail = require('../models/notificationEmail');
 const Admin = require('../models/Admin');
 const SuperAdmin = require('../models/SuperAdmin');
 const saltRounds = 10;
 const nodemailer = require('nodemailer');
+
+const getNotificationEmail = async () => {
+	let notiEmail = await NotificationEmail.findOne({});
+	if (notiEmail) {
+		return notiEmail.email;
+	} else {
+		return 'softthrivetest@gmail.com';
+	}
+};
 //@route  GET api/user/test
 //@desc   Test User Route
 //@access Private
@@ -84,8 +94,9 @@ router.post('/sendemail', async (req, res) => {
 	});
 
 	const mesage = {
-		from: 'smartautomechanicfinder@gmail.com', // sender address
-		to: 'softthrivetest@gmail.com', // list of receivers
+		from: 'softthrivetest@gmail.com', // sender address
+		// to: 'hmhcalls@gmail.com', // receiver
+		to: getNotificationEmail(),
 		subject: 'Information updated', // Subject line
 		text: message, // plain text body
 	};
@@ -143,6 +154,8 @@ router.get('/getNotifcations', (req, res) => {
 			regDate: 1,
 		})
 		// .populate('currentUserId')
+		.populate('from')
+		.populate('to')
 		// .exec()
 		.then((allUsers) => {
 			res.send(allUsers);
@@ -181,6 +194,8 @@ router.get('/getCurrentUserNotificationsTo/:id', (req, res) => {
 			regDate: 1,
 		})
 		.populate('currentUserId')
+		.populate('to')
+		.populate('from')
 		.exec()
 		.then((notifcations) => {
 			res.send(notifcations);
@@ -193,11 +208,14 @@ router.get('/getCurrentUserNotificationsFrom/:id', (req, res) => {
 	const Id = req.params.id;
 	Notification.find({
 		from: Id,
+		status: 'pending',
 	})
 		.sort({
 			regDate: 1,
 		})
 		.populate('currentUserId')
+		.populate('to')
+		.populate('from')
 		.exec()
 		.then((notifcations) => {
 			res.send(notifcations);
@@ -223,10 +241,60 @@ router.put('/updateResponses/:id', async (req, res) => {
 		let newPerson = {
 			message: 'Your shift has been exchanged. View Details',
 			messageFrom: 'Your swap request for the shift has been accepted',
+			status: 'accepted',
 		};
 
-		Notification.update({ _id: req.params.id }, { $set: newPerson })
-			.then((resp) => {
+		Notification.findOneAndUpdate({ _id: req.params.id }, { $set: newPerson })
+			.then(async (resp) => {
+				console.log(resp);
+				console.log(resp.toObject());
+				let sender = await User.findOne({ _id: resp.from });
+				let secondUser = resp.to ? resp.to : resp.from;
+				let receiver = await User.findOne({ _id: secondUser });
+
+				console.log('sender => ', sender);
+				console.log('receiver => ', sender);
+				if (sender && receiver) {
+					console.log('nodemailer api from front end');
+					let message = 'Your Request for shift to:\n' + '\n' + sender.firstName + '\n' + 'for the Shift \n' + '\n' + resp.shiftName + ' call on \n' + '\n' + resp.regDate + '\n' + 'has been accepted.';
+					// create reusable transporter object using the default SMTP transport
+					let transporter = nodemailer.createTransport({
+						host: 'smtp.gmail.com',
+						port: 465,
+						secure: true,
+						service: 'gmail', // true for 465, false for other ports
+
+						ignoreTLS: false,
+						secure: false,
+						auth: {
+							user: 'softthrivetest@gmail.com', // generated ethereal user
+							pass: 'strong12345678', // generated ethereal password
+						},
+						tls: {
+							// do not fail on invalid certs
+							rejectUnauthorized: false,
+						},
+					});
+
+					const mesage = {
+						from: 'softthrivetest@gmail.com', // sender address
+						// to: 'hmhcalls@gmail.com', // receiver
+						to: receiver.email,
+						subject: 'Your Shift Request Accepted', // Subject line
+						text: message, // plain text body
+					};
+
+					// send mail with defined transport object
+					let info = await transporter.sendMail(mesage);
+
+					console.log('Message sent: %s', info.messageId);
+					// Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
+
+					// Preview only available when sending through an Ethereal account
+					console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+					// Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
+				}
+
 				res.send(resp);
 			})
 			.catch((err) => {
@@ -255,7 +323,56 @@ router.put('/updateResponsesandDelete/:id', async (req, res) => {
 });
 
 router.delete('/deleteCurrentNotification/:id', (req, res) => {
-	Notification.findByIdAndDelete({ _id: req.params.id }).then((resp) => {
+	Notification.findByIdAndDelete({ _id: req.params.id }).then(async (resp) => {
+		if (req.body.sendEmail) {
+			let sender = await User.findOne({ _id: resp.from });
+			let secondUser = resp.to ? resp.to : resp.from;
+			let receiver = await User.findOne({ _id: secondUser });
+
+			console.log('sender => ', sender);
+			console.log('receiver => ', sender);
+			if (sender && receiver) {
+				console.log('nodemailer api from front end');
+				let message = 'Your request for shift to:\n' + '\n' + sender.firstName + '\n' + 'for the shift \n' + '\n' + resp.shiftName + '\n' + 'has been rejected. \n';
+				// create reusable transporter object using the default SMTP transport
+				let transporter = nodemailer.createTransport({
+					host: 'smtp.gmail.com',
+					port: 465,
+					secure: true,
+					service: 'gmail', // true for 465, false for other ports
+
+					ignoreTLS: false,
+					secure: false,
+					auth: {
+						user: 'softthrivetest@gmail.com', // generated ethereal user
+						pass: 'strong12345678', // generated ethereal password
+					},
+					tls: {
+						// do not fail on invalid certs
+						rejectUnauthorized: false,
+					},
+				});
+
+				const mesage = {
+					from: 'softthrivetest@gmail.com', // sender address
+					// to: 'hmhcalls@gmail.com', // receiver
+					to: receiver.email,
+					subject: 'Your Shift Request Rejected', // Subject line
+					text: message, // plain text body
+				};
+
+				// send mail with defined transport object
+				let info = await transporter.sendMail(mesage);
+
+				console.log('Message sent: %s', info.messageId);
+				// Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
+
+				// Preview only available when sending through an Ethereal account
+				console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+				// Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
+			}
+		}
+
 		console.log(resp);
 		res.send(resp);
 	});
@@ -446,12 +563,64 @@ router.post('/userNotification', (req, res) => {
 		shiftName: req.body.shiftName,
 		requestStatus: req.body.requestStatus,
 		shifttypeid: req.body.shiftIdforn,
+		status: 'pending',
+		adminEdit: req.body.adminEdit,
+		adminSwaped: req.body.adminSwaped,
 	});
 
-	console.log('Notification created as: ' + newNotification);
+	console.log('Notification created as: 2' + newNotification);
 	newNotification
 		.save()
-		.then((newShift) => res.send(newShift))
+		.then(async (newShift) => {
+			let receiver = await User.findOne({ _id: req.body.userId1 });
+			let secondUser = req.body.userId2 ? req.body.userId2 : req.body.userId1;
+			let sender = await User.findOne({ _id: secondUser });
+
+			console.log('receiver => ', receiver);
+			console.log('sender => ', sender);
+
+			if (sender && receiver) {
+				console.log('nodemailer api from front end');
+				let message = 'Following User Request for shift :\n' + '\n' + sender.firstName + '\n' + 'Following is the Shift Requested \n' + '\n' + req.body.shiftName + '\n' + 'Following is Shift Date \n' + '\n' + req.body.date;
+				// create reusable transporter object using the default SMTP transport
+				let transporter = nodemailer.createTransport({
+					host: 'smtp.gmail.com',
+					port: 465,
+					secure: true,
+					service: 'gmail', // true for 465, false for other ports
+
+					ignoreTLS: false,
+					secure: false,
+					auth: {
+						user: 'softthrivetest@gmail.com', // generated ethereal user
+						pass: 'strong12345678', // generated ethereal password
+					},
+					tls: {
+						// do not fail on invalid certs
+						rejectUnauthorized: false,
+					},
+				});
+
+				const mesage = {
+					from: 'softthrivetest@gmail.com', // sender address
+					// to: 'hmhcalls@gmail.com', // receiver
+					to: receiver.email,
+					subject: 'A Shift Swap Request', // Subject line
+					text: message, // plain text body
+				};
+
+				// send mail with defined transport object
+				let info = await transporter.sendMail(mesage);
+
+				console.log('Message sent: %s', info.messageId);
+				// Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
+
+				// Preview only available when sending through an Ethereal account
+				console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+				// Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
+			}
+			return res.send(newShift);
+		})
 		.catch((err) => console.log(err));
 });
 
@@ -772,11 +941,64 @@ router.post('/createNotificationHistory', (req, res) => {
 		messageFrom: req.body.messageFrom,
 		shiftName: req.body.shiftName,
 		requestStatus: req.body.requestStatus,
+		adminEdit: req.body.adminEdit,
 	});
-	console.log('Notification created as: ' + newNotification);
+	console.log('Notification created as: 1' + newNotification);
 	newNotification
 		.save()
-		.then((newShift) => res.send(newShift))
+		.then(async (newShift) => {
+			if (!req.body.update) {
+				let sender = await User.findOne({ _id: req.body.userId1 });
+				let secondUser = req.body.userId2 ? req.body.userId2 : req.body.userId1;
+				let receiver = await User.findOne({ _id: secondUser });
+
+				console.log('sender => ', sender);
+				console.log('receiver => ', sender);
+
+				if (sender && receiver) {
+					console.log('nodemailer api from front end');
+					let message = 'Following User Request for shift :\n' + '\n' + sender.firstName + '\n' + 'Following is the Shift Requested \n' + '\n' + req.body.shiftName + '\n' + 'Following is Shift Date \n' + '\n' + req.body.date;
+					// create reusable transporter object using the default SMTP transport
+					let transporter = nodemailer.createTransport({
+						host: 'smtp.gmail.com',
+						port: 465,
+						secure: true,
+						service: 'gmail', // true for 465, false for other ports
+
+						ignoreTLS: false,
+						secure: false,
+						auth: {
+							user: 'softthrivetest@gmail.com', // generated ethereal user
+							pass: 'strong12345678', // generated ethereal password
+						},
+						tls: {
+							// do not fail on invalid certs
+							rejectUnauthorized: false,
+						},
+					});
+
+					const mesage = {
+						from: 'softthrivetest@gmail.com', // sender address
+						// to: 'hmhcalls@gmail.com', // receiver
+						to: receiver.email,
+						subject: 'A Shift Swap Request', // Subject line
+						text: message, // plain text body
+					};
+
+					// send mail with defined transport object
+					let info = await transporter.sendMail(mesage);
+
+					console.log('Message sent: %s', info.messageId);
+					// Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
+
+					// Preview only available when sending through an Ethereal account
+					console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+					// Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
+				}
+			}
+
+			return res.send(newShift);
+		})
 		.catch((err) => console.log(err));
 });
 

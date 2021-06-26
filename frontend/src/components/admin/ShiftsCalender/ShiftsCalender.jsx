@@ -554,7 +554,7 @@ const ShiftsCalender = ({ userObj }) => {
 		console.log(data.filter((s) => s.shiftname === oneEvent.shiftname)[0]);
 		if (data.filter((s) => s.shiftname === oneEvent.shiftname).length > 0) {
 			axios.put('/user/updatingshift', { id: oneEvent._id, shiftid: data.filter((s) => s.shiftname === oneEvent.shiftname)[0]._id }).then(() => {
-				passNotification();
+				passNotification(true);
 				console.log('update ho gai');
 			});
 		} else {
@@ -562,7 +562,7 @@ const ShiftsCalender = ({ userObj }) => {
 		}
 	};
 
-	const passNotification = () => {
+	const passNotification = (adminEdit) => {
 		console.log('ooooooooooonn', oneEvent);
 		console.log('ooooooooooonn id2111', oneEvent._id);
 		const userId1 = oneEvent.userId;
@@ -599,6 +599,7 @@ const ShiftsCalender = ({ userObj }) => {
 						requester,
 						shiftName,
 						shiftIdforn,
+						adminEdit: adminEdit,
 					})
 					.then((res) => {
 						axios
@@ -642,7 +643,7 @@ const ShiftsCalender = ({ userObj }) => {
 			});
 	};
 
-	const passNotificationforr = () => {
+	const passNotificationforr = (swaped) => {
 		const userId1 = oneEvent.userId;
 		const shiftId1 = oneEvent._id;
 		let userId2 = currentId;
@@ -683,6 +684,7 @@ const ShiftsCalender = ({ userObj }) => {
 							requestStatus,
 							shiftName,
 							shiftIdforn,
+							adminSwaped: swaped,
 						})
 						.then((res) => {
 							console.log(res.data);
@@ -771,18 +773,22 @@ const ShiftsCalender = ({ userObj }) => {
 	};
 
 	function showHistory() {
-		return <div>{/* {
+		return (
+			<div>
+				{/* {
         history.map((dat,index) => {
           <div>
             {dat.shiftname}
           </div>
         })
-      } */}</div>;
+      } */}
+			</div>
+		);
 	}
 	if (show1) {
 		return (
 			<div>
-				<Modal title='Swap Request' visible={exchangeVisible} maskClosable={true} onCancel={() => setshow1(false)} onOk={passNotificationforr}>
+				<Modal title='Swap Request' visible={exchangeVisible} maskClosable={true} onCancel={() => setshow1(false)} onOk={() => passNotificationforr(true)}>
 					<div>
 						<Card type='inner'>Please confirm to send swap request this shift with your shift</Card>
 					</div>
@@ -839,6 +845,7 @@ const ShiftsCalender = ({ userObj }) => {
 							end: '',
 							center: 'prev,title,next',
 						}}
+						// eventContent={renderEventContent}
 						eventOrder='priority'
 						// eventClick={handelModal}
 						events={events}
@@ -1117,3 +1124,12 @@ const ShiftsCalender = ({ userObj }) => {
 	}
 };
 export default ShiftsCalender;
+
+function renderEventContent(eventInfo) {
+	return (
+		<div>
+			<b>{eventInfo.timeText}</b>
+			<i>{eventInfo.event.title}</i>
+		</div>
+	);
+}

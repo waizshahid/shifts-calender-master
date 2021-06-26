@@ -6,15 +6,28 @@ const userauth = require('../middleware/userauth');
 const { check, validationResult } = require('express-validator');
 const Shift = require('../models/Shift');
 const createShift = require('../models/createShift');
+
+const NotificationEmail = require('../models/notificationEmail');
 const User = require('../models/User');
 const Notifications = require('../models/Notifications');
 var nodemailer = require('nodemailer');
 
 var bodyParser = require('body-parser');
+router.use(bodyParser.json());
 var multer = require('multer');
 const { eventNames } = require('../models/Shift');
 const { assign } = require('nodemailer/lib/shared');
-router.use(bodyParser.json());
+
+const getNotificationEmail = async () => {
+	let notiEmail = await NotificationEmail.findOne({});
+	if (notiEmail) {
+		console.log(notiEmail);
+		return notiEmail.email;
+	} else {
+		return 'softthrivetest@gmail.com';
+	}
+};
+
 //@route  GET api/shift/getshift
 //@desc   Get all shift
 //@access Public
@@ -112,7 +125,34 @@ router.delete('/deletetypes', (req, res) => {
 //@access Public
 router.delete('/deleteshift', (req, res) => {
 	Shift.findOneAndDelete({ _id: req.query.id })
-		.then((resp) => {
+		.then(async (resp) => {
+			var transport = nodemailer.createTransport({
+				host: 'smtp.gmail.com',
+				port: 587,
+				secure: false,
+				requireTLS: true,
+				auth: {
+					// enter your account details to send email from
+					user: 'softthrivetest@gmail.com', // generated ethereal user
+					pass: 'strong12345678', // generated ethereal password
+				},
+			});
+
+			console.log('email => ', getNotificationEmail());
+			var mailOptions = {
+				from: 'softthrivetest@gmail.com',
+				to: await getNotificationEmail(),
+				subject: 'Shift deleted',
+				html: '<p> The following shift ' + resp.shiftname + ' has been deleted.</p>',
+			};
+
+			transport.sendMail(mailOptions, (error, info) => {
+				if (error) {
+					return console.log(error);
+				}
+				console.log('Message sent: %s', info.messageId);
+			});
+
 			res.send(resp);
 		})
 		.catch((err) => {
@@ -160,7 +200,7 @@ router.post('/createShiftsFromExcel', (req, res) => {
 		temp.push(shift);
 	});
 	console.log('Temp array');
-	console.log(temp);
+	// console.log(temp);
 	console.log('Array of Shifts recieved to backend');
 
 	temp.forEach((tempObj) => {
@@ -300,7 +340,7 @@ router.get('/getEventsBetweenTwoDates/:start/:end', (req, res) => {
 							.filter((shft) => shft && shft.start && shft.start === shift.start && shft.shiftTypeId.shiftname == 'Off')
 							.map((sh) => sh.userId.username)
 							.join(' & ');
-						console.log(offUsers);
+						// console.log(offUsers);
 						return {
 							// _id: shift._id,
 							Date: shift.start,
@@ -322,7 +362,7 @@ router.get('/getEventsBetweenTwoDates/:start/:end', (req, res) => {
 							.filter((shft) => shft && shft.start && shft.start === shift.start && shft.shiftTypeId.shiftname == 'Request')
 							.map((sh) => sh.userId.username)
 							.join(' & ');
-						console.log(requestUsers);
+						// console.log(requestUsers);
 						return {
 							// _id: shift._id,
 							Date: shift.start,
@@ -332,9 +372,9 @@ router.get('/getEventsBetweenTwoDates/:start/:end', (req, res) => {
 							// Name: shift.userId.lastName + ' ' + shift.userId.firstName,
 						};
 					} else {
-						console.log('***************');
-						console.log({ Date: shift.start, [shift.shiftTypeId.shiftname.trim()]: shift.userId.username });
-						console.log('***************');
+						// console.log('***************');
+						// console.log({ Date: shift.start, [shift.shiftTypeId.shiftname.trim()]: shift.userId.username });
+						// console.log('***************');
 						return { Date: shift.start, [shift.shiftTypeId.shiftname]: shift.userId.username };
 					}
 				}),
@@ -390,7 +430,7 @@ router.get('/deleteEventsBetweenTwoDates/:start/:end', async (req, res, next) =>
 
 router.delete('/deleteCurrentShift/:id', (req, res) => {
 	const id = req.params.id;
-	console.log(id);
+	// console.log(id);
 	createShift
 		.remove({ _id: id })
 		.exec()
@@ -398,7 +438,7 @@ router.delete('/deleteCurrentShift/:id', (req, res) => {
 			Shift.findById(id)
 				.exec()
 				.then((shift) => {
-					console.log(shift);
+					// console.log(shift);
 					if (result.deletedCount > 0) {
 						res.status(201).json({
 							message: 'shift deleted successfully',
@@ -453,7 +493,7 @@ router.get('/getUserByName/:id', async (req, res) => {
 	const id = req.params.id;
 
 	var shiftsList = [];
-	console.log('Name searched with id = ' + id);
+	// console.log('Name searched with id = ' + id);
 
 	createShift
 		.find({ userId: id })
@@ -461,10 +501,10 @@ router.get('/getUserByName/:id', async (req, res) => {
 		.populate('shiftTypeId')
 		.exec()
 		.then(async (shifts) => {
-			console.log(shifts);
+			// console.log(shifts);
 			res.status(200).json({
 				shifts: shifts.map((shift) => {
-					console.log(shift.title);
+					// console.log(shift.title);
 					return {
 						_id: shift._id,
 						start: shift.start,
@@ -479,7 +519,7 @@ router.get('/getUserByName/:id', async (req, res) => {
 });
 
 router.post('/createShift', (req, res) => {
-	console.log(req.body);
+	// console.log(req.body);
 	if (req.body === null) res.status(400).send('Bad Request');
 	let newShift = new createShift({
 		// _id :
@@ -493,10 +533,37 @@ router.post('/createShift', (req, res) => {
 		requestApprovalStatus: req.body.requestApprovalStatus,
 	});
 
-	console.log('Shift created as: ' + newShift);
+	// console.log('Shift created as: ' + newShift);
 	newShift
 		.save()
-		.then((newShift) => res.send(newShift))
+		.then(async (newShift) => {
+			var transport = nodemailer.createTransport({
+				host: 'smtp.gmail.com',
+				port: 587,
+				secure: false,
+				requireTLS: true,
+				auth: {
+					// enter your account details to send email from
+					user: 'softthrivetest@gmail.com', // generated ethereal user
+					pass: 'strong12345678', // generated ethereal password
+				},
+			});
+			console.log('email => ', getNotificationEmail());
+			var mailOptions = {
+				from: 'softthrivetest@gmail.com',
+				to: await getNotificationEmail(),
+				subject: 'Shift Created',
+				html: '<p> The following shift ' + newShift.shiftname + ' has been updated.</p>',
+			};
+
+			transport.sendMail(mailOptions, (error, info) => {
+				if (error) {
+					return console.log(error);
+				}
+				console.log('Message sent: %s', info.messageId);
+			});
+			res.send(newShift);
+		})
 		.catch((err) => console.log(err));
 });
 
@@ -551,7 +618,7 @@ router.get('/restrict-swap/:id/:swapable', (req, res) => {
 
 router.get('/updateRequestApproval/:id', (req, res) => {
 	const shiftId = req.params.id;
-	console.log('Shift ID' + shiftId);
+	// console.log('Shift ID' + shiftId);
 	createShift
 		.findOne({
 			_id: shiftId,
@@ -582,7 +649,7 @@ router.get('/updateRequestApproval/:id', (req, res) => {
 
 router.get('/updateApprovalStatustoFalse/:id', (req, res) => {
 	const shiftId = req.params.id;
-	console.log('Shift IIIIIID' + shiftId);
+	// console.log('Shift IIIIIID' + shiftId);
 	createShift
 		.findOne({
 			_id: shiftId,
@@ -613,7 +680,7 @@ router.get('/updateApprovalStatustoFalse/:id', (req, res) => {
 
 router.get('/updateApprovalStatustoTrue/:id', (req, res) => {
 	const shiftId = req.params.id;
-	console.log('Shift ID' + shiftId);
+	// console.log('Shift ID' + shiftId);
 	createShift
 		.findOne({
 			_id: shiftId,
@@ -899,6 +966,8 @@ router.get('/deleteThisShift/:id', (req, res) => {
 	createShift
 		.findByIdAndDelete(req.params.id)
 		.then((resp) => {
+			console.log(resp);
+
 			res.send('Shift Deleted Successfully');
 		})
 		.catch((err) => {
@@ -928,7 +997,7 @@ router.get('/getShiftName/:id', (req, res) => {
 		});
 });
 router.get('/pendingShifts/:myid', (req, res) => {
-	console.log('req.params in api', req.params.myid);
+	// console.log('req.params in api', req.params.myid);
 	Notifications.find({ message: 'One of the User wants to swap his shift with you. Click for the details', to: req.params.myid })
 		.populate('from')
 		.populate('shiftFrom')
@@ -938,10 +1007,10 @@ router.get('/pendingShifts/:myid', (req, res) => {
 			// shiftFrom: 1,
 		})
 		.then((pendings) => {
-			console.log(pendings);
+			// console.log(pendings);
 			res.status(200).json({
 				pendings: pendings.map((pending) => {
-					console.log(pending);
+					// console.log(pending);
 					if (pending.shiftFrom && pending.shifttypeid) {
 						return {
 							_id: pending.shiftFrom._id,
@@ -980,7 +1049,7 @@ router.get('/pendingShifts/:myid', (req, res) => {
 });
 
 router.get('/currentShifts', (req, res) => {
-	console.log('shifts');
+	// console.log('shifts');
 	createShift
 		.find()
 		.populate('userId')
@@ -1020,7 +1089,7 @@ router.get('/currentShifts', (req, res) => {
 						//   dottedComment = shift.comment.substring(0,3);
 						// }
 						//  dottedComment.append('...')
-						console.log(shift.comment);
+						// console.log(shift.comment);
 						if (shift.comment && shift.comment.length > 8) {
 							return {
 								_id: shift._id,
@@ -1200,14 +1269,15 @@ async function sendMail(user1, user2, title_1, title_2) {
 		requireTLS: true,
 		auth: {
 			// enter your account details to send email from
-			user: '',
-			pass: '',
+			user: 'softthrivetest@gmail.com', // generated ethereal user
+			pass: 'strong12345678', // generated ethereal password
 		},
 	});
 
+	console.log('email => ', getNotificationEmail());
 	var mailOptions = {
-		from: '',
-		to: '',
+		from: 'softthrivetest@gmail.com',
+		to: await getNotificationEmail(),
 		subject: 'Shift Transfer Log',
 		html: '<p> This mail sent as shift transfer log. <br/> Shift <b>' + title_1 + '</b> to this <b>' + title_2 + '</b> </p>',
 	};
@@ -1253,7 +1323,32 @@ router.put(
 				priority: req.body.newData.priority,
 			};
 
-			Shift.update({ _id: req.body.id }, { $set: newPerson }).then((resp) => {
+			Shift.update({ _id: req.body.id }, { $set: newPerson }).then(async (resp) => {
+				var transport = nodemailer.createTransport({
+					host: 'smtp.gmail.com',
+					port: 587,
+					secure: false,
+					requireTLS: true,
+					auth: {
+						// enter your account details to send email from
+						user: 'softthrivetest@gmail.com', // generated ethereal user
+						pass: 'strong12345678', // generated ethereal password
+					},
+				});
+				console.log('email => ', getNotificationEmail());
+				var mailOptions = {
+					from: 'softthrivetest@gmail.com',
+					to: await getNotificationEmail(),
+					subject: 'Shift Updated',
+					html: '<p> The following shift ' + resp.shiftname + ' has been updated.</p>',
+				};
+
+				transport.sendMail(mailOptions, (error, info) => {
+					if (error) {
+						return console.log(error);
+					}
+					console.log('Message sent: %s', info.messageId);
+				});
 				res.send(resp);
 			});
 		} catch (err) {
@@ -1268,22 +1363,22 @@ router.put(
 //@access public
 
 router.post('/changeEditable', async (req, res) => {
-	try{
-		let shifts = await Shift.find()
-		if(shifts.length > 0){
-			for(let i =0; i<shifts.length; i++){
-				let shift = shifts[i]
-				shift.editable = true
-				await shift.save()
+	try {
+		let shifts = await Shift.find();
+		if (shifts.length > 0) {
+			for (let i = 0; i < shifts.length; i++) {
+				let shift = shifts[i];
+				shift.editable = true;
+				await shift.save();
 			}
 			return res.json({
-				shifts: shifts
-			})
+				shifts: shifts,
+			});
 		}
-	}catch(err){
-		console.log(err)
+	} catch (err) {
+		console.log(err);
 	}
-})
+});
 
 //@route  POST api/shift/register
 //@desc   Register New Shift
@@ -1314,7 +1409,7 @@ router.post(
 								shiftname: req.body.shiftname,
 								color: req.body.color,
 								// editable: req.body.editable,
-								editable:true,
+								editable: true,
 								priority: req.body.priority,
 							});
 
@@ -1359,7 +1454,7 @@ router.get('/getNotification', (req, res) => {
 });
 
 router.get('/findCurrentShiftNotification/:userId/:shiftId', (req, res) => {
-	console.log(req.params.userId);
+	// console.log(req.params.userId);
 	Notifications.find({
 		$and: [
 			{

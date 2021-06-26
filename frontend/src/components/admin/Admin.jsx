@@ -54,6 +54,9 @@ const Admin = ({ admin }) => {
 	useEffect(() => {
 		getNotifications();
 	}, [shifts]);
+	useEffect(() => {
+		getNotifications();
+	}, []);
 	const swapShift = () => {
 		console.log(index);
 		exchangeAndDelete();
@@ -88,7 +91,7 @@ const Admin = ({ admin }) => {
 				console.log(err);
 			});
 	};
-	const deleteNotification = () => {
+	const deleteNotification = (index) => {
 		console.log('display mesage index', dsplayMessage[index]);
 		const notificationId = dsplayMessage[index]?._id;
 		console.log(dsplayMessage[index]?._id);
@@ -113,13 +116,14 @@ const Admin = ({ admin }) => {
 		axios
 			.get('user/getNotifcations')
 			.then((res1) => {
+				console.log(res1);
 				let array = [];
 				for (let i = 0; i < res1.data.length; i++) {
 					if (res1.data[i].requesterType === 'Super Admin') {
 						array.push(res1.data[i]);
 					} else if (res1.data[i].requesterType === 'Admin' && res1.data[i].currentUserId === currentId) {
 						array.push(res1.data[i]);
-					} else if (res1.data[i].requesterType === 'User' && res1.data[i].from === currentId) {
+					} else if (res1.data[i].requesterType === 'User' && res1.data[i].from._id === currentId) {
 						array.push(res1.data[i]);
 					}
 				}
@@ -130,13 +134,13 @@ const Admin = ({ admin }) => {
 				console.log(err);
 			});
 	};
-	const deleteNotification1 = (message) => {
+	const deleteNotification1 = (message, sendEmail) => {
 		console.log('message lelo', message);
 
 		const notificationId = dsplayMessage[message]._id;
 		console.log(dsplayMessage[message]._id);
 		axios
-			.delete('user/deleteCurrentNotification/' + notificationId)
+			.delete('user/deleteCurrentNotification/' + notificationId, { sendEmail: sendEmail })
 			.then((res) => {
 				refresh();
 			})
@@ -171,7 +175,7 @@ const Admin = ({ admin }) => {
 		console.log(dsplayMessage[message]);
 		const id = dsplayMessage[message]._id;
 		const shiftId1 = dsplayMessage[message].shiftFrom;
-		const userToExchange = dsplayMessage[message].to;
+		const userToExchange = dsplayMessage[message].to._id;
 
 		console.log(id);
 		console.log(userToExchange);
@@ -242,10 +246,10 @@ const Admin = ({ admin }) => {
 								temp.push(shiftArray[i]);
 							}
 						}
-            let user2firstName = temp[2].firstName ? temp[2].firstName : temp[1].firstName;
+						let user2firstName = temp[2].firstName ? temp[2].firstName : temp[1].firstName;
 						let user2lastName = temp[2].lastName ? temp[2].lastName : temp[1].lastName;
 						user1 = temp[0].firstName + ' ' + temp[0].lastName;
-            user2 = user2lastName + ' ' + user2firstName;
+						user2 = user2lastName + ' ' + user2firstName;
 						date = new Date(temp[1].start).toLocaleString('default', {
 							month: 'short',
 							day: 'numeric',
@@ -325,100 +329,108 @@ const Admin = ({ admin }) => {
 			display: 'block',
 		  }}>Notification</b>
 	 */}
-			{dsplayMessage.map((message, index) => (
-				<Menu.Item key={index}>
-					<div
-						style={{
-							width: '400',
-							borderRadius: '6px',
-							marginRight: '10px',
-							textAlign: 'end',
-						}}>
-						{message.requesterType === 'Super Admin' ? (
-							<div>
-								<div className='row'>
-									<Tag className='col-2' color='success' onClick={() => showShiftModal1(index)}>
-										Detail
-									</Tag>
-									<div
-										className='col-6'
-										style={{
-											display: 'flex',
-										}}>
-										<Tag color='success'>{message.requesterType}</Tag>
+			{console.log('==============', dsplayMessage)}
+			{dsplayMessage
+				.filter((msg) => !msg.adminEdit)
+				.map((message, index) => (
+					<Menu.Item key={index}>
+						<div
+							style={{
+								width: '400',
+								borderRadius: '6px',
+								marginRight: '10px',
+								textAlign: 'end',
+							}}>
+							{message.requesterType === 'Super Admin' ? (
+								<div>
+									<div className='row'>
+										<Tag className='col-2' color='success' onClick={() => showShiftModal1(index)}>
+											Detail
+										</Tag>
+										<div
+											className='col-6'
+											style={{
+												display: 'flex',
+											}}>
+											<Tag color='success'>{message.requesterType}</Tag>
+										</div>
+										<div className='col-4'>
+											<Tag color='default'>{message.regDate}</Tag>
+										</div>
 									</div>
-									<div className='col-4'>
-										<Tag color='default'>{message.regDate}</Tag>
-									</div>
+									<div className='row'>{message.message}</div>
+									<hr />
 								</div>
-								<div className='row'>{message.message}</div>
-								<hr />
-							</div>
-						) : message.requesterType === 'Admin' ? (
-							<div>
-								{message.currentUserId === currentId ? (
-									<div>
-										<div className='row'>
-											<div
-												className='col-8'
-												style={{
-													display: 'flex',
-												}}>
-												<Tag color='success'>{'Mine'}</Tag>
-											</div>
-											<div className='col-4'>
-												<Tag color='default'>{message.regDate}</Tag>
-											</div>
-										</div>
-										<div style={{ margin: 2 }} className='row'>
-											{'Your request for the shift named ' + message.shiftName + ' has been sent'}
-										</div>
+							) : message.requesterType === 'Admin' ? (
+								<div>
+									{message.currentUserId === currentId ? (
 										<div>
-											<Button style={{ margin: 20 }} key='1' onClick={deleteNotification}>
+											<div className='row'>
+												<div
+													className='col-8'
+													style={{
+														display: 'flex',
+													}}>
+													{/* <Tag color='success'>{'Mine'}</Tag> */}
+												</div>
+												<div className='col-4'>
+													<Tag color='default'>{message.regDate}</Tag>
+												</div>
+											</div>
+											<div style={{ margin: 2 }} className='row'>
+												Your request for the shift named {message.shiftName} to {message.from.lastName} has been {message.status === 'accepted' ? 'accepted' : 'sent'}
+											</div>
+											{message.status === 'accepted' && (
+												<Button style={{ margin: 20 }} key='1' onClick={() => deleteNotification(index)}>
+													Delete this Request
+												</Button>
+											)}
+											<div>
+												{/* <Button style={{ margin: 20 }} key='1' onClick={deleteNotification}>
 												Delete this Request
 											</Button>
 											<Button style={{ paddingLeft: 20 }} onClick={() => setVisible(false)} key='2' type='primary'>
 												OK
-											</Button>
+											</Button> */}
+											</div>
+											<hr />
 										</div>
-										<hr />
-									</div>
-								) : (
-									<div>
-										<div className='row'>
-											<div className='col-6'>
-												<Tag color='success'>{message.requesterType}</Tag>
+									) : (
+										<div>
+											<div className='row'>
+												<div className='col-6'>
+													<Tag color='success'>{message.requesterType}</Tag>
+												</div>
+												<div className='col-2'>
+													<Tag color='default'>{message.shiftName}</Tag>
+												</div>
+												<div className='col-2'>
+													<Tag color='default'>{message.regDate}</Tag>
+												</div>
 											</div>
-											<div className='col-2'>
-												<Tag color='default'>{message.shiftName}</Tag>
-											</div>
-											<div className='col-2'>
-												<Tag color='default'>{message.regDate}</Tag>
-											</div>
+											<div className='row'>{message.message}</div>
+											<hr />
 										</div>
-										<div className='row'>{message.message}</div>
-										<hr />
-									</div>
-								)}
-							</div>
-						) : (
-							<div>
-								{message.requesterType === 'User' ? (
-									<div className=''>
-										{message.from === currentId || message.to === currentId ? (
-											<div>
-												{' '}
-												{message.message !== 'Your swap request for the shift has been accepted' && message.message !== 'Your rejection response has been sent to the swap requester' && message.message !== 'Your shift has been exchanged. View Details' ? (
-													<div>
-														<Tag color='success' onClick={() => showShiftModal1(index)}>
+									)}
+								</div>
+							) : (
+								<div>
+									{message.requesterType === 'User' ? (
+										<div className=''>
+											{message.from._id === currentId || message.to._id === currentId ? (
+												<div>
+													{' '}
+													{message.message !== 'Your swap request for the shift has been accepted' && message.message !== 'Your rejection response has been sent to the swap requester' && message.message !== 'Your shift has been exchanged. View Details' ? (
+														<div>
+															{/* <Tag color='success' onClick={() => showShiftModal1(index)}>
 															Detail
 														</Tag>
-														<Tag color='green'>{message.requesterType}</Tag>
-														<br /> {message.message}
-														<br />
-														<Tag color='default'>{message.regDate}</Tag>
-														<Row className='buttonsetting'>
-															<Button style={{ marginRight: 25 }} onClick={() => deleteNotification1(index)}>
+														<Tag color='green'>{message.requesterType}</Tag> */}
+															<br /> {message.message}
+															<br />
+															{/* <Tag color='default'>{message.regDate}</Tag> */}
+															<Row className='buttonsetting'>
+																{/* <Button style={{ marginRight: 25 }} onClick={() => deleteNotification1(index)}>
 																Delete this notification
 															</Button>
 															<Button onClick={() => updateNotification1(index)} className='rejectbutton'>
@@ -426,52 +438,64 @@ const Admin = ({ admin }) => {
 															</Button>
 															<Button type='primary' className='button2setting' onClick={() => swapShift1(index)}>
 																Exchange
-															</Button>
-														</Row>{' '}
-														<hr />
-													</div>
-												) : (
-													<div>
+															</Button> */}
+
+																{/* <Button style={{ marginRight: 25 }} onClick={() => deleteNotification1(index)}>
+																Delete this notification
+															</Button> */}
+																<Button onClick={() => deleteNotification1(index, true)} className='rejectbutton'>
+																	Reject
+																</Button>
+																<Button type='primary' className='button2setting' onClick={() => swapShift1(index)}>
+																	Accept
+																</Button>
+															</Row>{' '}
+															<hr />
+														</div>
+													) : (
 														<div>
-															<div className='row'>
-																<div className='col-2'>
+															<div>
+																<div className='row'>
+																	{/* <div className='col-2'>
 																	{' '}
 																	<Tag color='success' onClick={() => showShiftModal1(index)}>
 																		Detail
 																	</Tag>{' '}
+																</div> */}
+																	<div className='col-4'>
+																		<Tag color='success'>{message.requesterType}</Tag>
+																	</div>
+																	<div className='col-2'>
+																		<Tag color='default'>{message.shiftName}</Tag>
+																	</div>
+																	<div className='col-2'>
+																		<Tag color='default'>{message.regDate}</Tag>
+																	</div>
 																</div>
-																<div className='col-4'>
-																	<Tag color='success'>{message.requesterType}</Tag>
-																</div>
-																<div className='col-2'>
-																	<Tag color='default'>{message.shiftName}</Tag>
-																</div>
-																<div className='col-2'>
-																	<Tag color='default'>{message.regDate}</Tag>
-																</div>
+																<div className='row'>{message.message}</div>
+																<Button style={{ marginRight: 25 }} onClick={() => deleteNotification1(index)}>
+																	Delete this notification
+																</Button>
+																<hr />
 															</div>
-															<div className='row'>{message.message}</div>
-															<Button style={{ marginRight: 25 }} onClick={() => deleteNotification1(index)}>
-																Delete this notification
-															</Button>
-															<hr />
 														</div>
-													</div>
-												)}
-											</div>
-										) : (
-											<div>{/* <Tag color="green">{message.requesterType}</Tag> <br/>{message.message}
-										<Tag color="default">{message.regDate}</Tag> */}</div>
-										)}
-									</div>
-								) : (
-									<div className=''></div>
-								)}
-							</div>
-						)}
-					</div>
-				</Menu.Item>
-			))}
+													)}
+												</div>
+											) : (
+												<div>
+													{/* <Tag color="green">{message.requesterType}</Tag> <br/>{message.message}
+										<Tag color="default">{message.regDate}</Tag> */}
+												</div>
+											)}
+										</div>
+									) : (
+										<div className=''></div>
+									)}
+								</div>
+							)}
+						</div>
+					</Menu.Item>
+				))}
 		</Menu>
 	);
 	const refresh = () => {

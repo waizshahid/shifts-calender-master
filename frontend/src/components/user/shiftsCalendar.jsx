@@ -546,6 +546,7 @@ const ShiftsCalendar = () => {
 			<br />
 			{loading === false ? (
 				<FullCalendar
+				
 					defaultView='dayGridMonth'
 					// timeZone='America/Chicago'
 					defaultDate='2021-06-01'

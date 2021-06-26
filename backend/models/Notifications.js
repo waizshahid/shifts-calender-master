@@ -50,6 +50,15 @@ const notificationSchema = new mongoose.Schema({
 		// required: true,
 		ref: 'shifts',
 	},
+	status: {
+		type: String,
+	},
+	adminEdit: {
+		type: Boolean,
+	},
+	adminSwaped: {
+		type: Boolean,
+	},
 });
 
 module.exports = mongoose.model('notifications', notificationSchema);

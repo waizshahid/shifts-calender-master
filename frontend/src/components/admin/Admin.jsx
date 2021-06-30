@@ -123,7 +123,7 @@ const Admin = ({ admin }) => {
 						array.push(res1.data[i]);
 					} else if (res1.data[i].requesterType === 'Admin' && res1.data[i].currentUserId === currentId) {
 						array.push(res1.data[i]);
-					} else if (res1.data[i].requesterType === 'User' && res1.data[i].from._id === currentId) {
+					} else if (res1.data[i].requesterType === 'User' && res1.data[i].from?._id === currentId) {
 						array.push(res1.data[i]);
 					}
 				}
@@ -175,7 +175,7 @@ const Admin = ({ admin }) => {
 		console.log(dsplayMessage[message]);
 		const id = dsplayMessage[message]._id;
 		const shiftId1 = dsplayMessage[message].shiftFrom;
-		const userToExchange = dsplayMessage[message].to._id;
+		const userToExchange = dsplayMessage[message].to?._id;
 
 		console.log(id);
 		console.log(userToExchange);
@@ -378,7 +378,7 @@ const Admin = ({ admin }) => {
 												</div>
 											</div>
 											<div style={{ margin: 2 }} className='row'>
-												Your request for the shift named {message.shiftName} to {message.from.lastName} has been {message.status === 'accepted' ? 'accepted' : 'sent'}
+												Your request for the shift named {message.shiftName} to {message?.from?.lastName} has been {message.status === 'accepted' ? 'accepted' : 'sent'}
 											</div>
 											{message.status === 'accepted' && (
 												<Button style={{ margin: 20 }} key='1' onClick={() => deleteNotification(index)}>
@@ -417,7 +417,7 @@ const Admin = ({ admin }) => {
 								<div>
 									{message.requesterType === 'User' ? (
 										<div className=''>
-											{message.from._id === currentId || message.to._id === currentId ? (
+											{message?.from?._id === currentId || message?.to?._id === currentId ? (
 												<div>
 													{' '}
 													{message.message !== 'Your swap request for the shift has been accepted' && message.message !== 'Your rejection response has been sent to the swap requester' && message.message !== 'Your shift has been exchanged. View Details' ? (

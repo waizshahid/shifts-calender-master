@@ -450,7 +450,7 @@ const Side = ({ user }) => {
 												<div className='row'>
 													<div className='col-12'>
 														{/* {message.message} */}
-														{message.currentUserId.firstName + ' ' + message.currentUserId.firstName} has Changed {message.regDate} {message.shiftName} from {message.from.firstName + ' ' + message.from.lastName} to {message.to.firstName + ' ' + message.to.lastName}
+														{message.currentUserId.firstName + ' ' + message.currentUserId.firstName} has Changed {message.regDate} {message.shiftName} from {message?.from?.firstName + ' ' + message?.from?.lastName} to {message.to?.firstName + ' ' + message.to?.lastName}
 													</div>
 												</div>
 												<Row className='buttonsetting'>
@@ -575,11 +575,11 @@ const Side = ({ user }) => {
 												{/* {message.messageFrom} */}
 												{message.status === 'pending' ? (
 													<div>
-														Your request has been sent to {message.from.lastName}, {message.from.firstName[0]}
+														Your request has been sent to {message.from?.lastName}, {message.from?.firstName[0]}
 													</div>
 												) : (
 													<>
-														{message.from.lastName}, {message.from.firstName[0]} has accepted your request,
+														{message.from.lastName}, {message.from?.firstName[0]} has accepted your request,
 														<br />
 														{message.to.lastName} is now {message.shiftName} {message.regDate}. click ok to acknowledge.
 													</>

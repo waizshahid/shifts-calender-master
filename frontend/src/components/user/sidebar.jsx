@@ -126,13 +126,13 @@ const Side = ({ user }) => {
 		console.log(dsplayMessage[message]);
 		const id = dsplayMessage[message]._id;
 		const shiftId1 = dsplayMessage[message].shiftFrom;
-		const userToExchange = dsplayMessage[message].to._id;
+		const userToExchange = dsplayMessage[message].to?._id;
 
 		console.log(id);
 		console.log(userToExchange);
 
 		const currentUserId = currentId;
-		const userId1 = dsplayMessage[message].from._id;
+		const userId1 = dsplayMessage[message].from?._id;
 		const userId2 = userToExchange;
 		// const shiftId1 = dsplayMessage[index].shiftFrom
 		const message1 = dsplayMessage[message].message;
@@ -492,8 +492,7 @@ const Side = ({ user }) => {
 									</div>
 								) : (
 									<div>
-										{console.log(message.from._id, currentId)}
-										{message.from._id === currentId ? (
+										{message.from?._id === currentId ? (
 											<div>
 												{message.message !== 'Your shift has been exchanged. View Details' && message.message !== 'Your rejection response has been sent to the swap requester' ? (
 													<div>
@@ -579,9 +578,9 @@ const Side = ({ user }) => {
 													</div>
 												) : (
 													<>
-														{message.from.lastName}, {message.from?.firstName[0]} has accepted your request,
+														{message.from?.lastName}, {message.from?.firstName[0]} has accepted your request,
 														<br />
-														{message.to.lastName} is now {message.shiftName} {message.regDate}. click ok to acknowledge.
+														{message.to?.lastName} is now {message.shiftName} {message.regDate}. click ok to acknowledge.
 													</>
 												)}
 												<br></br>

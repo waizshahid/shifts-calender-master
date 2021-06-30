@@ -483,11 +483,11 @@ router.get('/getSpecificNotification/:id', (req, res) => {
 						_id: shift._id,
 						shiftId: shift.shiftFrom._id,
 						date: shift.shiftFrom.start,
-						user1Name: shift?.from?.firstName + ' ' + shift?.from?.lastName,
-						user2Name: shift.to?.firstName + ' ' + shift.to?.lastName,
-						user1Email: shift.from?.email,
-						user2Email: shift.to?.email,
-						user1Type: shift.from?.type,
+						user1Name: shift.from.firstName + ' ' + shift.from.lastName,
+						user2Name: shift.to.firstName + ' ' + shift.to.lastName,
+						user1Email: shift.from.email,
+						user2Email: shift.to.email,
+						user1Type: shift.from.type,
 						user2Type: shift.to.type,
 					};
 				}),
@@ -1041,7 +1041,7 @@ router.get('/getEventHistory/:id', async (req, res) => {
 					if (shift.requesterType === 'Super Admin') {
 						return {
 							_id: shift._id,
-							doctorAssigned: shift.to?.firstName + ' ' + shift.to?.lastName,
+							doctorAssigned: shift.to.firstName + ' ' + shift.to.lastName,
 							shiftName: shift.shiftName,
 							swappingDate: shift.regDate,
 							shiftDate: shift.shiftFrom.start,
@@ -1050,7 +1050,7 @@ router.get('/getEventHistory/:id', async (req, res) => {
 					} else {
 						return {
 							_id: shift._id,
-							doctorAssigned: shift.to?.firstName + ' ' + shift.to?.lastName,
+							doctorAssigned: shift.to.firstName + ' ' + shift.to.lastName,
 							shiftName: shift.shiftName,
 							swappingDate: shift.regDate,
 							shiftDate: shift.shiftFrom.start,

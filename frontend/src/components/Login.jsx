@@ -10,14 +10,16 @@ import "../css/Login.css";
 
 const Login = (props) => {
 	const [error, setError] = React.useState(" ");
-	
-	const submitLogin = (person,email,pass) => {
+
+	const submitLogin = (person, email, pass) => {
+		console.log("before")
 		axios
 			.post("superadminauth/login", {
 				email,
 				pass,
 				person
-			})
+			},
+			)
 			.then((res) => {
 				window.localStorage.clear();
 				console.log("hhh", res.data);
@@ -40,29 +42,25 @@ const Login = (props) => {
 					props.history.push("/user/shifts-calender");
 				}
 			})
-				.catch((err) => {
-					setError(err);
-				});
+			.catch((err) => {
+				setError(err);
+			});
 	}
 
 	const onFinish = (values) => {
-		const { email, pass} = values;
+		const { email, pass } = values;
 		setError(" ");
 		// console.log(email)
-		
+
 		console.log(email.replace(/\s/g, '').toLowerCase())
 
-		axios.get("superadminauth/getType/"+email.replace(/\s/g, '').toLowerCase())
+		axios.get("superadminauth/getType/" + email.replace(/\s/g, '').toLowerCase())
 			.then((response) => {
-				submitLogin(response.data.type,email.replace(/\s/g, '').toLowerCase(),pass)
+				submitLogin(response.data.type, email.replace(/\s/g, '').toLowerCase(), pass)
 			})
 			.catch((err) => {
 				console.log(err);
 			})
-		
-		
-
-		
 	}
 
 	return (
@@ -107,7 +105,7 @@ const Login = (props) => {
 					/>
 				</Form.Item>
 
-				
+
 				{/* <Form.Item
 					name="person"
 					rules={[

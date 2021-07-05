@@ -142,7 +142,7 @@ const Side = ({ user }) => {
 		const shiftName = dsplayMessage[message].shiftName;
 
 		axios
-			.get('shift/swapShiftUser/' + shiftId1 + '/' + userToExchange)
+			.get('shift/swapShiftUser/' + shiftId1 + '/' + userToExchange + '/' + userId1)
 			.then((res) => {
 				console.log(res);
 				axios
@@ -161,7 +161,7 @@ const Side = ({ user }) => {
 	};
 
 	const [form] = Form.useForm();
-	const exchangeAndDelete = () => {};
+	const exchangeAndDelete = () => { };
 
 	const updateHistory = (currentUserId, userId1, userId2, shiftId1, message, adminresponse, date, requester, shiftName, update) => {
 		axios
@@ -910,8 +910,8 @@ const Side = ({ user }) => {
 							</Button>,
 						]}
 						onCancel={() => setsentVisible(false)}
-						// // onOk={handleOk}
-						// footer={null}
+					// // onOk={handleOk}
+					// footer={null}
 					>
 						<Row>
 							<Col xs={24} sm={24} md={24} lg={24} xl={24}>

@@ -354,13 +354,13 @@ const ShiftsCalender = ({ userObj }) => {
 			oneEvent.userId === undefined && oneEvent._id === undefined
 				? setexchangeVisible(false)
 				: axios.get('shift/findCurrentShiftNotification/' + currentId + '/' + oneEvent._id).then((res) => {
-						if (res.data.length === 0) {
-							console.log(res.data.length);
-							setexchangeVisible(true);
-						} else {
-							message.error('You have already requested for this shift');
-						}
-				  });
+					if (res.data.length === 0) {
+						console.log(res.data.length);
+						setexchangeVisible(true);
+					} else {
+						message.error('You have already requested for this shift');
+					}
+				});
 		}
 
 		// axios.get('shift/findCurrentShiftNotification/'+userId1+'/'+shiftId1)
@@ -760,16 +760,30 @@ const ShiftsCalender = ({ userObj }) => {
 					setEvents([]);
 				}
 			});
-		} else {
-			axios
-				.get('shift/filterShift/' + e.target.value)
-				.then((res) => {
-					setEvents(res.data.shifts);
-				})
-				.catch((err) => {
-					console.log(err);
-				});
 		}
+		// else {
+		// 	axios
+		// 		.get('shift/filterShift/' + e.target.value)
+		// 		.then((res) => {
+		// 			setEvents(res.data.shifts);
+		// 		})
+		// 		.catch((err) => {
+		// 			console.log(err);
+		// 		});
+		// }
+
+		else if (e.target.value === 'shifts only') {
+			axios.get('shift/currentShifts').then((res) => {
+				// let temp1 = []
+				// let temp2 = []
+				// for(let i =0 ; i<res.data.shifts.length; i++){
+
+				// }
+				console.log(res.data.shifts)
+				let withoutOff = res.data.shifts.filter(v => (v.shiftname != "Off" && v.shiftname != "Request"))
+				setEvents(withoutOff);
+			});
+		};
 	};
 
 	function showHistory() {
@@ -813,12 +827,12 @@ const ShiftsCalender = ({ userObj }) => {
 						<select id='selectDoctor' name='cars' className='custom-select bg-light m-2 shadow-sm' onChange={filterShift}>
 							<option defaultValue='All Users'>View All</option>
 							<option value='My Shifts'>My Shifts Only</option>
-							<option value='Pending'>Pending Shifts</option>
-							{filderedData.map((dat) => (
-								<option value={dat._id} key={dat._id}>
-									Shifts Only
-								</option>
-							))}
+							{/* <option value='Pending'>Pending Shifts</option> */}
+							{/* {filderedData.map((dat) => ( */}
+							<option value='shifts only'>
+								Shifts Only
+							</option>
+							{/* ))} */}
 							<option value='Off'>OFF Shifts</option>
 							{/* <option value="Shifts Offered">Shifts Offered </option> */}
 						</select>

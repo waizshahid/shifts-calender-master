@@ -102,15 +102,17 @@ router.get("/getType/:email", (req, res) => {
                     user: newperson
                 })
             } else {
+                console.log(getEmail)
                 User.findOne({
                         email: getEmail
                     })
                     .then((newperson) => {
-                        console.log("2")
+                        console.log("2", newperson)
                         if (newperson) {
                             console.log(newperson)
                             res.send(newperson)
                         } else {
+                            console.log("in else")
                             res.status(404).json({
                                 message: "no user found"
                             })

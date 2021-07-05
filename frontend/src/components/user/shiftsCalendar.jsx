@@ -62,21 +62,29 @@ const ShiftsCalendar = () => {
 	};
 	useEffect(
 		(e) => {
+
 			setShiftType(shiftNameUser);
 		},
 		[commentVisible],
 	);
 	function setRequestEvent(e) {
+
 		shiftNameUser = e.target.value.substring(0, e.target.value.indexOf(':'));
+
+		setShiftType(shiftNameUser);
 		setcommentVisible('true');
 	}
 
 	async function setOffEvent(e) {
+		console.log(e.target.value, "event value in off request")
 		shiftNameUser = e.target.value.substring(0, e.target.value.indexOf(':'));
+
+		setShiftType(shiftNameUser);
 		await setComment(' ');
 		setcommentVisible('false');
 	}
 	const handelShift = (e) => {
+		console.log(e.target.value.substring(e.target.value.indexOf(':') + 1), "handel shifffffftt")
 		if (e.target.value.substring(e.target.value.indexOf(':') + 1) === 'Request') {
 			setRequestEvent(e);
 		} else {
@@ -115,7 +123,6 @@ const ShiftsCalendar = () => {
 	};
 
 	const AfterSetOff = () => {
-		console.log(off);
 		console.log('in create shift ccccccccc');
 		const userId = currentId;
 		let shiftTypeId = shiftType;
@@ -214,6 +221,7 @@ const ShiftsCalendar = () => {
 	};
 
 	const handelSelect = (e) => {
+		console.log("ee")
 		if (e.target.value === 'All Shifts') {
 			axios.get('shift/currentShifts').then((res) => {
 				// let temp1 = []
@@ -266,7 +274,18 @@ const ShiftsCalendar = () => {
 					console.log(err);
 					console.log('error in calling');
 				});
-		} else;
+		} else if (e.target.value === 'shifts only') {
+			axios.get('shift/currentShifts').then((res) => {
+				// let temp1 = []
+				// let temp2 = []
+				// for(let i =0 ; i<res.data.shifts.length; i++){
+
+				// }
+				console.log(res.data.shifts)
+				let withoutOff = res.data.shifts.filter(v => (v.shiftname != "Off" && v.shiftname != "Request"))
+				setEvents(withoutOff);
+			});
+		};
 	};
 
 	useEffect(() => {
@@ -363,13 +382,13 @@ const ShiftsCalendar = () => {
 			oneEvent.userId === undefined && oneEvent._id === undefined
 				? setexchangeVisible(false)
 				: axios.get('shift/findCurrentShiftNotification/' + currentId + '/' + oneEvent._id).then((res) => {
-						if (res.data.length === 0) {
-							console.log(res.data.length);
-							setexchangeVisible(true);
-						} else {
-							message.error('You have already requested for this shift');
-						}
-				  });
+					if (res.data.length === 0) {
+						console.log(res.data.length);
+						setexchangeVisible(true);
+					} else {
+						message.error('You have already requested for this shift');
+					}
+				});
 		}
 
 		// axios.get('shift/findCurrentShiftNotification/'+userId1+'/'+shiftId1)
@@ -453,12 +472,12 @@ const ShiftsCalendar = () => {
 					// 		return;
 					// 	}
 					// }
-					if(data.length > 0 && data.filter(d => d.shiftname === shiftName).length > 0){
+					if (data.length > 0 && data.filter(d => d.shiftname === shiftName).length > 0) {
 						shiftIdforn = data.filter(d => d.shiftname === shiftName)[0]._id
-						
-					}else{
-							alert('This shift is not editable');
-					 		return;
+
+					} else {
+						alert('This shift is not editable');
+						return;
 					}
 					console.log(shiftIdforn);
 					axios
@@ -495,18 +514,15 @@ const ShiftsCalendar = () => {
 		const key = 'updatable';
 		await setAdminCheck(false);
 		await setLoading(true);
-
 		axios
 			.get('shift/deleteThisShift/' + currentShift)
 			.then((res1) => {
 				console.log(res1);
 				console.log(res1.data);
-
 				// message.loading({ content: 'Deleting...', key });
 				// setTimeout(() => {
 				//   message.success({ content: res1.data, key, duration: 2 });
 				// }, 1000);
-
 				axios
 					.get('shift/currentShifts')
 					.then(async (res) => {
@@ -523,7 +539,13 @@ const ShiftsCalendar = () => {
 				console.log(err);
 				message.err(err);
 			});
-	};
+	}
+	//;{filderedData.map((dat) => (
+	// 						<option value={dat._id} key={dat._id}>
+	// 							{/* Shifts without {' '}{dat.shiftname} */}
+	// 							Shifts Only
+	// 						</option>
+	// 					))}
 	return (
 		<div>
 			<div className='container-fluid'>
@@ -532,13 +554,12 @@ const ShiftsCalendar = () => {
 						<option value='All Shifts'>View All </option>
 						<option value='Off'>Off's Only </option>
 						<option value='My Shifts'>My Shifts Only</option>
-						<option value='Pending'>My Pending Shifts</option>
-						{filderedData.map((dat) => (
-							<option value={dat._id} key={dat._id}>
-								{/* Shifts without {' '}{dat.shiftname} */}
-								Shifts Only
-							</option>
-						))}
+						{/* <option value='Pending'>My Pending Shifts</option> */}
+
+						<option value="shifts only">
+							{/* Shifts without {' '}{dat.shiftname} */}
+							Shifts Only
+						</option>
 						{/* <option value="Shifts Offered">Shifts Offered </option> */}
 					</select>
 				</div>
@@ -546,7 +567,7 @@ const ShiftsCalendar = () => {
 			<br />
 			{loading === false ? (
 				<FullCalendar
-				
+
 					defaultView='dayGridMonth'
 					// timeZone='America/Chicago'
 					defaultDate='2021-06-01'

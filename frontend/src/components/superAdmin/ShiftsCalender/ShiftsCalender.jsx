@@ -175,7 +175,7 @@ const ShiftsCalender = () => {
 				let array = [];
 
 				for (let i = 0; i < res.data.shifts.length; i++) {
-					if (res.data.shifts[i].shiftname !== 'Off') {
+					if (res.data.shifts[i].shiftname !== 'Off' && res.data.shifts[i].shiftname !== 'Request') {
 						array.push(res.data.shifts[i]);
 					}
 				}

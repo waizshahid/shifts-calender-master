@@ -6,12 +6,10 @@ const userauth = require('../middleware/userauth');
 const { check, validationResult } = require('express-validator');
 const Shift = require('../models/Shift');
 const createShift = require('../models/createShift');
-
 const NotificationEmail = require('../models/notificationEmail');
 const User = require('../models/User');
 const Notifications = require('../models/Notifications');
 var nodemailer = require('nodemailer');
-
 var bodyParser = require('body-parser');
 router.use(bodyParser.json());
 var multer = require('multer');
@@ -537,6 +535,9 @@ router.post('/createShift', (req, res) => {
 	newShift
 		.save()
 		.then(async (newShift) => {
+			let user =await User.findOne({_id : newShift.userId})
+			let shift =await Shift.findOne({_id : newShift.shiftTypeId})
+			console.log(user , shift , "data to be send")
 			var transport = nodemailer.createTransport({
 				host: 'smtp.gmail.com',
 				port: 587,
@@ -548,14 +549,13 @@ router.post('/createShift', (req, res) => {
 					pass: 'strong12345678', // generated ethereal password
 				},
 			});
-			console.log('email => ', getNotificationEmail());
+			console.log('email => ',await getNotificationEmail());
 			var mailOptions = {
 				from: 'softthrivetest@gmail.com',
 				to: await getNotificationEmail(),
 				subject: 'Shift Created',
-				html: '<p> The following shift ' + newShift.shiftname + ' has been updated.</p>',
+				html: '<p> The'+ shift.shiftname +'for date :' +  newShift.start  +  'has been created by userName'+ user.username +'</p>',
 			};
-
 			transport.sendMail(mailOptions, (error, info) => {
 				if (error) {
 					return console.log(error);
@@ -921,29 +921,140 @@ router.get('/specificDateOffEvents/:start', (req, res) => {
 		});
 });
 
-router.get('/swapShiftUser/:shiftId/:userId', (req, res) => {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// router.get('/swapShiftUser/:shiftId/:userId', (req, res) => {
+// 	const id = req.params.shiftId;
+// 	const userId = req.params.userId;
+// 	createShift
+// 		.findOne({ _id: id })
+// 		.exec()
+// 		.then((shift) => {
+// 			shift.userId = userId;
+// 			shift
+// 				.save()
+// 				.then(async(shiftObj) => {
+
+// 					console.log(id , userId , shift , "params , param , response")
+
+// 			var transport = nodemailer.createTransport({
+// 				host: 'smtp.gmail.com',
+// 				port: 587,
+// 				secure: false,
+// 				requireTLS: true,
+// 				auth: {
+// 					// enter your account details to send email from
+// 					user: 'softthrivetest@gmail.com', // generated ethereal user
+// 					pass: 'strong12345678', // generated ethereal password
+// 				},
+// 			});
+// 			// console.log('email => ',await getNotificationEmail());
+// 			var mailOptions = {
+// 				from: 'softthrivetest@gmail.com',
+// 				to: await getNotificationEmail(),
+// 				subject: 'Shift transfered',
+// 				 html: '<p> The'+ shift.shiftname +'for date :' +  newShift.start  +  'has been created by userName'+ user.username +'</p>',
+// 			};
+// 			transport.sendMail(mailOptions, (error, info) => {
+// 				if (error) {
+// 					return console.log(error);
+// 				}
+// 				console.log('Message sent: %s', info.messageId);
+// 			});
+// 			// res.send(newShift);
+// 			})
+
+// 					res.status(201).json({
+// 						message: 'user swapped successfully',
+// 						shift: shiftObj,
+// 					});
+// 				})
+// 				.catch((err) => {
+// 					res.status(500).json({
+// 						error: err,
+// 					});
+// 				});
+// 		})
+
+
+router.get('/swapShiftUser/:shiftId/:userId/:userId1', (req, res) => {
 	const id = req.params.shiftId;
 	const userId = req.params.userId;
+	const userid1 = req.params.userId1;
+	 console.log(req.params.userId1 , "=============================================================================>userid1")
 	createShift
 		.findOne({ _id: id })
 		.exec()
 		.then((shift) => {
+			// console.log(shift , "shift in first then")
 			shift.userId = userId;
 			shift
 				.save()
-				.then((shiftObj) => {
-					res.status(201).json({
-						message: 'user swapped successfully',
-						shift: shiftObj,
-					});
-				})
+				.then(async(shiftObj) => {
+					console.log(id , userId , shiftObj , "shiftid , userid , shiftobjResponse");
+					var shift1 = await Shift.findOne({_id : shift.shiftTypeId});
+					var user1 = await User.findOne({_id : userId});
+					var user2 = await User.findOne({_id : userid1 });
+
+					console.log(shift1 , user1 , user2 , "shift1 , user1");
+
+					var transport =await nodemailer.createTransport({
+										host: 'smtp.gmail.com',
+										port: 587,
+										secure: false,
+										requireTLS: true,
+										auth: {
+											// enter your account details to send email from
+											user: 'softthrivetest@gmail.com', // generated ethereal user
+											pass: 'strong12345678', // generated ethereal password
+										},
+									});
+									console.log('email => ',await getNotificationEmail());
+									var mailOptions = {
+										from: 'softthrivetest@gmail.com',
+										to: await getNotificationEmail(),
+										subject: 'testing on approval',
+									       html: '<p> The '+ shift1.shiftname +'for date : ' +  shiftObj.start  +  'has been transferred to userName '+ user1.username +  '</br> by '+ user2.username +'</p>',
+									};
+									 transport.sendMail(mailOptions, (error, info) => {
+										if (error) {
+											return console.log(error);
+										}
+										console.log('Message sent: %s', info.messageId);
+									});
+
+						res.status(201).json({
+										message: 'user swapped successfully',
+										shift: shiftObj,
+				                    	})
+									})
+				
 				.catch((err) => {
+					console.log("in catch1")
 					res.status(500).json({
 						error: err,
 					});
 				});
 		})
 		.catch((err) => {
+			console.log("in catch2")
 			res.status(500).json({
 				erroe: err,
 			});
@@ -1274,7 +1385,7 @@ async function sendMail(user1, user2, title_1, title_2) {
 		},
 	});
 
-	console.log('email => ', getNotificationEmail());
+	console.log('email => ' + "Email sent as shift transfer log", getNotificationEmail());
 	var mailOptions = {
 		from: 'softthrivetest@gmail.com',
 		to: await getNotificationEmail(),
@@ -1324,6 +1435,7 @@ router.put(
 			};
 
 			Shift.update({ _id: req.body.id }, { $set: newPerson }).then(async (resp) => {
+				console.log(resp)
 				var transport = nodemailer.createTransport({
 					host: 'smtp.gmail.com',
 					port: 587,
@@ -1335,7 +1447,7 @@ router.put(
 						pass: 'strong12345678', // generated ethereal password
 					},
 				});
-				console.log('email => ', getNotificationEmail());
+				console.log('email => ' + "following shift has been updated"  + resp.shiftname , getNotificationEmail());
 				var mailOptions = {
 					from: 'softthrivetest@gmail.com',
 					to: await getNotificationEmail(),

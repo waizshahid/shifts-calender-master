@@ -338,10 +338,10 @@ const ShiftsCalendar = () => {
 		axios(options).then((res) => {
 			var temp = [];
 			for (let i = 0; i < res.data.length; i++) {
-				if (res.data[i].editable === 'true') {
-					temp.push(res.data[i]);
-					console.log(res.data[i]);
-				}
+				// if (res.data[i].editable === 'true') {
+				temp.push(res.data[i]);
+				console.log(res.data[i]);
+				// }
 			}
 
 			setData(temp);
@@ -476,6 +476,7 @@ const ShiftsCalendar = () => {
 						shiftIdforn = data.filter(d => d.shiftname === shiftName)[0]._id
 
 					} else {
+						console.log(data[0], data[1], data[2], data[3], data[4], shiftName, "shiftnoteditable")
 						alert('This shift is not editable');
 						return;
 					}

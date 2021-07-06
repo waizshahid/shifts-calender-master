@@ -11,7 +11,7 @@ import RestricSwapping from './restrictSwappingUser';
 import { Layout, Menu, Modal, Avatar, Dropdown, Badge, Row, Col, Card, Tag, Button, Form, Divider } from 'antd';
 import axios from 'axios';
 import jwt_decode from 'jwt-decode';
-
+import { AiFillCloseCircle } from "react-icons/ai"
 import { EditOutlined, PullRequestOutlined, LogoutOutlined, MenuOutlined, CalendarOutlined, SwapOutlined, BellFilled, MinusCircleOutlined } from '@ant-design/icons';
 import EditUser from './editUser';
 
@@ -577,17 +577,17 @@ const Side = ({ user }) => {
 														Your request has been sent to {message.from?.lastName}, {message.from?.firstName[0]}
 													</div>
 												) : (
-													<>
+													<><div><AiFillCloseCircle style={{ fontSize: "23px" }} onClick={() => deleteNotification1(index)} />
+													</div>
 														{message.from?.lastName}, {message.from?.firstName[0]} has accepted your request,
 														<br />
-														{message.to?.lastName} is now {message.shiftName} {message.regDate}. click ok to acknowledge.
+														{message.to?.lastName} is now {message.shiftName} {message.regDate}.
+
 													</>
 												)}
 												<br></br>
 												{message.status === 'accepted' && (
-													<Button className='col-6' onClick={() => deleteNotification1(index)}>
-														ok
-													</Button>
+													<h1></h1>
 												)}
 												{/* <div className='row'>
 													<Button className='col-6' onClick={() => deleteNotification1(index)}>
@@ -616,8 +616,9 @@ const Side = ({ user }) => {
 						</div>
 					</div>
 				</Menu.Item>
-			))}
-		</Menu>
+			))
+			}
+		</Menu >
 	);
 
 	const onSetSidebarOpen = (open) => {

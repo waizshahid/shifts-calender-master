@@ -21,6 +21,7 @@
     "react-big-calendar": "^0.27.0",
     "react-dom": "^16.13.1",
     "react-excel-renderer": "^1.1.0",
+    "react-icons": "^4.2.0",
     "react-jquery-plugin": "^1.1.7",
     "react-loader-spinner": "^3.1.14",
     "react-notifications-menu": "^1.0.1",

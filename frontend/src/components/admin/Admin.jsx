@@ -374,7 +374,7 @@ const Admin = ({ admin }) => {
 													{/* <Tag color='success'>{'Mine'}</Tag> */}
 												</div>
 												<div className='col-4'>
-													<Tag color='default'>{message.regDate}</Tag>
+													<Tag color='default'>{message.from.regDate}</Tag>
 												</div>
 											</div>
 											<div style={{ margin: 2 }} className='row'>

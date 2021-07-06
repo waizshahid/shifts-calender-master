@@ -105,7 +105,7 @@ const SuperAdmin = ({ superAdmin }) => {
 									<Tag color='success'>{message.requesterType}</Tag>
 								</div>
 								<div className='col-4'>
-									<Tag color='default'>{message.regDate}</Tag>
+									<Tag color='default'>{message.from.regDate}</Tag>
 								</div>
 							</div>
 							{/* {message.adminresponse} */}

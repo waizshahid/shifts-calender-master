@@ -246,17 +246,19 @@ class uploadfile extends Component {
 			.get('shift/getEventsBetweenTwoDates/' + start + '/' + end)
 			.then((resp) => {
 				console.log(start, end);
+				//console.log(resp.data.shifts)
 
-				//  let arr= []
-				//  for(let i = 0 ; i < resp.data.shifts.length ; i++){
-				//     if(resp.data.shifts[i] !== null)
-				//     {
-				//     arr.push(resp.data.shifts[i])
-				//     }
-				//  }
+				let arr = []
+				for (let i = 0; i < resp.data.shifts.length; i++) {
+					if (resp.data.shifts[i] !== null && !resp.data.shifts[i].Off && !resp.data.shifts[i].Request) {
+						arr.push(resp.data.shifts[i])
+					}
+				}
+
+				//	console.log(arr)
 
 				this.setState({
-					dateRangeArray: resp.data.shifts,
+					dateRangeArray: arr,
 				});
 
 				// console.log(JSON.stringify(this.state.dateRangeArray))

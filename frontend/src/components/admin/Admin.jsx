@@ -355,7 +355,7 @@ const Admin = ({ admin }) => {
 											<Tag color='success'>{message.requesterType}</Tag>
 										</div>
 										<div className='col-4'>
-											<Tag color='default'>{message.regDate}</Tag>
+											<Tag color='default'>{message.from.regDate}</Tag>
 										</div>
 									</div>
 									<div className='row'>{message.message}</div>
@@ -374,7 +374,7 @@ const Admin = ({ admin }) => {
 													{/* <Tag color='success'>{'Mine'}</Tag> */}
 												</div>
 												<div className='col-4'>
-													<Tag color='default'>{message.regDate}</Tag>
+													<Tag color='default'>{message.from.regDate}</Tag>
 												</div>
 											</div>
 											<div style={{ margin: 2 }} className='row'>
@@ -405,7 +405,7 @@ const Admin = ({ admin }) => {
 													<Tag color='default'>{message.shiftName}</Tag>
 												</div>
 												<div className='col-2'>
-													<Tag color='default'>{message.regDate}</Tag>
+													<Tag color='default'>{message.from.regDate}</Tag>
 												</div>
 											</div>
 											<div className='row'>{message.message}</div>
@@ -469,7 +469,7 @@ const Admin = ({ admin }) => {
 																		<Tag color='default'>{message.shiftName}</Tag>
 																	</div>
 																	<div className='col-2'>
-																		<Tag color='default'>{message.regDate}</Tag>
+																		<Tag color='default'>{message.from.regDate}</Tag>
 																	</div>
 																</div>
 																<div className='row'>{message.message}</div>

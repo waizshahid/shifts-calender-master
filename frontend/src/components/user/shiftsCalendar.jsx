@@ -436,7 +436,7 @@ const ShiftsCalendar = () => {
 		// console.log(event.startStr)
 	};
 
-	const passNotification = () => {
+	const passNotification = (day) => {
 		console.log('in notification');
 		const userId1 = oneEvent.userId;
 		const shiftId1 = oneEvent._id;
@@ -444,6 +444,7 @@ const ShiftsCalendar = () => {
 
 		// let shiftId2 = id2.substring(0, id2.indexOf(':'));
 		let date = new Date().toISOString().slice(0, 10);
+		//console.log(date, day.toISOString().slice(0, 10), "=============date wrong==============")
 		const message = 'One of the User wants to swap his shift with you. Click for the details';
 		const requester = 'User';
 		const currentUserId = currentId;
@@ -489,7 +490,7 @@ const ShiftsCalendar = () => {
 							shiftId1,
 							message,
 							messageFrom,
-							date,
+							date: day,
 							requester,
 							requestStatus,
 							shiftName,
@@ -644,7 +645,7 @@ const ShiftsCalendar = () => {
 					<Button key='1' onClick={() => setexchangeVisible(false)}>
 						Cancel
 					</Button>,
-					<Button onClick={passNotification} key='2' type='primary'>
+					<Button onClick={() => passNotification(day)} key='2' type='primary'>
 						Confirm
 					</Button>,
 				]}>

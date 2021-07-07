@@ -39,6 +39,7 @@ const Side = ({ user }) => {
 	const [visible2, set2Visible] = useState(false);
 	const [index, setIndex] = useState();
 	const [myDetails, setMyDetails] = useState({});
+	const [notificationVisible, setNotificationVisible] = useState(false);
 	const [fields, setFields] = React.useState([
 		{
 			name: ['firstName'],
@@ -190,7 +191,7 @@ const Side = ({ user }) => {
 		axios
 			.put('user/updateResponsesandDelete/' + notificationId)
 			.then((res) => {
-				refresh();
+				getNotifications();
 			})
 			.catch((err) => {
 				console.log(err);
@@ -204,12 +205,17 @@ const Side = ({ user }) => {
 		axios
 			.delete('user/deleteCurrentNotification/' + notificationId)
 			.then((res) => {
-				refresh();
+				getNotifications();
+				setNotificationVisible(true)
 			})
 			.catch((err) => {
 				console.log(err);
 			});
 	};
+
+	const handleVisibleChange = (flag) => {
+		setNotificationVisible(flag)
+	}
 
 	const deleteNotification1 = (message) => {
 		console.log('message lelo', message);
@@ -219,7 +225,8 @@ const Side = ({ user }) => {
 		axios
 			.delete('user/deleteCurrentNotification/' + notificationId)
 			.then((res) => {
-				refresh();
+				getNotifications();
+
 			})
 			.catch((err) => {
 				console.log(err);
@@ -232,7 +239,7 @@ const Side = ({ user }) => {
 		axios
 			.put('user/updateResponsesandDelete/' + notificationId)
 			.then((res) => {
-				refresh();
+				getNotifications();
 			})
 			.catch((err) => {
 				console.log(err);
@@ -390,10 +397,11 @@ const Side = ({ user }) => {
 	const menu = (
 		<Menu
 			style={{
-				width: '400',
+				width: '94%',
 				borderRadius: '6px',
 				marginRight: '30px',
 				marginTop: '20px',
+
 			}}>
 			{/* <b style={{
         backgroundColor:'rosybrown',
@@ -434,26 +442,17 @@ const Side = ({ user }) => {
 										{' '}
 										{message.message !== 'Your shift has been exchanged. View Details' && message.message !== 'Your rejection response has been sent to the swap requester' ? (
 											<div>
-												<div className='row'>
-													{/* <div onClick={() => showShiftModal1(index)}>
-														<Tag color='red'>{'Detail'}</Tag>
-													</div> */}
-													{/*
-													<div className='col-4'>
-														<Tag color='success'>{users[index].firstName + ' ' + users[index].lastName}</Tag>
-													</div>
-													<div className='col-6'>
-														<Tag color='default'>{message.shiftName}</Tag>
-														<Tag color='default'>{message.regDate}</Tag>
-													</div> */}
+												<div style={{ display: "flex", justifyContent: "flex-end" }}><div style={{ justifyContent: "flex-end", width: "101px", border: "1px solid gray", marginTop: "5px", marginBottom: "10px", textAlign: "center", borderRadius: "5px" }} onClick={() => deleteNotification1(index)}>
+													Acknowledged
+												</div></div>
+
+
+												<div style={{ width: "309px", wordWrap: "break-word", whiteSpace: "pre-wrap" }}>
+													{/* {message.message} */}
+													<p>{message.currentUserId.firstName.charAt(0) + ' ' + message.currentUserId.lastName} has Changed {message?.from?.regDate} {message.shiftName} from {message?.from?.firstName.charAt(0) + ' ' + message?.from?.lastName} to {message.to?.firstName.charAt(0) + ' ' + message.to?.lastName}</p>
 												</div>
-												<div className='row'>
-													<div className='col-12'>
-														{/* {message.message} */}
-														{message.currentUserId.firstName + ' ' + message.currentUserId.firstName} has Changed {message?.from?.regDate} {message.shiftName} from {message?.from?.firstName + ' ' + message?.from?.lastName} to {message.to?.firstName + ' ' + message.to?.lastName}
-													</div>
-												</div>
-												<Row className='buttonsetting'>
+
+												{/* <Row className='buttonsetting'>
 													<Button onClick={() => deleteNotification1(index)} className='rejectbutton'>
 														OK
 													</Button>
@@ -464,7 +463,7 @@ const Side = ({ user }) => {
 													<Button type='primary' className='button2setting' onClick={() => swapShift1(index)}>
 														Exchange
 													</Button> */}
-												</Row>
+												{/* </Row>  */}
 												<hr />
 											</div>
 										) : (
@@ -510,7 +509,9 @@ const Side = ({ user }) => {
 														</div>
 														<div className='row'>
 															<div style={{ margine: 10 }} className='col-12' className='textsetting'>
-																{message.requesterType} {users[index].lastName + ' is requesting ' + message.shiftName + ' call ' + message?.from?.regDate}
+																{console.log(message, "message")}
+																{/* {message.requesterType} */}
+																{users[index].firstName.charAt(0)} {users[index].lastName + ' is requesting ' + message.shiftName + ' call ' + message?.regDate}
 															</div>
 														</div>
 														<div>
@@ -572,16 +573,20 @@ const Side = ({ user }) => {
 													</div> */}
 												</div>
 												{/* {message.messageFrom} */}
-												{message.status === 'pending' ? (
+												{message.status === 'pending' ? (<>
+													<div style={{ display: "flex", justifyContent: "flex-end" }}><div style={{ justifyContent: "flex-end", width: "101px", border: "1px solid gray", marginTop: "5px", marginBottom: "10px", textAlign: "center", borderRadius: "5px" }} onClick={() => deleteNotification1(index)}>
+														Acknowledged
+													</div></div>
 													<div>
-														Your request has been sent to {message.from?.lastName}, {message.from?.firstName[0]}
-													</div>
+														Your request has been sent to{message.from?.firstName[0]} {message.from?.lastName}
+													</div></>
 												) : (
-													<><div><AiFillCloseCircle style={{ fontSize: "23px" }} onClick={() => deleteNotification1(index)} />
-													</div>
-														{message.from?.lastName}, {message.from?.firstName[0]} has accepted your request,
+													<><div style={{ display: "flex", justifyContent: "flex-end" }}><div style={{ justifyContent: "flex-end", width: "101px", border: "1px solid gray", marginTop: "5px", marginBottom: "10px", textAlign: "center", borderRadius: "5px" }} onClick={() => deleteNotification1(index)}>
+														Acknowledged
+													</div></div>
+														{message.from?.firstName[0]} {message.from?.lastName}  has accepted your request,
 														<br />
-														{message.to?.lastName} is now {message.shiftName} {message?.from?.regDate}.
+														{message.to?.firstName.charAt(0)} {message.to?.lastName} is now {message.shiftName} {message?.from?.regDate}.
 
 													</>
 												)}
@@ -712,7 +717,7 @@ const Side = ({ user }) => {
 
 						{dsplayMessage.length === 0 ? (
 							<span className='ml-2'>
-								<Dropdown overlay={menu} trigger={['click']} placement='bottomCenter'>
+								<Dropdown overlay={menu} visible={notificationVisible} trigger={['click']} placement='bottomCenter'>
 									<Avatar
 										style={{
 											backgroundColor: '#001529',
@@ -727,7 +732,7 @@ const Side = ({ user }) => {
 							</span>
 						) : (
 							<span className='ml-2'>
-								<Dropdown overlay={menu} trigger={['click']} placement='bottomCenter'>
+								<Dropdown overlay={menu} visible={notificationVisible} trigger={['click']} onVisibleChange={handleVisibleChange} placement='topCenter'>
 									<Badge color='red'>
 										<Avatar
 											style={{

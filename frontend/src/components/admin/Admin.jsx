@@ -31,6 +31,8 @@ const Admin = ({ admin }) => {
 	const [myDetails, setMyDetails] = useState({});
 	const [visible, setVisible] = useState(false);
 	const [visible2, set2Visible] = useState(false);
+	const [notificationVisible, setNotificationVisible] = useState(false);
+
 	useEffect(() => {
 		console.log(admin);
 	}, []);
@@ -99,12 +101,18 @@ const Admin = ({ admin }) => {
 			.delete('user/deleteCurrentNotification/' + notificationId)
 			.then((res) => {
 				console.log(res.data);
-				window.location.reload();
+				getNotifications();
+				setNotificationVisible(true)
 			})
 			.catch((err) => {
 				console.log(err);
 			});
 	};
+
+	const handleVisibleChange = (flag) => {
+		setNotificationVisible(flag)
+	}
+
 	const getNotifications = () => {
 		//   axios.get("user/getCurrentUserNotificationsTo/"+currentId).then((res1) => {
 		// axios.get("user/getCurrentUserNotificationsFrom/"+currentId).then((res2) => {
@@ -317,7 +325,7 @@ const Admin = ({ admin }) => {
 		<Menu
 			//onClick={showShiftModal}
 			style={{
-				width: '400',
+				width: '94%',
 				borderRadius: '6px',
 				marginRight: '30px',
 				marginTop: '30px',
@@ -365,26 +373,17 @@ const Admin = ({ admin }) => {
 								<div>
 									{message.currentUserId === currentId ? (
 										<div>
-											<div className='row'>
-												<div
-													className='col-8'
-													style={{
-														display: 'flex',
-													}}>
-													{/* <Tag color='success'>{'Mine'}</Tag> */}
-												</div>
-												<div className='col-4'>
-													<Tag color='default'>{message.from.regDate}</Tag>
-												</div>
+											<div style={{ display: "flex", justifyContent: "flex-end" }}><div style={{ justifyContent: "flex-end", width: "101px", border: "1px solid gray", marginTop: "5px", marginBottom: "10px", textAlign: "center", borderRadius: "5px" }} onClick={() => deleteNotification(index)}>
+												Acknowledged
+											</div></div>
+											<div style={{ margin: 2, width: "309px", wordWrap: "break-word", whiteSpace: "pre-wrap" }}>
+												<p>Your request for the shift named {message.shiftName} to {message?.from?.firstName.charAt(0)} {message?.from?.lastName} has been {message.status === 'accepted' ? 'accepted' : 'sent'} on Date : {message.regDate} </p>
 											</div>
-											<div style={{ margin: 2 }} className='row'>
-												Your request for the shift named {message.shiftName} to {message?.from?.lastName} has been {message.status === 'accepted' ? 'accepted' : 'sent'}
-											</div>
-											{message.status === 'accepted' && (
+											{/* {message.status === 'accepted' && (
 												<Button style={{ margin: 20 }} key='1' onClick={() => deleteNotification(index)}>
 													Delete this Request
 												</Button>
-											)}
+											)} */}
 											<div>
 												{/* <Button style={{ margin: 20 }} key='1' onClick={deleteNotification}>
 												Delete this Request
@@ -586,7 +585,7 @@ const Admin = ({ admin }) => {
 
 						{dsplayMessage.length === 0 ? (
 							<span>
-								<Dropdown overlay={menu} trigger={['click']} placement='bottomCenter'>
+								<Dropdown overlay={menu} visible={notificationVisible} trigger={['click']} placement='topCenter'>
 									<Avatar
 										style={{
 											backgroundColor: '#001529',
@@ -601,7 +600,7 @@ const Admin = ({ admin }) => {
 							</span>
 						) : (
 							<span>
-								<Dropdown overlay={menu} trigger={['click']} placement='bottomCenter'>
+								<Dropdown overlay={menu} visible={notificationVisible} trigger={['click']} onVisibleChange={handleVisibleChange} placement='bottomCenter'>
 									<Badge color='red'>
 										<Avatar
 											style={{
@@ -659,7 +658,7 @@ const Admin = ({ admin }) => {
 						OK
 					</Button>,
 				]}
-				// onOk={handleOk}
+			// onOk={handleOk}
 			>
 				<Row>
 					{/* <Col xs={24} sm={24} md={24} lg={24} xl={24}>

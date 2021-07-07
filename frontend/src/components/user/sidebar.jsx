@@ -419,7 +419,7 @@ const Side = ({ user }) => {
 									</div>
 									<div className='col-6'>
 										<Tag color='default'>{message.shiftName}</Tag>
-										<Tag color='default'>{message.regDate}</Tag>
+										<Tag color='default'>{message.from.regDate}</Tag>
 									</div>
 								</div>
 
@@ -450,7 +450,7 @@ const Side = ({ user }) => {
 												<div className='row'>
 													<div className='col-12'>
 														{/* {message.message} */}
-														{message.currentUserId.firstName + ' ' + message.currentUserId.firstName} has Changed {message.regDate} {message.shiftName} from {message?.from?.firstName + ' ' + message?.from?.lastName} to {message.to?.firstName + ' ' + message.to?.lastName}
+														{message.currentUserId.firstName + ' ' + message.currentUserId.firstName} has Changed {message?.from?.regDate} {message.shiftName} from {message?.from?.firstName + ' ' + message?.from?.lastName} to {message.to?.firstName + ' ' + message.to?.lastName}
 													</div>
 												</div>
 												<Row className='buttonsetting'>
@@ -476,7 +476,7 @@ const Side = ({ user }) => {
 														</div>
 														<div className='col-6'>
 															<Tag color='default'>{message.shiftName}</Tag>
-															<Tag color='default'>{message.regDate}</Tag>
+															<Tag color='default'>{message?.from?.regDate}</Tag>
 														</div>
 													</div>
 													{message.message}
@@ -510,7 +510,7 @@ const Side = ({ user }) => {
 														</div>
 														<div className='row'>
 															<div style={{ margine: 10 }} className='col-12' className='textsetting'>
-																{message.requesterType} {users[index].lastName + ' is requesting ' + message.shiftName + ' call ' + message.regDate}
+																{message.requesterType} {users[index].lastName + ' is requesting ' + message.shiftName + ' call ' + message?.from?.regDate}
 															</div>
 														</div>
 														<div>
@@ -581,7 +581,7 @@ const Side = ({ user }) => {
 													</div>
 														{message.from?.lastName}, {message.from?.firstName[0]} has accepted your request,
 														<br />
-														{message.to?.lastName} is now {message.shiftName} {message.regDate}.
+														{message.to?.lastName} is now {message.shiftName} {message?.from?.regDate}.
 
 													</>
 												)}

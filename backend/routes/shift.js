@@ -554,7 +554,7 @@ router.post('/createShift', (req, res) => {
 				from: 'softthrivetest@gmail.com',
 				to: await getNotificationEmail(),
 				subject: 'Shift Created',
-				html: '<p> The'+ shift.shiftname +'for date :' +  newShift.start  +  'has been created by userName'+ user.username +'</p>',
+				html: '<p> The '+ shift.shiftname +' for ' +  newShift.start  +  ' has been created by '+ user.username +'</p>',
 			};
 			transport.sendMail(mailOptions, (error, info) => {
 				if (error) {

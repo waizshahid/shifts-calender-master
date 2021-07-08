@@ -41,6 +41,7 @@ const ShiftsCalender = ({ userObj }) => {
 	const [oneEvent, setOneEvent] = useState({});
 	const [events, setEvents] = useState([]);
 	const [assign, setAssign] = useState('');
+	const [timeFormat, settimeFormat] = useState('')
 	const [shiftType, setShiftType] = useState('');
 	const [start, setStart] = useState('');
 	const [loading, setLoading] = useState(true);
@@ -301,14 +302,14 @@ const ShiftsCalender = ({ userObj }) => {
 	};
 	const handleEventClick = ({ event, el }) => {
 		console.log('in event handler .......');
-		console.log('event', event);
+		console.log('event', event.start);
 
 		title = event.title;
 		currentShift = event._def.extendedProps._id;
 
 		if (event._def.extendedProps.userId !== currentId) {
 			console.log('event def', event._def.extendedProps);
-			settingEvent(event._def.extendedProps);
+			settingEvent(event._def.extendedProps, event.start);
 			functionforexchangeshiftmodal();
 		} else {
 			setidhere(event._def.extendedProps);
@@ -369,9 +370,23 @@ const ShiftsCalender = ({ userObj }) => {
 	const functionforexchangeshiftmodal = () => {
 		oneEvent.userId === undefined && oneEvent._id === undefined ? setexchangeVisible(false) : setexchangeVisible(true);
 	};
-	const settingEvent = (event) => {
+
+
+	const settingEvent = async (event, start) => {
+		console.log(start, "here is")
+		let t = await convert(start);
+		settimeFormat(t)
+		//console.log(t, "ttt")
 		setOneEvent(event);
 	};
+
+
+	function convert(str) {
+		var date = new Date(str),
+			mnth = ("0" + (date.getMonth() + 1)).slice(-2),
+			day = ("0" + date.getDate()).slice(-2);
+		return [date.getFullYear(), mnth, day].join("-");
+	}
 
 	function changedate() {
 		$('#calendar').fullCalendar('gotoDate', '2014-05-01');
@@ -550,12 +565,12 @@ const ShiftsCalender = ({ userObj }) => {
 
 	const prepassnotification = () => {
 		console.log('in pre pass notification');
-		console.log('ccccc', oneEvent.shiftname, oneEvent);
+		console.log('ccccc', oneEvent.shiftname, oneEvent, data);
 		console.log(data.filter((s) => s.shiftname === oneEvent.shiftname)[0]);
 		if (data.filter((s) => s.shiftname === oneEvent.shiftname).length > 0) {
 			axios.put('/user/updatingshift', { id: oneEvent._id, shiftid: data.filter((s) => s.shiftname === oneEvent.shiftname)[0]._id }).then(() => {
 				passNotification(true);
-				console.log('update ho gai');
+				console.log('updated');
 			});
 		} else {
 			alert('Please select shift');
@@ -616,13 +631,15 @@ const ShiftsCalender = ({ userObj }) => {
 							})
 							.then((resp) => {
 								if (userId2 !== '') {
+									console.log(shiftId1, userId2)
 									axios
-										.get('shift/swapShiftUser/' + shiftId1 + '/' + userId2)
+										.get('shift/swapShiftUserbyAdmin/' + shiftId1 + '/' + userId2)
 										.then((res1) => {
 											console.log(res1);
 											window.location.reload();
 										})
 										.catch((err) => {
+											window.location.reload();
 											console.log(err);
 										});
 								} else {
@@ -644,6 +661,7 @@ const ShiftsCalender = ({ userObj }) => {
 	};
 
 	const passNotificationforr = (swaped) => {
+		console.log(swaped)
 		const userId1 = oneEvent.userId;
 		const shiftId1 = oneEvent._id;
 		let userId2 = currentId;
@@ -679,7 +697,7 @@ const ShiftsCalender = ({ userObj }) => {
 							shiftId1,
 							message,
 							messageFrom,
-							date,
+							date: timeFormat,
 							requester,
 							requestStatus,
 							shiftName,
@@ -799,104 +817,104 @@ const ShiftsCalender = ({ userObj }) => {
 			</div>
 		);
 	}
-	if (show1) {
-		return (
-			<div>
-				<Modal title='Swap Request' visible={exchangeVisible} maskClosable={true} onCancel={() => setshow1(false)} onOk={() => passNotificationforr(true)}>
-					<div>
-						<Card type='inner'>Please confirm to send swap request this shift with your shift</Card>
-					</div>
-				</Modal>
-			</div>
-		);
-	} else {
-		return (
-			<div className='m-sm-4 m-2'>
-				<div className='row'>
-					<div className='col-3'>
-						<select id='selectDoctor' name='cars' className='custom-select bg-light m-2 shadow-sm' onChange={handleDoctors}>
-							<option defaultValue='All Users'>All Users</option>
-							{users.map((dat) => (
-								<option value={dat._id} key={dat._id}>
-									{dat.lastName + ', ' + dat.firstName}
-								</option>
-							))}
-						</select>
-					</div>
-					<div className='col-3'>
-						<select id='selectDoctor' name='cars' className='custom-select bg-light m-2 shadow-sm' onChange={filterShift}>
-							<option defaultValue='All Users'>View All</option>
-							<option value='My Shifts'>My Shifts Only</option>
-							{/* <option value='Pending'>Pending Shifts</option> */}
-							{/* {filderedData.map((dat) => ( */}
-							<option value='shifts only'>
-								Shifts Only
+	// if (show1) {
+	// 	return (
+	// 		<div>
+	// 			<Modal title='Swap Request' visible={exchangeVisible} maskClosable={true} onCancel={() => setshow1(false)} onOk={() => passNotificationforr(true)}>
+	// 				<div>
+	// 					<Card type='inner'>Please confirm to send swap request this shift with your shift</Card>
+	// 				</div>
+	// 			</Modal>
+	// 		</div>
+	// 	);
+	// } else {
+	return (
+		<div className='m-sm-4 m-2'>
+			<div className='row'>
+				<div className='col-3'>
+					<select id='selectDoctor' name='cars' className='custom-select bg-light m-2 shadow-sm' onChange={handleDoctors}>
+						<option defaultValue='All Users'>All Users</option>
+						{users.map((dat) => (
+							<option value={dat._id} key={dat._id}>
+								{dat.lastName + ', ' + dat.firstName}
 							</option>
-							{/* ))} */}
-							<option value='Off'>OFF Shifts</option>
-							{/* <option value="Shifts Offered">Shifts Offered </option> */}
-						</select>
-					</div>
-					{/* <div className="col-5"></div>
-          <div className="col-4"> */}
-					{/* <UploadShiftFile /> */}
-					{/* </div> */}
+						))}
+					</select>
 				</div>
-				<br />
-				<br />
-				{/* <Button onClick={changedate}>CC</Button> */}
-				{loading === false ? (
-					<FullCalendar
-						defaultView='dayGridMonth'
-						// timeZone="America/Chicago"
-						plugins={[dayGridPlugin, interactionPlugin]}
-						weekNumberCalculation='ISO'
-						dateClick={showModal}
-						eventClick={handleEventClick}
-						titleFormat={{ month: 'long', year: 'numeric' }}
-						headerToolbar={{
-							left: '',
-							end: '',
-							center: 'prev,title,next',
-						}}
-						// eventContent={renderEventContent}
-						eventOrder='priority'
-						// eventClick={handelModal}
-						events={events}
-					/>
-				) : (
-					<div className='row' className='spinner'>
-						<img src={Spinner} className='loading' alt='' />
-					</div>
-				)}
-				<Modal title='Swap Request Failed' visible={adminCheck} maskClosable={true} onCancel={() => setAdminCheck(false)} footer={null}>
-					<div>
-						<Card type='inner'>You can't request your own shift</Card>
-						<br />
-					</div>
+				<div className='col-3'>
+					<select id='selectDoctor' name='cars' className='custom-select bg-light m-2 shadow-sm' onChange={filterShift}>
+						<option defaultValue='All Users'>View All</option>
+						<option value='My Shifts'>My Shifts Only</option>
+						{/* <option value='Pending'>Pending Shifts</option> */}
+						{/* {filderedData.map((dat) => ( */}
+						<option value='shifts only'>
+							Shifts Only
+						</option>
+						{/* ))} */}
+						<option value='Off'>OFF Shifts</option>
+						{/* <option value="Shifts Offered">Shifts Offered </option> */}
+					</select>
+				</div>
+				{/* <div className="col-5"></div>
+          <div className="col-4"> */}
+				{/* <UploadShiftFile /> */}
+				{/* </div> */}
+			</div>
+			<br />
+			<br />
+			{/* <Button onClick={changedate}>CC</Button> */}
+			{loading === false ? (
+				<FullCalendar
+					defaultView='dayGridMonth'
+					// timeZone="America/Chicago"
+					plugins={[dayGridPlugin, interactionPlugin]}
+					weekNumberCalculation='ISO'
+					dateClick={showModal}
+					eventClick={handleEventClick}
+					titleFormat={{ month: 'long', year: 'numeric' }}
+					headerToolbar={{
+						left: '',
+						end: '',
+						center: 'prev,title,next',
+					}}
+					// eventContent={renderEventContent}
+					eventOrder='priority'
+					// eventClick={handelModal}
+					events={events}
+				/>
+			) : (
+				<div className='row' className='spinner'>
+					<img src={Spinner} className='loading' alt='' />
+				</div>
+			)}
+			<Modal title='Swap Request Failed' visible={adminCheck} maskClosable={true} onCancel={() => setAdminCheck(false)} footer={null}>
+				<div>
+					<Card type='inner'>You can't request your own shift</Card>
+					<br />
+				</div>
 
-					<div className='container'>
-						<div className='row'>
-							<div className='col-3'>
-								<Button key='1' danger type='primary' onClick={deleteShift}>
-									Delete
-								</Button>
-							</div>
-							<div className='col-6'>
-								<Button onClick={() => seteditshift(true)} key='1' danger type='primary'>
-									Edit
-								</Button>
-							</div>
-							<div className='col-3'>
-								<Button key='2' onClick={() => setAdminCheck(false)}>
-									Cancel
-								</Button>
-							</div>
+				<div className='container'>
+					<div className='row'>
+						<div className='col-3'>
+							<Button key='1' danger type='primary' onClick={deleteShift}>
+								Delete
+							</Button>
+						</div>
+						<div className='col-6'>
+							<Button onClick={() => seteditshift(true)} key='1' danger type='primary'>
+								Edit
+							</Button>
+						</div>
+						<div className='col-3'>
+							<Button key='2' onClick={() => setAdminCheck(false)}>
+								Cancel
+							</Button>
 						</div>
 					</div>
-				</Modal>
+				</div>
+			</Modal>
 
-				{/* <Calendar
+			{/* <Calendar
         selectable
         localizer={localizer}
         onSelectSlot={showModal}
@@ -910,132 +928,132 @@ const ShiftsCalender = ({ userObj }) => {
           event: CustomeEvents,
         }}
       /> */}
-				<Modal
-					title='Swapped Request Failed'
-					visible={failexchangeVisible}
-					onCancel={() => setFailexchangeVisible(false)}
-					maskClosable={true}
-					footer={[
-						<Button type='primary' key='1' onClick={() => setFailexchangeVisible(false)}>
-							Cancel
-						</Button>,
-					]}></Modal>
+			<Modal
+				title='Swapped Request Failed'
+				visible={failexchangeVisible}
+				onCancel={() => setFailexchangeVisible(false)}
+				maskClosable={true}
+				footer={[
+					<Button type='primary' key='1' onClick={() => setFailexchangeVisible(false)}>
+						Cancel
+					</Button>,
+				]}></Modal>
 
-				<Modal title='Admin Edit Shift' visible={editshift} maskClosable={true} onCancel={() => seteditshift(false)} onOk={settingshiftinbackend}>
+			<Modal title='Admin Edit Shift' visible={editshift} maskClosable={true} onCancel={() => seteditshift(false)} onOk={settingshiftinbackend}>
+				<div>
+					<Card type='inner'>Edit your Shift</Card>
+				</div>
+				<select id='cars' name='cars' className='custom-select bg-light m-2 shadow-sm' onChange={handelAssign11}>
+					<option defaultValue='Set Shift' id='assi'>
+						Shifts
+					</option>
+					{data.map((dat) => (
+						<option value={dat._id} key={dat._id}>
+							{dat.shiftname}
+						</option>
+					))}
+				</select>
+			</Modal>
+
+			<Modal
+				title='Create Shift'
+				visible={visible}
+				// onOk={handleOk}
+				onCancel={handleCancel}
+				footer={[
+					<Button key='1' onClick={handleCancel}>
+						Cancel
+					</Button>,
+					<Button onClick={handleOk} key='2' type='primary'>
+						Create
+					</Button>,
+				]}>
+				<select id='cars' name='cars' className='custom-select bg-light m-2 shadow-sm' onChange={handelAssign}>
+					<option defaultValue='Doctor Assigned' id='assi'>
+						Doctor Assigned
+					</option>
+					{users.map((dat) => (
+						<option value={dat._id} key={dat._id}>
+							{dat.lastName + ',' + dat.firstName}
+						</option>
+					))}
+				</select>
+				<select id='cars' name='cars' className='custom-select bg-light m-2 shadow-sm' onChange={handelShift}>
+					<option defaultValue='Shift Type ' id='shType'>
+						Shift Type
+					</option>
+					{data.map((sh) => (
+						<option value={sh.shiftname} key={sh._id}>
+							{sh.shiftname}
+						</option>
+					))}
+				</select>
+				{commentVisible === 'true' ? (
 					<div>
-						<Card type='inner'>Edit your Shift</Card>
+						<input type='text' className='form-control m-2 bg-light shadow-sm' placeholder='Comments for requested shift type' onChange={handleComment} />
 					</div>
-					<select id='cars' name='cars' className='custom-select bg-light m-2 shadow-sm' onChange={handelAssign11}>
-						<option defaultValue='Set Shift' id='assi'>
-							Shifts
-						</option>
-						{data.map((dat) => (
-							<option value={dat._id} key={dat._id}>
-								{dat.shiftname}
-							</option>
-						))}
-					</select>
-				</Modal>
-
-				<Modal
-					title='Create Shift'
-					visible={visible}
-					// onOk={handleOk}
-					onCancel={handleCancel}
-					footer={[
-						<Button key='1' onClick={handleCancel}>
-							Cancel
-						</Button>,
-						<Button onClick={handleOk} key='2' type='primary'>
-							Create
-						</Button>,
-					]}>
-					<select id='cars' name='cars' className='custom-select bg-light m-2 shadow-sm' onChange={handelAssign}>
-						<option defaultValue='Doctor Assigned' id='assi'>
-							Doctor Assigned
-						</option>
-						{users.map((dat) => (
-							<option value={dat._id} key={dat._id}>
-								{dat.lastName + ',' + dat.firstName}
-							</option>
-						))}
-					</select>
-					<select id='cars' name='cars' className='custom-select bg-light m-2 shadow-sm' onChange={handelShift}>
-						<option defaultValue='Shift Type ' id='shType'>
-							Shift Type
-						</option>
-						{data.map((sh) => (
-							<option value={sh.shiftname} key={sh._id}>
-								{sh.shiftname}
-							</option>
-						))}
-					</select>
-					{commentVisible === 'true' ? (
+				) : (
+					<div></div>
+				)}
+			</Modal>
+			<Modal
+				title='Update Shift or Request Swap'
+				visible={exchangeVisible}
+				maskClosable={true}
+				onCancel={() => setexchangeVisible(false)}
+				// onOk={passNotification}
+				footer={null}>
+				<Tabs defaultActiveKey='1' onChange={callback}>
+					<TabPane
+						tab={
+							<span>
+								<EditOutlined />
+								Edit Shift
+							</span>
+						}
+						key='1'>
 						<div>
-							<input type='text' className='form-control m-2 bg-light shadow-sm' placeholder='Comments for requested shift type' onChange={handleComment} />
-						</div>
-					) : (
-						<div></div>
-					)}
-				</Modal>
-				<Modal
-					title='Update Shift or Request Swap'
-					visible={exchangeVisible}
-					maskClosable={true}
-					onCancel={() => setexchangeVisible(false)}
-					// onOk={passNotification}
-					footer={null}>
-					<Tabs defaultActiveKey='1' onChange={callback}>
-						<TabPane
-							tab={
-								<span>
-									<EditOutlined />
-									Edit Shift
-								</span>
-							}
-							key='1'>
-							<div>
-								<Card type='inner'>
-									<div className='row'>
-										<div
-											className='col-4'
-											style={{
-												textAlign: 'right',
-											}}>
-											<b>Select User:</b>
-										</div>
-										<div className='col-6'>
-											<Select defaultValue='Select Any User' style={{ width: 280 }} onChange={handelFrom}>
-												{lastNameUsers.map((dat) => (
-													<Option value={dat._id} key={dat._id}>
-														{dat.lastName + ', ' + dat.firstName}
-													</Option>
-												))}
-											</Select>
-										</div>
+							<Card type='inner'>
+								<div className='row'>
+									<div
+										className='col-4'
+										style={{
+											textAlign: 'right',
+										}}>
+										<b>Select User:</b>
 									</div>
-									<br />
-									<div className='row'>
-										<div
-											className='col-4'
-											style={{
-												textAlign: 'right',
-											}}>
-											<b>Select Shift:</b>
-										</div>
-										<div className='col-6'>
-											<Select defaultValue={oneEvent.shiftname} style={{ width: 280 }} onChange={handelFrom1}>
-												{data.map((dat) => (
-													<Option value={dat._id} key={dat._id}>
-														{dat.shiftname}
-													</Option>
-												))}
-											</Select>
-										</div>
+									<div className='col-6'>
+										<Select defaultValue='Select Any User' style={{ width: 280 }} onChange={handelFrom}>
+											{lastNameUsers.map((dat) => (
+												<Option value={dat._id} key={dat._id}>
+													{dat.lastName + ', ' + dat.firstName}
+												</Option>
+											))}
+										</Select>
 									</div>
-									<br />
+								</div>
+								<br />
+								<div className='row'>
+									<div
+										className='col-4'
+										style={{
+											textAlign: 'right',
+										}}>
+										<b>Select Shift:</b>
+									</div>
+									<div className='col-6'>
+										<Select defaultValue={oneEvent.shiftname} style={{ width: 280 }} onChange={handelFrom1}>
+											{data.map((dat) => (
+												<Option value={dat._id} key={dat._id}>
+													{dat.shiftname}
+												</Option>
+											))}
+										</Select>
+									</div>
+								</div>
+								<br />
 
-									{/* <div className="row">
+								{/* <div className="row">
                     <div
                       className="col-4"
                       style={{
@@ -1047,18 +1065,18 @@ const ShiftsCalender = ({ userObj }) => {
                     <div className="col-6">{oneEvent.shiftname}</div>
                   </div> */}
 
-									<br />
-									<div className='row'>
-										<div
-											className='col-4'
-											style={{
-												textAlign: 'right',
-											}}>
-											<b>Shift title:</b>
-										</div>
-										<div className='col-6'>{title}</div>
+								<br />
+								<div className='row'>
+									<div
+										className='col-4'
+										style={{
+											textAlign: 'right',
+										}}>
+										<b>Shift title:</b>
 									</div>
-									{/* <div className="row">
+									<div className='col-6'>{title}</div>
+								</div>
+								{/* <div className="row">
                                 <div className="col-4" style={{
                                     textAlign: 'right'
                                 }}><b>Current User:</b></div>
@@ -1066,77 +1084,77 @@ const ShiftsCalender = ({ userObj }) => {
                                     title.lastIndexOf(":") + 1
                                 )}</div>
                             </div> */}
-									{oneEvent.comment == undefined ? (
-										<div></div>
-									) : (
-										<div>
-											<Divider />
-											<div
-												style={{
-													textAlign: 'center',
-													fontStyle: 'italic',
-												}}>
-												{oneEvent.comment}
-											</div>
+								{oneEvent.comment == undefined ? (
+									<div></div>
+								) : (
+									<div>
+										<Divider />
+										<div
+											style={{
+												textAlign: 'center',
+												fontStyle: 'italic',
+											}}>
+											{oneEvent.comment}
 										</div>
-									)}
-								</Card>
-								<br />
-								<div className='row'>
-									<div className='col-2'>
-										<Button type='primary' danger onClick={deleteShift}>
-											Delete
-										</Button>
 									</div>
-									<div className='col-5'></div>
-									<div className='col-2'>
-										<Button onClick={() => setexchangeVisible(false)}>Cancel</Button>
-									</div>
-									<div className='col-2'>
-										<Button onClick={prepassnotification} type='primary'>
-											Update
-										</Button>
-									</div>
-								</div>
-							</div>
-						</TabPane>
-						<TabPane
-							tab={
-								<span>
-									<HistoryOutlined />
-									History
-								</span>
-							}
-							key='2'>
-							<ShowHistory historyObj={history} />
+								)}
+							</Card>
+							<br />
 							<div className='row'>
-								<div className='col-9'></div>
-								<div className='col-3'>
+								<div className='col-2'>
+									<Button type='primary' danger onClick={deleteShift}>
+										Delete
+									</Button>
+								</div>
+								<div className='col-5'></div>
+								<div className='col-2'>
 									<Button onClick={() => setexchangeVisible(false)}>Cancel</Button>
 								</div>
-							</div>
-						</TabPane>
-						<TabPane
-							tab={
-								<span>
-									<SwapLeftOutlined />
-									Swap Request
-								</span>
-							}
-							key='3'>
-							<div className='row'>
-								<div className='col-4'></div>
-								<div className='col-8'>
-									<Button onClick={handleEventClick1}>Request Swap</Button>
+								<div className='col-2'>
+									<Button onClick={prepassnotification} type='primary'>
+										Update
+									</Button>
 								</div>
 							</div>
-						</TabPane>
-					</Tabs>
-				</Modal>
-			</div>
-		);
-	}
-};
+						</div>
+					</TabPane>
+					<TabPane
+						tab={
+							<span>
+								<HistoryOutlined />
+								History
+							</span>
+						}
+						key='2'>
+						<ShowHistory historyObj={history} />
+						<div className='row'>
+							<div className='col-9'></div>
+							<div className='col-3'>
+								<Button onClick={() => setexchangeVisible(false)}>Cancel</Button>
+							</div>
+						</div>
+					</TabPane>
+					<TabPane
+						tab={
+							<span>
+								<SwapLeftOutlined />
+								Swap Request
+							</span>
+						}
+						key='3'>
+						<div className='row'>
+							<div className='col-4'></div>
+							<div className='col-8'>
+								<Button onClick={() => passNotificationforr(true)}>Request Swap</Button>
+							</div>
+						</div>
+					</TabPane>
+				</Tabs>
+			</Modal>
+		</div>
+	);
+}
+// };
 export default ShiftsCalender;
 
 function renderEventContent(eventInfo) {

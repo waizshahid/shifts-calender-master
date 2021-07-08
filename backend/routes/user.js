@@ -13,6 +13,7 @@ const Admin = require('../models/Admin');
 const SuperAdmin = require('../models/SuperAdmin');
 const saltRounds = 10;
 const nodemailer = require('nodemailer');
+var mongoose = require('mongoose');
 
 const getNotificationEmail = async () => {
 	let notiEmail = await NotificationEmail.findOne({});
@@ -321,6 +322,61 @@ router.put('/updateResponsesandDelete/:id', async (req, res) => {
 		res.status(500).send('Server error');
 	}
 });
+
+
+
+
+
+router.put('/deleteFromid/:id', (req, res) => {
+	 Notification.findOne({_id : req.params.id}).then((notify)=> {
+		 console.log(notify.to)
+		 let t = {id:"000000000000000000000000"}
+		 if(notify.to == t.id)
+		 {
+			
+			Notification.findByIdAndDelete({ _id: req.params.id }).then(async (resp) => {
+				res.send("deleted")
+			  })
+		 }
+		 else{
+			 Notification.findByIdAndUpdate({ _id: req.params.id } , {
+				from: mongoose.Types.ObjectId("000000000000000000000000")
+			}).then(async (resp) => {
+				res.send("deleted")
+				console.log("deleted FROM API=========================")
+			}).catch((err) =>{
+				console.log(err)
+			})
+		 }
+	  })
+})
+
+
+router.put('/deleteToid/:id', (req, res) => {
+	Notification.findOne({_id : req.params.id}).then((notify)=> {
+		console.log(typeof(notify.from) , notify.from)
+		let t = {id:"000000000000000000000000"}
+		if(notify.from == t.id)
+		{
+			Notification.findByIdAndDelete({ _id: req.params.id }).then(async (resp) => {
+              res.send("deleted")
+			})
+		}
+		else{
+			Notification.findByIdAndUpdate({ _id: req.params.id } , {
+					to:   mongoose.Types.ObjectId("000000000000000000000000")
+					
+				}).then(async (resp) => {
+					res.send("deleted")
+				}).catch((err)=> {
+					console.log(err)
+				})
+		}
+	})
+})
+
+
+
 
 router.delete('/deleteCurrentNotification/:id', (req, res) => {
 	Notification.findByIdAndDelete({ _id: req.params.id }).then(async (resp) => {

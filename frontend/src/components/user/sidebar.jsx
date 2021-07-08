@@ -233,6 +233,56 @@ const Side = ({ user }) => {
 			});
 	};
 
+
+	const deleteNotificationForAdminSwap = (message) => {
+		console.log('message lelo', message, dsplayMessage[message]);
+
+		const notificationId = dsplayMessage[message]._id;
+		console.log(dsplayMessage[message]._id);
+		console.log();
+		let currentid = jwt_decode(localStorage.getItem("usertoken")).id
+
+		if (dsplayMessage[message].from?._id == currentid) {
+			axios
+				.put('user/deleteFromid/' + notificationId)
+				.then((res) => {
+					console.log(res)
+					getNotifications();
+
+				})
+				.catch((err) => {
+					console.log(err);
+				});
+		}
+
+		else if (dsplayMessage[message].to._id == currentid) {
+			axios
+				.put('user/deleteToid/' + notificationId)
+				.then((res) => {
+					console.log(res)
+					getNotifications();
+
+				})
+				.catch((err) => {
+					console.log(err);
+				});
+		}
+
+		else {
+			alert("error")
+		}
+
+		// axios
+		// 	.put('user/deleteCurrentNotification/' + notificationId)
+		// 	.then((res) => {
+		// 		getNotifications();
+
+		// 	})
+		// 	.catch((err) => {
+		// 		console.log(err);
+		// 	});
+	};
+
 	const updateNotification1 = (message) => {
 		const notificationId = dsplayMessage[message]._id;
 		console.log(dsplayMessage[message]._id);
@@ -442,7 +492,7 @@ const Side = ({ user }) => {
 										{' '}
 										{message.message !== 'Your shift has been exchanged. View Details' && message.message !== 'Your rejection response has been sent to the swap requester' ? (
 											<div>
-												<div style={{ display: "flex", justifyContent: "flex-end" }}><div style={{ justifyContent: "flex-end", width: "101px", border: "1px solid gray", marginTop: "5px", marginBottom: "10px", textAlign: "center", borderRadius: "5px" }} onClick={() => deleteNotification1(index)}>
+												<div style={{ display: "flex", justifyContent: "flex-end" }}><div style={{ justifyContent: "flex-end", width: "101px", border: "1px solid gray", marginTop: "5px", marginBottom: "10px", textAlign: "center", borderRadius: "5px" }} onClick={() => deleteNotificationForAdminSwap(index)}>
 													Acknowledged
 												</div></div>
 
@@ -508,7 +558,7 @@ const Side = ({ user }) => {
 															</div> */}
 														</div>
 														<div className='row'>
-															<div style={{ margine: 10 }} className='col-12' className='textsetting'>
+															<div style={{ margin: 10 }} className='col-12' className='textsetting'>
 																{console.log(message, "message")}
 																{/* {message.requesterType} */}
 																{users[index].firstName.charAt(0)} {users[index].lastName + ' is requesting ' + message.shiftName + ' call ' + message?.regDate}
@@ -578,7 +628,7 @@ const Side = ({ user }) => {
 														Acknowledged
 													</div></div>
 													<div>
-														Your request has been sent to{message.from?.firstName[0]} {message.from?.lastName}
+														Your request has been sent to {message.from?.firstName[0]} {message.from?.lastName}
 													</div></>
 												) : (
 													<><div style={{ display: "flex", justifyContent: "flex-end" }}><div style={{ justifyContent: "flex-end", width: "101px", border: "1px solid gray", marginTop: "5px", marginBottom: "10px", textAlign: "center", borderRadius: "5px" }} onClick={() => deleteNotification1(index)}>

@@ -54,6 +54,7 @@ const ShiftsCalender = ({ userObj }) => {
 	const [adminCheck, setAdminCheck] = useState('');
 	const [exchangeVisible, setexchangeVisible] = useState(false);
 	const [createShiftID, setCreateShiftId] = useState('');
+	const [createShiftType, setCreateShiftType] = useState(null)
 	const [editshift, seteditshift] = useState(false);
 	const [editshift12, seteditshift1] = useState('');
 	const [id2, setTargetId] = useState('');
@@ -141,7 +142,8 @@ const ShiftsCalender = ({ userObj }) => {
 			.get('shift/getShiftId/' + e.target.value)
 			.then((res) => {
 				setCreateShiftId(res.data._id);
-				console.log(res.data);
+				setCreateShiftType(res.data.shiftname);
+				console.log(res.data.shiftname);
 			})
 			.catch((err) => {
 				message.error('Cannot find the shift type from database');
@@ -159,7 +161,12 @@ const ShiftsCalender = ({ userObj }) => {
 	};
 
 	const handleOk = async (e) => {
-		console.log('in pok okkok');
+		console.log(createShiftID, assign, currentId, "createShift")
+		console.log(oneEvent)
+		let date1 = new Date().toISOString().slice(0, 10);
+
+
+
 		await setVisible(false);
 		setLoading(true);
 		const userId = assign;
@@ -167,6 +174,9 @@ const ShiftsCalender = ({ userObj }) => {
 		// let color = "";
 		let shiftTypeId = '';
 		var swapable = 'true';
+
+
+		/////////////////////
 		// let priority = "";
 
 		// for (let i = 0; i < data.length; i++) {
@@ -189,6 +199,7 @@ const ShiftsCalender = ({ userObj }) => {
 		//     break;
 		//   }
 		// }
+		////////////////////////////////////////
 
 		const options = {
 			url: 'shift/createShift',
@@ -210,11 +221,29 @@ const ShiftsCalender = ({ userObj }) => {
 		};
 		axios(options)
 			.then((res) => {
-				console.log('in shift creation admin');
+				console.log('in shift creation admin create shift', res);
+
+
+				if (createShiftType == 'Off') {
+					console.log("shiftoff")
+					axios.post('user/createNotificationHistory', {
+						currentUserId: currentId,
+						userId1: assign,
+						userId2: assign,
+						shiftId1: res.data._id,
+						message: "Your Off shift has been created",
+						adminresponse: "Shift is Created",
+						date: date1,
+						requester: "Admin",
+						shiftName: createShiftType,
+					})
+				}
+
 				axios
 					.get('shift/currentShifts')
-					.then(async (res) => {
-						await setEvents(res.data.shifts);
+					.then(async (res1) => {
+						//console.log(res1 , "currentShift")
+						await setEvents(res1.data.shifts);
 						setLoading(false);
 						message.success('Shift Created Successfully');
 						await finddetail();

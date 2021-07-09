@@ -37,6 +37,7 @@ const ShiftsCalendar = () => {
 	const [approval, setApproval] = useState('');
 	const [comment, setComment] = useState('');
 	const [id2, setTargetId] = useState('');
+	const [shiftName, setShiftName] = useState('')
 	const token = localStorage.usertoken;
 	const decoded = jwt_decode(token);
 	const currentId = decoded.id;
@@ -69,6 +70,8 @@ const ShiftsCalendar = () => {
 	);
 	function setRequestEvent(e) {
 
+		console.log()
+
 		shiftNameUser = e.target.value.substring(0, e.target.value.indexOf(':'));
 
 		setShiftType(shiftNameUser);
@@ -84,6 +87,7 @@ const ShiftsCalendar = () => {
 		setcommentVisible('false');
 	}
 	const handelShift = (e) => {
+		setShiftName(e.target.value.substring(e.target.value.indexOf(':') + 1));
 		console.log(e.target.value.substring(e.target.value.indexOf(':') + 1), "handel shifffffftt")
 		if (e.target.value.substring(e.target.value.indexOf(':') + 1) === 'Request') {
 			setRequestEvent(e);
@@ -114,6 +118,7 @@ const ShiftsCalendar = () => {
 	};
 
 	useEffect(() => {
+		console.log(shiftName, "on offselect")
 		AfterSetOff();
 	}, [off]);
 
@@ -124,6 +129,7 @@ const ShiftsCalendar = () => {
 
 	const AfterSetOff = () => {
 		console.log('in create shift ccccccccc');
+		let date1 = new Date().toISOString().slice(0, 10);
 		const userId = currentId;
 		let shiftTypeId = shiftType;
 		console.log(userId);
@@ -177,6 +183,24 @@ const ShiftsCalendar = () => {
 				// setTimeout(() => {
 				//   message.success("Shift Created Successfully");
 				// },1000)
+
+				////////
+
+				if (shiftName == 'Off') {
+					console.log("shiftoff")
+					axios.post('user/createNotificationHistory', {
+						currentUserId: currentId,
+						userId1: currentId,
+						userId2: currentId,
+						shiftId1: res.data._id,
+						message: "Your Off shift has been created",
+						adminresponse: "Shift is Created",
+						date: date1,
+						requester: "User",
+						shiftName: shiftName,
+					})
+				}
+				////////
 				console.log('shiftype idss', shiftTypeId);
 				axios
 					.get('shift/currentShifts')
@@ -422,7 +446,6 @@ const ShiftsCalendar = () => {
 		console.log(day);
 		// day = convertUTCDateToLocalDate(new Date(event.startStr))
 		// console.log(day.substring(0, day.indexOf('(')))
-
 		if (event.startStr >= date) {
 			if (event._def.extendedProps.userId !== currentId) {
 				settingEvent(event._def.extendedProps);
@@ -432,7 +455,6 @@ const ShiftsCalendar = () => {
 		} else {
 			setFailexchangeVisible(true);
 		}
-
 		// console.log(event.startStr)
 	};
 

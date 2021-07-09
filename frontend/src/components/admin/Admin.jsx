@@ -377,7 +377,7 @@ const Admin = ({ admin }) => {
 												Acknowledged
 											</div></div>
 											<div style={{ margin: 2, width: "309px", wordWrap: "break-word", whiteSpace: "pre-wrap" }}>
-												{console.log(message, "opopopop")}
+												{/* {console.log(oneE, "opopopop")} */}
 												<p>Your request for the shift named {message.shiftName} to {message?.from?.firstName.charAt(0)} {message?.from?.lastName} has been {message.status === 'accepted' ? 'accepted' : 'sent'} on Date : {message.regDate} </p>
 											</div>
 											{/* {message.status === 'accepted' && (

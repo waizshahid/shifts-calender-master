@@ -380,7 +380,6 @@ router.put('/deleteToid/:id', (req, res) => {
 
 router.put('/deleteforme/:id', (req, res) => {
 	
-	
 			Notification.findByIdAndUpdate({ _id: req.params.id } , {
 					to:   mongoose.Types.ObjectId("000000000000000000000000")
 					
@@ -389,7 +388,6 @@ router.put('/deleteforme/:id', (req, res) => {
 				}).catch((err)=> {
 					console.log(err)
 				})
-		
 	})
 
 

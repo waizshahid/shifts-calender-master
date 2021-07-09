@@ -234,7 +234,6 @@ const Side = ({ user }) => {
 	};
 
 	const deleteNotificationFromMeonly = (message) => {
-
 		console.log('message lelo', message);
 		const notificationId = dsplayMessage[message]._id;
 		console.log(dsplayMessage[message]._id);

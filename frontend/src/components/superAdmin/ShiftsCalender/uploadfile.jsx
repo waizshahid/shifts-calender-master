@@ -352,6 +352,7 @@ class uploadfile extends Component {
 								<div className='col-8'>Download Excel sheet</div>
 							</div>
 						</Button>
+						
 					</div>
 				</div>
 

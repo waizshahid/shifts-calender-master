@@ -378,6 +378,26 @@ router.put('/deleteToid/:id', (req, res) => {
 
 
 
+router.put('/deleteforme/:id', (req, res) => {
+	
+	
+			Notification.findByIdAndUpdate({ _id: req.params.id } , {
+					to:   mongoose.Types.ObjectId("000000000000000000000000")
+					
+				}).then(async (resp) => {
+					res.send("deleted")
+				}).catch((err)=> {
+					console.log(err)
+				})
+		
+	})
+
+
+
+
+
+
+
 router.delete('/deleteCurrentNotification/:id', (req, res) => {
 	Notification.findByIdAndDelete({ _id: req.params.id }).then(async (resp) => {
 		if (req.body.sendEmail) {
@@ -1017,7 +1037,7 @@ router.post('/createNotificationHistory', (req, res) => {
 					// create reusable transporter object using the default SMTP transport
 					let transporter = nodemailer.createTransport({
 						host: 'smtp.gmail.com',
-						port: 465,
+						port: 587,
 						secure: true,
 						service: 'gmail', // true for 465, false for other ports
 

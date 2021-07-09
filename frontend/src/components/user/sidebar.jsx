@@ -233,6 +233,21 @@ const Side = ({ user }) => {
 			});
 	};
 
+	const deleteNotificationFromMeonly = (message) => {
+
+		console.log('message lelo', message);
+		const notificationId = dsplayMessage[message]._id;
+		console.log(dsplayMessage[message]._id);
+		axios.put('user/deleteforme/' + notificationId)
+			.then((res) => {
+				console.log(res)
+				getNotifications();
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	};
+
 
 	const deleteNotificationForAdminSwap = (message) => {
 		console.log('message lelo', message, dsplayMessage[message]);
@@ -271,16 +286,6 @@ const Side = ({ user }) => {
 		else {
 			alert("error")
 		}
-
-		// axios
-		// 	.put('user/deleteCurrentNotification/' + notificationId)
-		// 	.then((res) => {
-		// 		getNotifications();
-
-		// 	})
-		// 	.catch((err) => {
-		// 		console.log(err);
-		// 	});
 	};
 
 	const updateNotification1 = (message) => {
@@ -624,7 +629,7 @@ const Side = ({ user }) => {
 												</div>
 												{/* {message.messageFrom} */}
 												{message.status === 'pending' ? (<>
-													<div style={{ display: "flex", justifyContent: "flex-end" }}><div style={{ justifyContent: "flex-end", width: "101px", border: "1px solid gray", marginTop: "5px", marginBottom: "10px", textAlign: "center", borderRadius: "5px" }} onClick={() => deleteNotification1(index)}>
+													<div style={{ display: "flex", justifyContent: "flex-end" }}><div style={{ justifyContent: "flex-end", width: "101px", border: "1px solid gray", marginTop: "5px", marginBottom: "10px", textAlign: "center", borderRadius: "5px" }} onClick={() => deleteNotificationFromMeonly(index)}>
 														Acknowledged
 													</div></div>
 													<div>

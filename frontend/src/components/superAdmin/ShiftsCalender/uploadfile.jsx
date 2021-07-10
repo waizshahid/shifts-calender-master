@@ -6,6 +6,7 @@ import ReactHTMLTableToExcel from 'react-html-table-to-excel';
 import { Modal } from 'antd';
 import ExportToExcel from './exportToExcel';
 import FormItem from 'antd/lib/form/FormItem';
+import moment from 'moment';
 const { RangePicker } = DatePicker;
 const rangeConfig = {
 	rules: [
@@ -22,6 +23,7 @@ class uploadfile extends Component {
 		types: '',
 		startDate: '',
 		endDate: '',
+		offrequest: false,
 		users: '',
 		finalArray: '',
 		error: false,
@@ -62,20 +64,17 @@ class uploadfile extends Component {
 		var utc_days = Math.floor(serial - 25568);
 		var utc_value = utc_days * 86400;
 		var date_info = new Date(utc_value * 1000);
-
 		var fractional_day = serial - Math.floor(serial) + 0.0000001;
-
 		var total_seconds = Math.floor(86400 * fractional_day);
-
 		var seconds = total_seconds % 60;
-
 		total_seconds -= seconds;
-
 		var hours = Math.floor(total_seconds / (60 * 60));
 		var minutes = Math.floor(total_seconds / 60) % 60;
-
+		console.log(new Date(date_info.getFullYear(), date_info.getMonth(), date_info.getDate(), hours, minutes, seconds))
 		return new Date(date_info.getFullYear(), date_info.getMonth(), date_info.getDate(), hours, minutes, seconds);
 	};
+
+
 	onFileChange = (event) => {
 		this.setState({ file: event.target.files[0] });
 		let fileObj = event.target.files[0];
@@ -222,6 +221,130 @@ class uploadfile extends Component {
 		// let month = inDate.getMonth() + 1 < 10 ? '0' + (inDate.getMonth() + 1) : inDate.getMonth() + 1;
 		// return date + '/' + month + '/' + inDate.getFullYear();
 	}
+
+
+
+
+
+
+
+
+
+
+
+
+	callDateRangeEventforOffRequest = async (fieldsValue) => {
+		// this.setState({
+		//   showDateRange: false
+		// })
+
+		const rangeValue = fieldsValue['range-picker'];
+		if (rangeValue === undefined) {
+			this.setState({
+				error: true,
+			});
+		}
+		const values = {
+			...fieldsValue,
+			'range-picker': [rangeValue[0].format('YYYY-MM-DD'), rangeValue[1].format('YYYY-MM-DD')],
+		};
+		// console.log('Received values of form: ', values);
+
+		const start = rangeValue[0].format('YYYY-MM-DD');
+		const end = rangeValue[1].format('YYYY-MM-DD');
+
+		await axios
+			.get('shift/getEventsBetweenTwoDates/' + start + '/' + end)
+			.then((resp) => {
+				console.log(start, end);
+				console.log(resp.data.shifts.length)
+
+				let arr = []
+				for (let i = 0; i < resp.data.shifts.length; i++) {
+					if (resp.data.shifts[i] !== null && (resp.data.shifts[i].Off || resp.data.shifts[i].Request)) {
+						//console.log(resp.data.shifts[i])
+						arr.push(resp.data.shifts[i])
+					}
+				}
+				//	console.log(arr)
+
+				this.setState({
+					dateRangeArray: arr,
+				});
+
+				// console.log(JSON.stringify(this.state.dateRangeArray))
+				// console.log(this.state.data)
+				// console.log(this.state.dateRangeArray);
+				let shortArr = [];
+				for (var i = 0; i < this.state.dateRangeArray.length; i++) {
+					// console.log(this.state.dateRangeArray[i]);
+					if (this.state.dateRangeArray[i]) {
+						this.state.dateRangeArray[i].Date = this.JSDateToExcelDate(new Date(this.state.dateRangeArray[i].Date));
+						//this.state.dateRangeArray[i].Date = this.state.dateRangeArray[i].Date.substring(0, this.state.dateRangeArray[i].Date.indexOf(','));
+						shortArr.push(this.state.dateRangeArray[i]);
+					}
+				}
+				// console.log(shortArr);
+				var obj = {};
+				for (var i = 0; i < this.state.dateRangeArray.length; i++) {
+					if (this.state.dateRangeArray[i]) {
+						var date = this.state.dateRangeArray[i].Date;
+						// Get previous date saved inside the result
+
+						var p_date = obj[date] || {};
+						// console.log(p_date);
+						// Merge the previous date with the next date
+						obj[date] = Object.assign(p_date, this.state.dateRangeArray[i]);
+					}
+				}
+
+				// Convert to an array
+				var result = Object.values(obj);
+				// console.log(JSON.stringify(result))
+				// console.log(result)
+
+				// let arr = []
+
+				// for(let i = 0 ; i < result.length ; i++){
+				//   result[i].Date = this.toShort(result[i].Date)
+				// }
+				console.log(result);
+				let heading = [];
+				let items = result.map((item) => Object.keys(item));
+
+				if (items && items.length > 0) {
+					items.forEach((item) => {
+						item.forEach((i) => {
+							if (!heading.includes(i)) {
+								heading.push(i);
+							}
+						});
+					});
+				}
+				console.log(items);
+
+				this.setState({
+					exportExcelArr: result,
+					excelHeading: heading,
+				});
+				console.log(this.state.exportExcelArr);
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	}
+
+
+
+
+
+
+
+
+
+
+
+
 	callDateRangeEvent = (fieldsValue) => {
 		// this.setState({
 		//   showDateRange: false
@@ -344,12 +467,20 @@ class uploadfile extends Component {
 						</Button>
 					</div>
 					<div className='col-3'>
-						<Button type='primary' onClick={this.selectDate}>
+						<Button type='primary' onClick={() => { this.setState({ offrequest: false }); this.selectDate() }}>
 							<div className='row'>
 								<div className='col-1'>
 									<i class='fa fa-download'></i>
 								</div>
 								<div className='col-8'>Download Excel sheet</div>
+							</div>
+						</Button>
+						<Button style={{ marginLeft: "5px" }} type='primary' onClick={() => { this.setState({ offrequest: true }); this.selectDate() }}>
+							<div className='row' >
+								<div className='col-1'>
+									<i class='fa fa-download'></i>
+								</div>
+								<div className='col-8'>Download Off and Request Shift</div>
 							</div>
 						</Button>
 
@@ -369,7 +500,7 @@ class uploadfile extends Component {
 					visible={this.state.showDateRange}
 					footer={null}>
 					<br />
-					<Form onFinish={this.callDateRangeEvent} {...rangeConfig}>
+					<Form onFinish={this.state.offrequest == true ? this.callDateRangeEventforOffRequest : this.callDateRangeEvent} {...rangeConfig}>
 						<div className='row'>
 							<div className='col-12'>
 								<Form.Item name='range-picker' label={<b>Please Select Dates</b>}>
@@ -458,7 +589,8 @@ class uploadfile extends Component {
 						return (
 							<tr>
 								{this.state.excelHeading.map((heading) => (
-									<td>{value[heading]}</td>
+									heading != "Date" ?
+										<td>{value[heading]}</td> : <td>{this.ExcelDateToJSDate(value[heading]).toISOString().toString().slice(0, 10)}</td>
 								))}
 								{/* <td>{value.Date}</td>
 								<td>{value.Heart}</td>

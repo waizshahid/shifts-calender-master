@@ -632,7 +632,8 @@ const Side = ({ user }) => {
 														Acknowledged
 													</div></div>
 													<div>
-														Your request has been sent to {message.from?.firstName[0]} {message.from?.lastName}
+														{console.log(message, "llllllllllll")}
+														<p>Your request for {message.shiftName} on {message.regDate} to {message?.from?.firstName.charAt(0)} {message?.from?.lastName} has been {message.status === 'accepted' ? 'accepted' : 'sent'} </p>
 													</div></>
 												) : (
 													<><div style={{ display: "flex", justifyContent: "flex-end" }}><div style={{ justifyContent: "flex-end", width: "101px", border: "1px solid gray", marginTop: "5px", marginBottom: "10px", textAlign: "center", borderRadius: "5px" }} onClick={() => deleteNotification1(index)}>

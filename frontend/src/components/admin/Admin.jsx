@@ -109,6 +109,21 @@ const Admin = ({ admin }) => {
 			});
 	};
 
+
+	const deleteNotificationFromMeonly = (message) => {
+		console.log('message lelo', message);
+		const notificationId = dsplayMessage[message]._id;
+		console.log(dsplayMessage[message]._id);
+		axios.put('user/deleteforme/' + notificationId)
+			.then((res) => {
+				console.log(res)
+				getNotifications();
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	};
+
 	const handleVisibleChange = (flag) => {
 		setNotificationVisible(flag)
 	}
@@ -129,7 +144,8 @@ const Admin = ({ admin }) => {
 				for (let i = 0; i < res1.data.length; i++) {
 					if (res1.data[i].requesterType === 'Super Admin') {
 						array.push(res1.data[i]);
-					} else if (res1.data[i].requesterType === 'Admin' && res1.data[i].currentUserId === currentId) {
+					} else if (res1.data[i].requesterType === 'Admin' && res1.data[i].currentUserId === currentId && res1.data[i].to?._id != null) {
+						console.log(res1.data[i], "llllllllllllllll")
 						array.push(res1.data[i]);
 					} else if (res1.data[i].requesterType === 'User' && res1.data[i].from?._id === currentId) {
 						array.push(res1.data[i]);
@@ -373,12 +389,12 @@ const Admin = ({ admin }) => {
 								<div>
 									{message.currentUserId === currentId ? (
 										<div>
-											<div style={{ display: "flex", justifyContent: "flex-end" }}><div style={{ justifyContent: "flex-end", width: "101px", border: "1px solid gray", marginTop: "5px", marginBottom: "10px", textAlign: "center", borderRadius: "5px" }} onClick={() => deleteNotification(index)}>
+											<div style={{ display: "flex", justifyContent: "flex-end" }}><div style={{ justifyContent: "flex-end", width: "101px", border: "1px solid gray", marginTop: "5px", marginBottom: "10px", textAlign: "center", borderRadius: "5px" }} onClick={() => deleteNotificationFromMeonly(index)}>
 												Acknowledged
 											</div></div>
 											<div style={{ margin: 2, width: "309px", wordWrap: "break-word", whiteSpace: "pre-wrap" }}>
 												{/* {console.log(oneE, "opopopop")} */}
-												<p>Your request for the shift named {message.shiftName} to {message?.from?.firstName.charAt(0)} {message?.from?.lastName} has been {message.status === 'accepted' ? 'accepted' : 'sent'} on Date : {message.regDate} </p>
+												<p>Your request for {message.shiftName} on {message.regDate} to {message?.from?.firstName.charAt(0)} {message?.from?.lastName} has been {message.status === 'accepted' ? 'accepted' : 'sent'} </p>
 											</div>
 											{/* {message.status === 'accepted' && (
 												<Button style={{ margin: 20 }} key='1' onClick={() => deleteNotification(index)}>

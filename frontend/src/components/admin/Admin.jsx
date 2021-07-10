@@ -19,6 +19,8 @@ let user1 = '';
 let user2 = '';
 let date = '';
 let shiftname = '';
+let users = [];
+
 const Admin = ({ admin }) => {
 	const [sidebarOpen, setSidebarOpen] = useState(false);
 	const [dsplayMessage, setMessage] = useState([]);
@@ -144,14 +146,17 @@ const Admin = ({ admin }) => {
 				for (let i = 0; i < res1.data.length; i++) {
 					if (res1.data[i].requesterType === 'Super Admin') {
 						array.push(res1.data[i]);
-					} else if (res1.data[i].requesterType === 'Admin' && res1.data[i].currentUserId === currentId && res1.data[i].to?._id != null) {
+					} else if (res1.data[i].requesterType === 'Admin' && (res1.data[i].currentUserId === currentId || res1.data[i].from?._id == currentId) && res1.data[i].to?._id != null && res1.data[i].to != null) {
 						console.log(res1.data[i], "llllllllllllllll")
 						array.push(res1.data[i]);
 					} else if (res1.data[i].requesterType === 'User' && res1.data[i].from?._id === currentId) {
 						array.push(res1.data[i]);
 					}
 				}
-				console.log('notificationssss', array);
+				for (let i = 0; i < array.length; i++) {
+					users.push(array[i].to);
+				}
+				console.log('notificationssss', array, users);
 				setMessage(array);
 			})
 			.catch((err) => {
@@ -160,7 +165,6 @@ const Admin = ({ admin }) => {
 	};
 	const deleteNotification1 = (message, sendEmail) => {
 		console.log('message lelo', message);
-
 		const notificationId = dsplayMessage[message]._id;
 		console.log(dsplayMessage[message]._id);
 		axios
@@ -194,6 +198,7 @@ const Admin = ({ admin }) => {
 	};
 
 	const swapShift1 = (message) => {
+
 		console.log(message);
 		//console.log(mesage)
 		console.log(dsplayMessage[message]);
@@ -205,7 +210,7 @@ const Admin = ({ admin }) => {
 		console.log(userToExchange);
 
 		const currentUserId = currentId;
-		const userId1 = dsplayMessage[message].from;
+		const userId1 = dsplayMessage[message].from?._id;
 		const userId2 = userToExchange;
 		// const shiftId1 = dsplayMessage[index].shiftFrom
 		const message1 = dsplayMessage[message].message;
@@ -215,7 +220,7 @@ const Admin = ({ admin }) => {
 		const shiftName = dsplayMessage[message].shiftName;
 
 		axios
-			.get('shift/swapShiftUser/' + shiftId1 + '/' + userToExchange)
+			.get('shift/swapShiftUser/' + shiftId1 + '/' + userToExchange + '/' + userId1)
 			.then((res) => {
 				console.log(res);
 				axios
@@ -411,25 +416,52 @@ const Admin = ({ admin }) => {
 											</div>
 											<hr />
 										</div>
-									) : (
+									) : (<div>
+
+										{message.message == "One of the User wants to swap his shift with you. Click for the detail..."}
 										<div>
 											<div className='row'>
-												<div className='col-6'>
-													<Tag color='success'>{message.requesterType}</Tag>
-												</div>
-												<div className='col-2'>
+												{/* <div onClick={() => showShiftModal1(index)} className='col-2'>
+													<Tag color='red'>{'Detail'}</Tag>
+												</div> */}
+												{/* <div className='col-4'>
+													<Tag color='green'>{users[index].firstName + ' ' + users[index].lastName}</Tag>
+												</div> */}
+												{/* <div className='col-6'>
 													<Tag color='default'>{message.shiftName}</Tag>
-												</div>
-												<div className='col-2'>
-													<Tag color='default'>{message.from.regDate}</Tag>
+													<Tag color='default'>{message.regDate}</Tag>
+												</div> */}
+											</div>
+											<div className='row'>
+												<div style={{ margin: 10 }} className='col-12' className='textsetting'>
+													{console.log(message, "message")}
+													{/* {message.requesterType} */}
+													{users[index].firstName.charAt(0)} {users[index].lastName + ' is requesting ' + message.shiftName + ' call ' + message?.regDate}
 												</div>
 											</div>
-											<div className='row'>{message.message}</div>
+											<div>
+												<Row className='buttonsetting'>
+													{/* <Button onClick={() => deleteNotification1(index)}>Delete this notification</Button> */}
+													{/* <Button onClick={() => updateNotification1(index)} className='rejectbutton'>
+														Reject
+													</Button>
+													<Button type='primary' className='button2setting' onClick={() => swapShift1(index)}>
+														Exchange
+													</Button> */}
+													<Button type='primary' className='button2setting' onClick={() => { swapShift1(index) }}>
+														Accept
+													</Button>
+													<Button onClick={() => deleteNotification1(index, true)} className='rejectbutton'>
+														Reject
+													</Button>
+												</Row>
+											</div>
 											<hr />
 										</div>
-									)}
+									</div>)}
 								</div>
 							) : (
+
 								<div>
 									{message.requesterType === 'User' ? (
 										<div className=''>

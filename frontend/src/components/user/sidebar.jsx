@@ -323,6 +323,7 @@ const Side = ({ user }) => {
 						users.push(array[i].currentUserId);
 					}
 					setMessage(array);
+					console.log(users, array)
 				});
 			})
 			.catch((err) => {
@@ -632,7 +633,7 @@ const Side = ({ user }) => {
 														Acknowledged
 													</div></div>
 													<div>
-														{console.log(message, "llllllllllll")}
+
 														<p>Your request for {message.shiftName} on {message.regDate} to {message?.from?.firstName.charAt(0)} {message?.from?.lastName} has been {message.status === 'accepted' ? 'accepted' : 'sent'} </p>
 													</div></>
 												) : (

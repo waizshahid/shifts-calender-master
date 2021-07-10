@@ -990,7 +990,8 @@ router.get('/swapShiftUser/:shiftId/:userId/:userId1', (req, res) => {
 			shift
 				.save()
 				.then(async(shiftObj) => {
-					console.log(id , userId , shiftObj , "shiftid , userid , shiftobjResponse");
+					console.log(userid1 , "userid1")
+					console.log(id , userId , userid1 , shiftObj , shift.shiftTypeId , "shiftid , userid , shiftobjResponse");
 					var shift1 = await Shift.findOne({_id : shift.shiftTypeId});
 					var user1 = await User.findOne({_id : userId});
 					var user2 = await User.findOne({_id : userid1 });

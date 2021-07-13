@@ -123,7 +123,7 @@ const Side = ({ user }) => {
 
 	const swapShift1 = (message) => {
 		console.log(message);
-		//console.log(mesage)
+		//console.log(mesage)s
 		console.log(dsplayMessage[message]);
 		const id = dsplayMessage[message]._id;
 		const shiftId1 = dsplayMessage[message].shiftFrom;

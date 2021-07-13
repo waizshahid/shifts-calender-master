@@ -22,7 +22,7 @@ const getNotificationEmail = async () => {
 		console.log(notiEmail);
 		return notiEmail.email;
 	} else {
-		return 'softthrivetest@gmail.com';
+		return 'admin@calls.pvmgonline.com';
 	}
 };
 
@@ -125,20 +125,20 @@ router.delete('/deleteshift', (req, res) => {
 	Shift.findOneAndDelete({ _id: req.query.id })
 		.then(async (resp) => {
 			var transport = nodemailer.createTransport({
-				host: 'smtp.gmail.com',
+				host: 'box5419.bluehost.com',
 				port: 587,
 				secure: false,
 				requireTLS: true,
 				auth: {
 					// enter your account details to send email from
-					user: 'softthrivetest@gmail.com', // generated ethereal user
-					pass: 'strong12345678', // generated ethereal password
+					user: 'admin@calls.pvmgonline.com', // generated ethereal user
+					pass: 'pvmgonline12.', // generated ethereal password
 				},
 			});
 
 			console.log('email => ', getNotificationEmail());
 			var mailOptions = {
-				from: 'softthrivetest@gmail.com',
+				from: 'admin@calls.pvmgonline.com',
 				to: await getNotificationEmail(),
 				subject: 'Shift deleted',
 				html: '<p> The following shift ' + resp.shiftname + ' has been deleted.</p>',
@@ -539,19 +539,19 @@ router.post('/createShift', (req, res) => {
 			let shift =await Shift.findOne({_id : newShift.shiftTypeId})
 			console.log(user , shift , "data to be send")
 			var transport = nodemailer.createTransport({
-				host: 'smtp.gmail.com',
+				host: 'box5419.bluehost.com',
 				port: 587,
 				secure: false,
 				requireTLS: true,
 				auth: {
 					// enter your account details to send email from
-					user: 'softthrivetest@gmail.com', // generated ethereal user
-					pass: 'strong12345678', // generated ethereal password
+					user: 'admin@calls.pvmgonline.com', // generated ethereal user
+					pass: 'pvmgonline12.', // generated ethereal password
 				},
 			});
 			console.log('email => ',await getNotificationEmail());
 			var mailOptions = {
-				from: 'softthrivetest@gmail.com',
+				from: 'admin@calls.pvmgonline.com',
 				to: await getNotificationEmail(),
 				subject: 'Shift Created',
 				html: '<p> The '+ shift.shiftname +' for ' +  newShift.start  +  ' has been created by '+ user.username +'</p>',
@@ -938,22 +938,22 @@ router.get('/swapShiftUserbyAdmin/:shiftId/:userId', (req, res) => {
 				.then(async(shiftObj) => {
 				console.log(id , userId , shift , "params , param , response")
 			    var transport = nodemailer.createTransport({
-				host: 'smtp.gmail.com',  //outgoing
+				host: 'box5419.bluehost.com',  //outgoing
 				port: 587,
 				secure: false,
 				requireTLS: true,
 				auth: {
 					// enter your account details to send email from
-					user: 'softthrivetest@gmail.com', // generated ethereal user
-					pass: 'strong12345678', // generated ethereal password
+					user: 'admin@calls.pvmgonline.com', // generated ethereal user
+					pass: 'pvmgonline12.', // generated ethereal password
 				},
 			});
 			// console.log('email => ',await getNotificationEmail());
 			var mailOptions = {
-				from: 'softthrivetest@gmail.com',
+				from: 'admin@calls.pvmgonline.com',
 				to: await getNotificationEmail(),
 				subject: 'Shift transfered',
-				 html: '<p> The'+ shift.shiftname +'for date :' +  newShift.start  +  'has been created by userName'+ user.username +'</p>',
+				 html: '<p> The'+ shift.shiftname +'for ' +  newShift.start  +  'has been created by '+ user.username +'</p>',
 			};
 			transport.sendMail(mailOptions, (error, info) => {
 				if (error) {
@@ -999,22 +999,22 @@ router.get('/swapShiftUser/:shiftId/:userId/:userId1', (req, res) => {
 					console.log(shift1 , user1 , user2 , "shift1 , user1");
 
 					var transport =await nodemailer.createTransport({
-										host: 'smtp.gmail.com',
+										host: 'box5419.bluehost.com',
 										port: 587,
 										secure: false,
 										requireTLS: true,
 										auth: {
 											// enter your account details to send email from
-											user: 'softthrivetest@gmail.com', // generated ethereal user
-											pass: 'strong12345678', // generated ethereal password
+											user: 'admin@calls.pvmgonline.com', // generated ethereal user
+											pass: 'pvmgonline12.', // generated ethereal password
 										},
 									});
 									console.log('email => ',await getNotificationEmail());
 									var mailOptions = {
-										from: 'softthrivetest@gmail.com',
+										from: 'admin@calls.pvmgonline.com',
 										to: await getNotificationEmail(),
 										subject: 'testing on approval',
-									       html: '<p> The '+ shift1.shiftname +'for date : ' +  shiftObj.start  +  'has been transferred to userName '+ user1.username +  '</br> by '+ user2.username +'</p>',
+									       html: '<p> The '+ shift1.shiftname +'for ' +  shiftObj.start  +  'has been transferred to '+ user1.username +  '</br> from '+ user2.username +'</p>',
 									};
 									 transport.sendMail(mailOptions, (error, info) => {
 										if (error) {
@@ -1357,21 +1357,21 @@ router.put('/swapShifts', (req, res) => {
 });
 async function sendMail(user1, user2, title_1, title_2) {
 	var transport = nodemailer.createTransport({
-		host: 'smtp.gmail.com',
+		host: 'box5419.bluehost.com',
 		port: 587,
 		secure: false,
 		requireTLS: true,
 		
 		auth: {
 			// enter your account details to send email from
-			user: 'softthrivetest@gmail.com', // generated ethereal user
-			pass: 'strong12345678', // generated ethereal password
+			user: 'admin@calls.pvmgonline.com', // generated ethereal user
+			pass: 'pvmgonline12.', // generated ethereal password
 		},
 	});
 
 	console.log('email => ' + "Email sent as shift transfer log", getNotificationEmail());
 	var mailOptions = {
-		from: 'softthrivetest@gmail.com',
+		from: 'admin@calls.pvmgonline.com',
 		to: await getNotificationEmail(),
 		subject: 'Shift Transfer Log',
 		html: '<p> This mail sent as shift transfer log. <br/> Shift <b>' + title_1 + '</b> to this <b>' + title_2 + '</b> </p>',
@@ -1421,19 +1421,19 @@ router.put(
 			Shift.update({ _id: req.body.id }, { $set: newPerson }).then(async (resp) => {
 				console.log(resp)
 				var transport = nodemailer.createTransport({
-					host: 'smtp.gmail.com',
+					host: 'box5419.bluehost.com',
 					port: 587,
 					secure: false,
 					requireTLS: true,
 					auth: {
 						// enter your account details to send email from
-						user: 'softthrivetest@gmail.com', // generated ethereal user
-						pass: 'strong12345678', // generated ethereal password
+						user: 'admin@calls.pvmgonline.com', // generated ethereal user
+						pass: 'pvmgonline12.', // generated ethereal password
 					},
 				});
 				console.log('email => ' + "following shift has been updated"  + resp.shiftname , getNotificationEmail());
 				var mailOptions = {
-					from: 'softthrivetest@gmail.com',
+					from: 'admin@calls.pvmgonline.com',
 					to: await getNotificationEmail(),
 					subject: 'Shift Updated',
 					html: '<p> The following shift ' + resp.shiftname + ' has been updated.</p>',

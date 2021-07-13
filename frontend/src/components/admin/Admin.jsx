@@ -474,7 +474,7 @@ const Admin = ({ admin }) => {
 															Detail
 														</Tag>
 														<Tag color='green'>{message.requesterType}</Tag> */}
-															<br /> {message.message}
+															<br /> {users[index].firstName.charAt(0)} {users[index].lastName + ' is requesting ' + message.shiftName + ' call ' + message?.regDate}
 															<br />
 															{/* <Tag color='default'>{message.regDate}</Tag> */}
 															<Row className='buttonsetting'>

@@ -73,7 +73,7 @@ router.put('/editshift12', async (req, res) => {
 });
 
 router.post('/sendemail', async (req, res) => {
-	console.log('nodemailer api from front end');
+	console.log('nodemailer api from front end sendemail');
 	let message = req.body.message;
 	// create reusable transporter object using the default SMTP transport
 	let transporter = nodemailer.createTransport({
@@ -256,7 +256,7 @@ router.put('/updateResponses/:id', async (req, res) => {
 				console.log('sender => ', sender);
 				console.log('receiver => ', sender);
 				if (sender && receiver) {
-					console.log('nodemailer api from front end');
+					console.log('nodemailer api from front end update responses');
 					let message = 'Your Request for shift to:\n' + '\n' + sender.firstName + '\n' + 'for the Shift \n' + '\n' + resp.shiftName + ' call on \n' + '\n' + resp.regDate + '\n' + 'has been accepted.';
 					// create reusable transporter object using the default SMTP transport
 					let transporter = nodemailer.createTransport({
@@ -406,7 +406,7 @@ router.delete('/deleteCurrentNotification/:id', (req, res) => {
 			console.log('sender => ', sender);
 			console.log('receiver => ', sender);
 			if (sender && receiver) {
-				console.log('nodemailer api from front end');
+				console.log('nodemailer api from front end delete current notification');
 				let message = 'Your request for shift to:\n' + '\n' + sender.firstName + '\n' + 'for the shift \n' + '\n' + resp.shiftName + '\n' + 'has been rejected. \n';
 				// create reusable transporter object using the default SMTP transport
 				let transporter = nodemailer.createTransport({
@@ -654,7 +654,7 @@ router.post('/userNotification', (req, res) => {
 			console.log('sender => ', sender);
 
 			if (sender && receiver) {
-				console.log('nodemailer api from front end');
+				console.log('nodemailer api from front end userNotification');
 				let message = 'Following User Request for shift :\n' + '\n' + sender.firstName + '\n' + 'Following is the Shift Requested \n' + '\n' + req.body.shiftName + '\n' + 'Following is Shift Date \n' + '\n' + req.body.date;
 				// create reusable transporter object using the default SMTP transport
 				let transporter = nodemailer.createTransport({
@@ -1030,7 +1030,7 @@ router.post('/createNotificationHistory', (req, res) => {
 				console.log('receiver => ', sender);
 
 				if (sender && receiver) {
-					console.log('nodemailer api from front end');
+					console.log('nodemailer api from front end create notification history');
 					let message = 'Following User Request for shift :\n' + '\n' + sender.firstName + '\n' + 'Following is the Shift Requested \n' + '\n' + req.body.shiftName + '\n' + 'Following is Shift Date \n' + '\n' + req.body.date;
 					// create reusable transporter object using the default SMTP transport
 					let transporter = nodemailer.createTransport({

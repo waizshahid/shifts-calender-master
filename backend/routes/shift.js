@@ -1014,7 +1014,7 @@ router.get('/swapShiftUser/:shiftId/:userId/:userId1', (req, res) => {
 										from: 'admin@calls.pvmgonline.com',
 										to: await getNotificationEmail(),
 										subject: 'testing on approval',
-									       html: '<p> The '+ shift1.shiftname +'for ' +  shiftObj.start  +  'has been transferred to '+ user1.username +  '</br> from '+ user2.username +'</p>',
+									       html: '<p> The '+ shift1.shiftname +' for ' +  shiftObj.start  +  ' has been transferred to '+ user1.username +  '</br> from '+ user2.username +'</p>',
 									};
 									 transport.sendMail(mailOptions, (error, info) => {
 										if (error) {
@@ -1193,7 +1193,7 @@ router.get('/currentShifts', (req, res) => {
 								shiftname: shift.shiftTypeId.shiftname,
 								requestApprovalStatus: shift.requestApprovalStatus,
 								title: shift.shiftTypeId.shiftname.substring(0, 3) + ':' + ' ' + shift.userId.lastName + ' (' + shift.comment.substring(0, 14) + '...' + ')',
-								color: count > 8 ? 'red' : shift.shiftTypeId.color,
+								color: (count > 8 && shift.shiftTypeId.shiftname == "Off") ? 'red' : shift.shiftTypeId.color,
 								swapable: shift.swapable,
 								userId: shift.userId._id,
 								userType: shift.userId.type,
@@ -1209,7 +1209,7 @@ router.get('/currentShifts', (req, res) => {
 								shiftname: shift.shiftTypeId.shiftname,
 								requestApprovalStatus: shift.requestApprovalStatus,
 								title: shift.comment ? shift.shiftTypeId.shiftname.substring(0, 3) + ':' + ' ' + shift.userId.lastName + ' (' + shift.comment + ')' : shift.shiftTypeId.shiftname.substring(0, 3) + ':' + ' ' + shift.userId.lastName + ', ' + shift.userId.firstName,
-								color: count > 8 ? 'red' : shift.shiftTypeId.color,
+								color: (count > 8 && shift.shiftTypeId.shiftname=="Off") ? 'red' : shift.shiftTypeId.color,
 								swapable: shift.swapable,
 								userId: shift.userId._id,
 								userType: shift.userId.type,
@@ -1227,7 +1227,7 @@ router.get('/currentShifts', (req, res) => {
 							requestApprovalStatus: shift.requestApprovalStatus,
 							title: shift.shiftTypeId.shiftname + ':' + ' ' + shift.userId.firstName.charAt(0) + ' ' + shift.userId.lastName,
 							// title: shift.shiftTypeId.shiftname + ':' + ' ' + shift.userId.lastName + ',' + shift.userId.firstName,
-							color: count > 8 ? 'red' : shift.shiftTypeId.color,
+							color: (count > 8 && shift.shiftTypeId.shiftname == "Off") ? 'red' : shift.shiftTypeId.color,
 							swapable: shift.swapable,
 							userId: shift.userId._id,
 							userType: shift.userId.type,

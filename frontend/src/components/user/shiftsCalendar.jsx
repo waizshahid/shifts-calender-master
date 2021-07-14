@@ -184,7 +184,7 @@ const ShiftsCalendar = () => {
 				//   message.success("Shift Created Successfully");
 				// },1000)
 
-				////////
+				//////// 
 
 				if (shiftName == 'Off') {
 					console.log("shiftoff")
@@ -193,7 +193,7 @@ const ShiftsCalendar = () => {
 						userId1: currentId,
 						userId2: currentId,
 						shiftId1: res.data._id,
-						message: "Your Off shift has been created",
+						message: "Created FirstTime",
 						adminresponse: "Shift is Created",
 						date: date1,
 						requester: "User",

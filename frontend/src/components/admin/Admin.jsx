@@ -140,22 +140,26 @@ const Admin = ({ admin }) => {
 		// })
 		axios
 			.get('user/getNotifcations')
-			.then((res1) => {
+			.then(async (res1) => {
 				console.log(res1);
 				let array = [];
 				for (let i = 0; i < res1.data.length; i++) {
 					if (res1.data[i].requesterType === 'Super Admin') {
 						array.push(res1.data[i]);
 					} else if (res1.data[i].requesterType === 'Admin' && (res1.data[i].currentUserId === currentId || res1.data[i].from?._id == currentId) && res1.data[i].to?._id != null && res1.data[i].to != null) {
-						console.log(res1.data[i], "llllllllllllllll")
 						array.push(res1.data[i]);
-					} else if (res1.data[i].requesterType === 'User' && res1.data[i].from?._id === currentId) {
+					} else if (res1.data[i].requesterType === 'User' && (res1.data[i].from?._id === currentId || res1.data[i].from?._id == currentId)) {
 						array.push(res1.data[i]);
 					}
 				}
-				for (let i = 0; i < array.length; i++) {
-					users.push(array[i].to);
-				}
+
+				console.log(array, array.length, "my notification array")
+				// for (let i = 0; i < array.length; i++) {
+
+				// 	let user = await axios.get('user/getuser' + '/' + array[i].currentUserId)
+				// 	console.log(user, "user")
+				// 	users.push(user.data);
+				// }
 				console.log('notificationssss', array, users);
 				setMessage(array);
 			})
@@ -416,49 +420,80 @@ const Admin = ({ admin }) => {
 											</div>
 											<hr />
 										</div>
-									) : (<div>
+									) : (
+										message.status == 'pending' ?
+											(<div>
 
-										{message.message == "One of the User wants to swap his shift with you. Click for the detail..."}
-										<div>
-											<div className='row'>
-												{/* <div onClick={() => showShiftModal1(index)} className='col-2'>
+												{message.message == "One of the User wants to swap his shift with you. Click for the detail..."}
+												<div>
+													<div className='row'>
+														{/* <div onClick={() => showShiftModal1(index)} className='col-2'>
 													<Tag color='red'>{'Detail'}</Tag>
 												</div> */}
-												{/* <div className='col-4'>
+														{/* <div className='col-4'>
 													<Tag color='green'>{users[index].firstName + ' ' + users[index].lastName}</Tag>
 												</div> */}
-												{/* <div className='col-6'>
+														{/* <div className='col-6'>
 													<Tag color='default'>{message.shiftName}</Tag>
 													<Tag color='default'>{message.regDate}</Tag>
 												</div> */}
-											</div>
-											<div className='row'>
-												<div style={{ margin: 10 }} className='col-12' className='textsetting'>
-													{console.log(message, "message")}
-													{/* {message.requesterType} */}
-													{users[index].firstName.charAt(0)} {users[index].lastName + ' is requesting ' + message.shiftName + ' call ' + message?.regDate}
-												</div>
-											</div>
-											<div>
-												<Row className='buttonsetting'>
-													{/* <Button onClick={() => deleteNotification1(index)}>Delete this notification</Button> */}
-													{/* <Button onClick={() => updateNotification1(index)} className='rejectbutton'>
+													</div>
+													<div className='row'>
+														<div style={{ margin: 10 }} className='col-12' className='textsetting'>
+															{console.log(message, "message")}
+															{/* {message.requesterType} */}
+															{message.currentUserId.firstName.charAt(0)} {message.currentUserId.lastName + ' is requesting ' + message.shiftName + ' call ' + message?.regDate}
+														</div>
+													</div>
+													<div>
+														<Row className='buttonsetting'>
+															{/* <Button onClick={() => deleteNotification1(index)}>Delete this notification</Button> */}
+															{/* <Button onClick={() => updateNotification1(index)} className='rejectbutton'>
 														Reject
 													</Button>
 													<Button type='primary' className='button2setting' onClick={() => swapShift1(index)}>
 														Exchange
 													</Button> */}
-													<Button type='primary' className='button2setting' onClick={() => { swapShift1(index) }}>
-														Accept
-													</Button>
-													<Button onClick={() => deleteNotification1(index, true)} className='rejectbutton'>
-														Reject
-													</Button>
-												</Row>
+															<Button type='primary' className='button2setting' onClick={() => { swapShift1(index) }}>
+																Accept
+															</Button>
+															<Button onClick={() => deleteNotification1(index, true)} className='rejectbutton'>
+																Reject
+															</Button>
+														</Row>
+													</div>
+													<hr />
+												</div>
 											</div>
-											<hr />
-										</div>
-									</div>)}
+											)
+											:
+											(
+												<div>
+													<div style={{ display: "flex", justifyContent: "flex-end" }}><div style={{ justifyContent: "flex-end", width: "101px", border: "1px solid gray", marginTop: "5px", marginBottom: "10px", textAlign: "center", borderRadius: "5px" }} onClick={() => deleteNotificationFromMeonly(index)}>
+														Acknowledged
+													</div></div>
+													<div style={{ margin: 2, width: "309px", wordWrap: "break-word", whiteSpace: "pre-wrap" }}>
+														{/* {console.log(oneE, "opopopop")} */}
+														<p>Your request for {message.shiftName} on {message.regDate} to {message?.from?.firstName.charAt(0)} {message?.from?.lastName} has been {message.status === 'accepted' ? 'accepted' : 'sent'} </p>
+													</div>
+													{/* {message.status === 'accepted' && (
+												<Button style={{ margin: 20 }} key='1' onClick={() => deleteNotification(index)}>
+													Delete this Request
+												</Button>
+											)} */}
+													<div>
+														{/* <Button style={{ margin: 20 }} key='1' onClick={deleteNotification}>
+												Delete this Request
+											</Button>
+											<Button style={{ paddingLeft: 20 }} onClick={() => setVisible(false)} key='2' type='primary'>
+												OK
+											</Button> */}
+													</div>
+													<hr />
+												</div>
+											)
+									)
+									}
 								</div>
 							) : (
 
@@ -474,7 +509,7 @@ const Admin = ({ admin }) => {
 															Detail
 														</Tag>
 														<Tag color='green'>{message.requesterType}</Tag> */}
-															<br /> {users[index].firstName.charAt(0)} {users[index].lastName + ' is requesting ' + message.shiftName + ' call ' + message?.regDate}
+															<br /> {message.currentUserId.firstName.charAt(0)} {message.currentUserId.lastName + ' is requesting ' + message?.shiftName + ' call ' + message?.regDate}
 															<br />
 															{/* <Tag color='default'>{message.regDate}</Tag> */}
 															<Row className='buttonsetting'>

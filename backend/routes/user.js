@@ -20,7 +20,7 @@ const getNotificationEmail = async () => {
 	if (notiEmail) {
 		return notiEmail.email;
 	} else {
-		return 'softthrivetest@gmail.com';
+		return 'admin@calls.pvmgonline.com';
 	}
 };
 //@route  GET api/user/test
@@ -36,6 +36,19 @@ router.get('/test', userauth, (req, res) => {
 router.get('/', userauth, async (req, res) => {
 	try {
 		User.findById(req.user.id).then((user) => {
+			res.json(user);
+		});
+	} catch (err) {
+		console.log(err.message);
+		res.status(500).send('Server Error');
+	}
+});
+
+
+router.get('/getuser/:id', async (req, res) => {
+	console.log("id" , req.params.id)
+	try {
+		User.findById(req.params.id).then((user) => {
 			res.json(user);
 		});
 	} catch (err) {
@@ -77,7 +90,7 @@ router.post('/sendemail', async (req, res) => {
 	let message = req.body.message;
 	// create reusable transporter object using the default SMTP transport
 	let transporter = nodemailer.createTransport({
-		host: 'smtp.gmail.com',
+		host: 'box5419.bluehost.com',
 		port: 465,
 		secure: true,
 		service: 'gmail', // true for 465, false for other ports
@@ -85,8 +98,8 @@ router.post('/sendemail', async (req, res) => {
 		ignoreTLS: false,
 		secure: false,
 		auth: {
-			user: 'softthrivetest@gmail.com', // generated ethereal user
-			pass: 'strong12345678', // generated ethereal password
+			user: 'admin@calls.pvmgonline.com', // generated ethereal user
+			pass: 'pvmgonline12.', // generated ethereal password
 		},
 		tls: {
 			// do not fail on invalid certs
@@ -95,7 +108,7 @@ router.post('/sendemail', async (req, res) => {
 	});
 
 	const mesage = {
-		from: 'softthrivetest@gmail.com', // sender address
+		from: 'admin@calls.pvmgonline.com', // sender address
 		// to: 'hmhcalls@gmail.com', // receiver
 		to: getNotificationEmail(),
 		subject: 'Information updated', // Subject line
@@ -154,7 +167,7 @@ router.get('/getNotifcations', (req, res) => {
 		.sort({
 			regDate: 1,
 		})
-		// .populate('currentUserId')
+		 .populate('currentUserId')
 		.populate('from')
 		.populate('to')
 		// .exec()
@@ -238,6 +251,8 @@ router.delete('/deleteAllNotifications', (req, res) => {
 });
 
 router.put('/updateResponses/:id', async (req, res) => {
+
+	console.log("updateResponses" , req.params.id)
 	try {
 		let newPerson = {
 			message: 'Your shift has been exchanged. View Details',
@@ -247,7 +262,7 @@ router.put('/updateResponses/:id', async (req, res) => {
 
 		Notification.findOneAndUpdate({ _id: req.params.id }, { $set: newPerson })
 			.then(async (resp) => {
-				console.log(resp);
+				console.log("============?>>>>>>" , resp);
 				console.log(resp.toObject());
 				let sender = await User.findOne({ _id: resp.from });
 				let secondUser = resp.to ? resp.to : resp.from;
@@ -260,7 +275,7 @@ router.put('/updateResponses/:id', async (req, res) => {
 					let message = 'Your Request for shift to:\n' + '\n' + sender.firstName + '\n' + 'for the Shift \n' + '\n' + resp.shiftName + ' call on \n' + '\n' + resp.regDate + '\n' + 'has been accepted.';
 					// create reusable transporter object using the default SMTP transport
 					let transporter = nodemailer.createTransport({
-						host: 'smtp.gmail.com',
+						host: 'box5419.bluehost.com',
 						port: 465,
 						secure: true,
 						service: 'gmail', // true for 465, false for other ports
@@ -268,8 +283,8 @@ router.put('/updateResponses/:id', async (req, res) => {
 						ignoreTLS: false,
 						secure: false,
 						auth: {
-							user: 'softthrivetest@gmail.com', // generated ethereal user
-							pass: 'strong12345678', // generated ethereal password
+							user: 'admin@calls.pvmgonline.com', // generated ethereal user
+							pass: 'pvmgonline12.', // generated ethereal password
 						},
 						tls: {
 							// do not fail on invalid certs
@@ -278,7 +293,7 @@ router.put('/updateResponses/:id', async (req, res) => {
 					});
 
 					const mesage = {
-						from: 'softthrivetest@gmail.com', // sender address
+						from: 'admin@calls.pvmgonline.com', // sender address
 						// to: 'hmhcalls@gmail.com', // receiver
 						to: receiver.email,
 						subject: 'Your Shift Request Accepted', // Subject line
@@ -410,7 +425,7 @@ router.delete('/deleteCurrentNotification/:id', (req, res) => {
 				let message = 'Your request for shift to:\n' + '\n' + sender.firstName + '\n' + 'for the shift \n' + '\n' + resp.shiftName + '\n' + 'has been rejected. \n';
 				// create reusable transporter object using the default SMTP transport
 				let transporter = nodemailer.createTransport({
-					host: 'smtp.gmail.com',
+					host: 'box5419.bluehost.com',
 					port: 465,
 					secure: true,
 					service: 'gmail', // true for 465, false for other ports
@@ -418,8 +433,8 @@ router.delete('/deleteCurrentNotification/:id', (req, res) => {
 					ignoreTLS: false,
 					secure: false,
 					auth: {
-						user: 'softthrivetest@gmail.com', // generated ethereal user
-						pass: 'strong12345678', // generated ethereal password
+						user: 'admin@calls.pvmgonline.com', // generated ethereal user
+						pass: 'pvmgonline12.', // generated ethereal password
 					},
 					tls: {
 						// do not fail on invalid certs
@@ -428,7 +443,7 @@ router.delete('/deleteCurrentNotification/:id', (req, res) => {
 				});
 
 				const mesage = {
-					from: 'softthrivetest@gmail.com', // sender address
+					from: 'admin@calls.pvmgonline.com', // sender address
 					// to: 'hmhcalls@gmail.com', // receiver
 					to: receiver.email,
 					subject: 'Your Shift Request Rejected', // Subject line
@@ -658,7 +673,7 @@ router.post('/userNotification', (req, res) => {
 				let message = 'Following User Request for shift :\n' + '\n' + sender.firstName + '\n' + 'Following is the Shift Requested \n' + '\n' + req.body.shiftName + '\n' + 'Following is Shift Date \n' + '\n' + req.body.date;
 				// create reusable transporter object using the default SMTP transport
 				let transporter = nodemailer.createTransport({
-					host: 'smtp.gmail.com',
+					host: 'box5419.bluehost.com',
 					port: 465,
 					secure: true,
 					service: 'gmail', // true for 465, false for other ports
@@ -666,8 +681,8 @@ router.post('/userNotification', (req, res) => {
 					ignoreTLS: false,
 					secure: false,
 					auth: {
-						user: 'softthrivetest@gmail.com', // generated ethereal user
-						pass: 'strong12345678', // generated ethereal password
+						user: 'admin@calls.pvmgonline.com', // generated ethereal user
+						pass: 'pvmgonline12.', // generated ethereal password
 					},
 					tls: {
 						// do not fail on invalid certs
@@ -676,7 +691,7 @@ router.post('/userNotification', (req, res) => {
 				});
 
 				const mesage = {
-					from: 'softthrivetest@gmail.com', // sender address
+					from: 'admin@calls.pvmgonline.com', // sender address
 					// to: 'hmhcalls@gmail.com', // receiver
 					to: receiver.email,
 					subject: 'A Shift Swap Request', // Subject line
@@ -1034,7 +1049,7 @@ router.post('/createNotificationHistory', (req, res) => {
 					let message = 'Following User Request for shift :\n' + '\n' + sender.firstName + '\n' + 'Following is the Shift Requested \n' + '\n' + req.body.shiftName + '\n' + 'Following is Shift Date \n' + '\n' + req.body.date;
 					// create reusable transporter object using the default SMTP transport
 					let transporter = nodemailer.createTransport({
-						host: 'smtp.gmail.com',
+						host: 'box5419.bluehost.com',
 						port: 587,
 						secure: true,
 						service: 'gmail', // true for 465, false for other ports
@@ -1042,8 +1057,8 @@ router.post('/createNotificationHistory', (req, res) => {
 						ignoreTLS: false,
 						secure: false,
 						auth: {
-							user: 'softthrivetest@gmail.com', // generated ethereal user
-							pass: 'strong12345678', // generated ethereal password
+							user: 'admin@calls.pvmgonline.com', // generated ethereal user
+							pass: 'pvmgonline12.', // generated ethereal password
 						},
 						tls: {
 							// do not fail on invalid certs
@@ -1052,7 +1067,7 @@ router.post('/createNotificationHistory', (req, res) => {
 					});
 
 					const mesage = {
-						from: 'softthrivetest@gmail.com', // sender address
+						from: 'admin@calls.pvmgonline.com', // sender address
 						// to: 'hmhcalls@gmail.com', // receiver
 						to: receiver.email,
 						subject: 'A Shift Swap Request', // Subject line
@@ -1129,6 +1144,7 @@ router.get('/getEventHistory/:id', async (req, res) => {
 							swappingDate: shift.regDate,
 							shiftDate: shift.shiftFrom.start,
 							modifiedBy: shift.currentUserId.email,
+							message: shift.message
 						};
 					}
 				}),

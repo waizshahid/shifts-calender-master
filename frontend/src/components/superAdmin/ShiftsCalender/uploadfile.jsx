@@ -466,7 +466,7 @@ class uploadfile extends Component {
 							</div>
 						</Button>
 					</div>
-					<div className='col-3'>
+					<div className='col-3 d-flex row'>
 						<Button type='primary' onClick={() => { this.setState({ offrequest: false }); this.selectDate() }}>
 							<div className='row'>
 								<div className='col-1'>

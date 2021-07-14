@@ -70,6 +70,7 @@ const ShiftsCalender = ({ userObj }) => {
 	const [userDetail, setuserDetail] = useState({});
 	const [selectedshiftid, setselectedshiftid] = useState({});
 	const [idhere, setidhere] = useState({});
+
 	function callback(key) {
 		console.log(key);
 	}
@@ -84,7 +85,7 @@ const ShiftsCalender = ({ userObj }) => {
 	};
 
 	const handelFrom1 = (e) => {
-		console.log('event on editing shift in handelform', oneEvent._id);
+		console.log('event on editing shift in handelform', oneEvent._id, e);
 		setTargetId1(e);
 	};
 	const handelAssign = (e) => {
@@ -164,9 +165,6 @@ const ShiftsCalender = ({ userObj }) => {
 		console.log(createShiftID, assign, currentId, "createShift")
 		console.log(oneEvent)
 		let date1 = new Date().toISOString().slice(0, 10);
-
-
-
 		await setVisible(false);
 		setLoading(true);
 		const userId = assign;
@@ -231,7 +229,7 @@ const ShiftsCalender = ({ userObj }) => {
 						userId1: assign,
 						userId2: assign,
 						shiftId1: res.data._id,
-						message: "Your Off shift has been created",
+						message: "Created FirstTime",
 						adminresponse: "Shift is Created",
 						date: date1,
 						requester: "Admin",
@@ -392,7 +390,6 @@ const ShiftsCalender = ({ userObj }) => {
 					}
 				});
 		}
-
 		// axios.get('shift/findCurrentShiftNotification/'+userId1+'/'+shiftId1)
 	}, [history]);
 
@@ -501,7 +498,6 @@ const ShiftsCalender = ({ userObj }) => {
 			.then((res1) => {
 				console.log(res1);
 				console.log(res1.data);
-
 				// message.loading({ content: 'Deleting...', key });
 				setTimeout(() => {
 					axios
@@ -595,13 +591,14 @@ const ShiftsCalender = ({ userObj }) => {
 	const prepassnotification = () => {
 		console.log('in pre pass notification');
 		console.log('ccccc', oneEvent.shiftname, oneEvent, data);
-		console.log(data.filter((s) => s.shiftname === oneEvent.shiftname)[0]);
+		console.log(data.filter((s) => s.shiftname === oneEvent.shiftname)[0]._id);
 		if (data.filter((s) => s.shiftname === oneEvent.shiftname).length > 0) {
-			axios.put('/user/updatingshift', { id: oneEvent._id, shiftid: data.filter((s) => s.shiftname === oneEvent.shiftname)[0]._id }).then(() => {
+			axios.put('/user/updatingshift', { id: oneEvent._id, shiftid: id21 }).then(() => {
 				passNotification(true);
 				console.log('updated');
 			});
 		} else {
+
 			alert('Please select shift');
 		}
 	};
@@ -631,6 +628,7 @@ const ShiftsCalender = ({ userObj }) => {
 						break;
 					}
 				}
+				console.log(shiftIdforn, "shiftIdforn")
 				axios
 					.post('user/userNotification', {
 						currentUserId,

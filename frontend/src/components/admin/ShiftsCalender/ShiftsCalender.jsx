@@ -450,7 +450,7 @@ const ShiftsCalender = ({ userObj }) => {
 
 	function sendemail() {
 		axios.post('user/sendemail', {
-			message: 'Following Admin Created shift :\n' + '\n' + myDetails.firstName + '\n' + 'Following is the Data of Shift being created\n' + 'Start date of Shift being created\n' + '\n' + date + '\n' + 'End date of Shift being created\n' + '\n' + date,
+			message: ' Admin ' + myDetails.firstName + ' created shift on ' + date,
 		});
 		console.log('after api call');
 	}

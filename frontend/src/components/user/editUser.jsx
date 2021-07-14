@@ -3,13 +3,13 @@ import { Form, Input, Button, Select, Row, Col, Modal } from "antd";
 import axios from "axios";
 
 const { Option } = Select;
-const EditUser = ({ setEditProfile, userObj , id}) => {
+const EditUser = ({ setEditProfile, userObj, id }) => {
 	const [error, setError] = React.useState(" ");
 	const [success, setEditSuccess] = React.useState(false)
 	const [fields, setFields] = React.useState([
 		{
-		  name: ["firstName"],
-		  value: userObj.firstName,
+			name: ["firstName"],
+			value: userObj.firstName,
 		},
 		{
 			name: ["lastName"],
@@ -19,12 +19,12 @@ const EditUser = ({ setEditProfile, userObj , id}) => {
 			name: ["username"],
 			value: userObj.username,
 		},
-		
+
 		{
 			name: ["email"],
 			value: userObj.email,
 		},
-		
+
 		{
 			name: ["pass"],
 			value: '',
@@ -33,7 +33,7 @@ const EditUser = ({ setEditProfile, userObj , id}) => {
 			name: ["confirm"],
 			value: '',
 		}
-	  ]);
+	]);
 
 	const [form] = Form.useForm();
 	const onFinish = (values) => {
@@ -42,52 +42,54 @@ const EditUser = ({ setEditProfile, userObj , id}) => {
 		setEditProfile(false)
 		setEditSuccess(true)
 		axios.put("user/updateMe", {
-					id,
-					newData: { 
-						email,
-						firstName,
-						lastName,
-						username,
-						pass
-					},
-				})
-				.then((res) => {
-					
-					console.log("after updating profile dataxx",res.data)
-					sendemail(res.data.firstname,res.data.lastname,res.data.username,res.data.email);
-				})
-		
-					
-			
-				.catch((err) => {
-					console.log(err.response);
-					// setFailVisible(true)
-				});
-		
+			id,
+			newData: {
+				email,
+				firstName,
+				lastName,
+				username,
+				pass
+			},
+		})
+			.then((res) => {
+
+				console.log("after updating profile dataxx", res.data)
+				sendemail(res.data.firstname, res.data.lastname, res.data.username, res.data.email);
+			})
+
+
+
+			.catch((err) => {
+				console.log(err.response);
+				// setFailVisible(true)
+			});
+
 	};
 
-	const sendemail = (firstName,lastName,username,email) => {  console.log("node api from front end")
-	 axios.post("user/sendemail", {
-		message : "Following User Updated his profile :\n" +"\nUpdated First Name :" + firstName + "\nUpdated Last Name :" + lastName +"\n Updated User Name :" + username +"\n Updated Email :" + email 
-	 })
-	.then(()=>{console.log("after api call")})}
+	const sendemail = (firstName, lastName, username, email) => {
+		console.log("node api from front end")
+		axios.post("user/sendemail", {
+			message: " User " + firstName + "\nUpdated Last Name :" + lastName + "\n Updated User Name :" + username + "\n Updated Email :" + email
+		})
+			.then(() => { console.log("after api call") })
+	}
 
 	return (
 		<div className="p-0">
 			<Modal
-                  title="Profile Updated Successfully"
-                  visible={success}
-                  maskClosable={true}
-                  onCancel={() => setEditSuccess(false)}
-                  // onOk={handleOk}
-                  footer={null}
-                >
-                  <b style={{
-					  color: '#5cb85c'
-				  }}>
-					  Profile has been updated successfully
-				  </b>
-              </Modal>
+				title="Profile Updated Successfully"
+				visible={success}
+				maskClosable={true}
+				onCancel={() => setEditSuccess(false)}
+				// onOk={handleOk}
+				footer={null}
+			>
+				<b style={{
+					color: '#5cb85c'
+				}}>
+					Profile has been updated successfully
+				</b>
+			</Modal>
 			<Form
 				form={form}
 				name="register"
@@ -199,7 +201,7 @@ const EditUser = ({ setEditProfile, userObj , id}) => {
 
 				<label>Use 6 or more characters with a mix of letters, numbers & symbols</label>
 				<label className="text-danger">{error.email}</label>
-			
+
 				<Row>
 					<Col span={13}>
 					</Col>

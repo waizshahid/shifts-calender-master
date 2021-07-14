@@ -141,7 +141,7 @@ router.delete('/deleteshift', (req, res) => {
 				from: 'admin@calls.pvmgonline.com',
 				to: await getNotificationEmail(),
 				subject: 'Shift deleted',
-				html: '<p> The following shift ' + resp.shiftname + ' has been deleted.</p>',
+				html: '<p> Shift ' + resp.shiftname + ' has been deleted.</p>',
 			};
 
 			transport.sendMail(mailOptions, (error, info) => {
@@ -953,7 +953,7 @@ router.get('/swapShiftUserbyAdmin/:shiftId/:userId', (req, res) => {
 				from: 'admin@calls.pvmgonline.com',
 				to: await getNotificationEmail(),
 				subject: 'Shift transfered',
-				 html: '<p> The'+ shift.shiftname +'for ' +  newShift.start  +  'has been created by '+ user.username +'</p>',
+				 html: '<p> The '+ shift.shiftname +' for ' +  newShift.start  +  ' has been created by '+ user.username +'</p>',
 			};
 			transport.sendMail(mailOptions, (error, info) => {
 				if (error) {
@@ -1431,12 +1431,12 @@ router.put(
 						pass: 'pvmgonline12.', // generated ethereal password
 					},
 				});
-				console.log('email => ' + "following shift has been updated"  + resp.shiftname , getNotificationEmail());
+				console.log('email => ' + "Shift "  + resp.shiftname , getNotificationEmail());
 				var mailOptions = {
 					from: 'admin@calls.pvmgonline.com',
 					to: await getNotificationEmail(),
 					subject: 'Shift Updated',
-					html: '<p> The following shift ' + resp.shiftname + ' has been updated.</p>',
+					html: '<p> Shift ' + resp.shiftname + ' has been updated.</p>',
 				};
 
 				transport.sendMail(mailOptions, (error, info) => {

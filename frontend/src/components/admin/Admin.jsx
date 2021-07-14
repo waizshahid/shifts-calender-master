@@ -442,7 +442,7 @@ const Admin = ({ admin }) => {
 														<div style={{ margin: 10 }} className='col-12' className='textsetting'>
 															{console.log(message, "message")}
 															{/* {message.requesterType} */}
-															{message.currentUserId.firstName.charAt(0)} {message.currentUserId.lastName + ' is requesting ' + message.shiftName + ' call ' + message?.regDate}
+															{message.currentUserId?.firstName?.charAt(0)} {message.currentUserId.lastName + ' is requesting ' + message.shiftName + ' call ' + message?.regDate}
 														</div>
 													</div>
 													<div>

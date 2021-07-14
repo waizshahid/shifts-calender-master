@@ -163,6 +163,7 @@ router.get('/getusers', (req, res) => {
 		});
 });
 router.get('/getNotifcations', (req, res) => {
+	
 	Notification.find()
 		.sort({
 			regDate: 1,
@@ -172,6 +173,7 @@ router.get('/getNotifcations', (req, res) => {
 		.populate('to')
 		// .exec()
 		.then((allUsers) => {
+			
 			res.send(allUsers);
 		});
 });
@@ -272,7 +274,7 @@ router.put('/updateResponses/:id', async (req, res) => {
 				console.log('receiver => ', sender);
 				if (sender && receiver) {
 					console.log('nodemailer api from front end update responses');
-					let message = 'Your Request for shift to:\n' + '\n' + sender.firstName + '\n' + 'for the Shift \n' + '\n' + resp.shiftName + ' call on \n' + '\n' + resp.regDate + '\n' + 'has been accepted.';
+					let message = 'Your Request for shift to ' + sender.firstName + ' for the Shift '+ resp.shiftName + ' call on ' + resp.regDate +  ' has been accepted.';
 					// create reusable transporter object using the default SMTP transport
 					let transporter = nodemailer.createTransport({
 						host: 'box5419.bluehost.com',
@@ -422,7 +424,7 @@ router.delete('/deleteCurrentNotification/:id', (req, res) => {
 			console.log('receiver => ', sender);
 			if (sender && receiver) {
 				console.log('nodemailer api from front end delete current notification');
-				let message = 'Your request for shift to:\n' + '\n' + sender.firstName + '\n' + 'for the shift \n' + '\n' + resp.shiftName + '\n' + 'has been rejected. \n';
+				let message = 'Your request  to ' + sender.firstName  + ' for the shift ' + resp.shiftName +  ' has been rejected.';
 				// create reusable transporter object using the default SMTP transport
 				let transporter = nodemailer.createTransport({
 					host: 'box5419.bluehost.com',
@@ -670,7 +672,7 @@ router.post('/userNotification', (req, res) => {
 
 			if (sender && receiver) {
 				console.log('nodemailer api from front end userNotification');
-				let message = 'Following User Request for shift :\n' + '\n' + sender.firstName + '\n' + 'Following is the Shift Requested \n' + '\n' + req.body.shiftName + '\n' + 'Following is Shift Date \n' + '\n' + req.body.date;
+				let message =  sender.firstName  + ' has requested '  + req.body.shiftName + ' shift on ' + req.body.date;
 				// create reusable transporter object using the default SMTP transport
 				let transporter = nodemailer.createTransport({
 					host: 'box5419.bluehost.com',
@@ -1046,7 +1048,7 @@ router.post('/createNotificationHistory', (req, res) => {
 
 				if (sender && receiver) {
 					console.log('nodemailer api from front end create notification history');
-					let message = 'Following User Request for shift :\n' + '\n' + sender.firstName + '\n' + 'Following is the Shift Requested \n' + '\n' + req.body.shiftName + '\n' + 'Following is Shift Date \n' + '\n' + req.body.date;
+					let message =  sender.firstName +  ' has requested for ' + req.body.shiftName + ' on ' + req.body.date;
 					// create reusable transporter object using the default SMTP transport
 					let transporter = nodemailer.createTransport({
 						host: 'box5419.bluehost.com',

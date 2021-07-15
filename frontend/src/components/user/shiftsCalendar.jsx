@@ -169,6 +169,7 @@ const ShiftsCalendar = () => {
 			},
 			data: {
 				userId: currentId,
+				Created: currentId,
 				comment: comment,
 				start: date,
 				end: date,
@@ -206,7 +207,7 @@ const ShiftsCalendar = () => {
 					.get('shift/currentShifts')
 					.then(async (res) => {
 						await setEvents(res.data.shifts);
-						setLoading(false);
+						//	setLoading(false);
 						message.success('Shift Created Successfully');
 					})
 					.catch((err) => {
@@ -221,7 +222,7 @@ const ShiftsCalendar = () => {
 
 	const handleOk = async (e) => {
 		await setVisible(false);
-		setLoading(true);
+		//	setLoading(true);
 		let tempArray = [];
 		axios
 			.get('shift/currentShifts')

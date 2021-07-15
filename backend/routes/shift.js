@@ -125,7 +125,7 @@ router.delete('/deleteshift', (req, res) => {
 	Shift.findOneAndDelete({ _id: req.query.id })
 		.then(async (resp) => {
 			var transport = nodemailer.createTransport({
-				host: 'box5419.bluehost.com',
+				host: 'admin@calls.pvmgonline.com',
 				port: 587,
 				secure: false,
 				requireTLS: true,
@@ -516,8 +516,8 @@ router.get('/getUserByName/:id', async (req, res) => {
 		});
 });
 
-router.post('/createShift', (req, res) => {
-	// console.log(req.body);
+router.post('/createShift', (req, res) => { 
+	
 	if (req.body === null) res.status(400).send('Bad Request');
 	let newShift = new createShift({
 		// _id :
@@ -531,15 +531,16 @@ router.post('/createShift', (req, res) => {
 		requestApprovalStatus: req.body.requestApprovalStatus,
 	});
 
-	// console.log('Shift created as: ' + newShift);
 	newShift
 		.save()
 		.then(async (newShift) => {
+
 			let user =await User.findOne({_id : newShift.userId})
+			let created = await User.findOne({_id:req.body.Created})
 			let shift =await Shift.findOne({_id : newShift.shiftTypeId})
-			console.log(user , shift , "data to be send")
+			
 			var transport = nodemailer.createTransport({
-				host: 'box5419.bluehost.com',
+				host: 'admin@calls.pvmgonline.com',
 				port: 587,
 				secure: false,
 				requireTLS: true,
@@ -549,13 +550,14 @@ router.post('/createShift', (req, res) => {
 					pass: 'pvmgonline12.', // generated ethereal password
 				},
 			});
-			console.log('email => ',await getNotificationEmail());
+
 			var mailOptions = {
 				from: 'admin@calls.pvmgonline.com',
 				to: await getNotificationEmail(),
 				subject: 'Shift Created',
-				html: '<p> The '+ shift.shiftname +' for ' +  newShift.start  +  ' has been created by '+ user.username +'</p>',
+				html: '<p> The '+ shift.shiftname +' for ' +  newShift.start  +  ' has been created for '+ user.firstName.charAt(0) + " " + user.lastName  +   ' by ' + created.firstName.charAt(0) + " " + created.lastName +  '</p>',
 			};
+
 			transport.sendMail(mailOptions, (error, info) => {
 				if (error) {
 					return console.log(error);
@@ -938,7 +940,7 @@ router.get('/swapShiftUserbyAdmin/:shiftId/:userId', (req, res) => {
 				.then(async(shiftObj) => {
 				console.log(id , userId , shift , "params , param , response")
 			    var transport = nodemailer.createTransport({
-				host: 'box5419.bluehost.com',  //outgoing
+				host: 'admin@calls.pvmgonline.com',  //outgoing
 				port: 587,
 				secure: false,
 				requireTLS: true,
@@ -999,7 +1001,7 @@ router.get('/swapShiftUser/:shiftId/:userId/:userId1', (req, res) => {
 					console.log(shift1 , user1 , user2 , "shift1 , user1");
 
 					var transport =await nodemailer.createTransport({
-										host: 'box5419.bluehost.com',
+										host: 'admin@calls.pvmgonline.com',
 										port: 587,
 										secure: false,
 										requireTLS: true,
@@ -1357,7 +1359,7 @@ router.put('/swapShifts', (req, res) => {
 });
 async function sendMail(user1, user2, title_1, title_2) {
 	var transport = nodemailer.createTransport({
-		host: 'box5419.bluehost.com',
+		host: 'admin@calls.pvmgonline.com',
 		port: 587,
 		secure: false,
 		requireTLS: true,
@@ -1421,7 +1423,7 @@ router.put(
 			Shift.update({ _id: req.body.id }, { $set: newPerson }).then(async (resp) => {
 				console.log(resp)
 				var transport = nodemailer.createTransport({
-					host: 'box5419.bluehost.com',
+					host: 'admin@calls.pvmgonline.com',
 					port: 587,
 					secure: false,
 					requireTLS: true,

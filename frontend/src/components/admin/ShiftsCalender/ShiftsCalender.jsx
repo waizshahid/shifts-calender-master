@@ -207,8 +207,10 @@ const ShiftsCalender = ({ userObj }) => {
 				'Content-Type': 'application/json;charset=UTF-8',
 			},
 			data: {
+
 				start: date,
 				userId: userId,
+				Created: currentId,
 				end: date,
 				comment: comment,
 				offApprovalStatus: 'Approved',
@@ -598,24 +600,23 @@ const ShiftsCalender = ({ userObj }) => {
 				console.log('updated');
 			});
 		} else {
-
 			alert('Please select shift');
 		}
 	};
 
 	const passNotification = (adminEdit) => {
-		console.log('ooooooooooonn', oneEvent);
-		console.log('ooooooooooonn id2111', oneEvent._id);
+		console.log('Event', oneEvent);
+		console.log('id', oneEvent._id);
 		const userId1 = oneEvent.userId;
 		let shiftId1 = oneEvent._id;
-		console.log('shiftid1', id2);
+		console.log('shiftid', id2);
 		let userId2 = id2;
 		let date = new Date().toISOString().slice(0, 10);
 		const message = 'Your shift has been swapped. Click for details';
 		const adminresponse = 'The requested shifts  has been swapped.';
 		const requester = 'Admin';
 		const currentUserId = currentId;
-		console.log('helo123', userId1, userId2, shiftId1);
+		console.log('data', userId1, userId2, shiftId1);
 		let shiftName = '';
 		let shiftIdforn = '';
 		axios

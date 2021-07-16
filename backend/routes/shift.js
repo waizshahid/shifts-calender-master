@@ -395,16 +395,19 @@ router.get('/deleteEventsBetweenTwoDates/:start/:end', async (req, res, next) =>
 			end: { $lte: endDate },
 			start: { $gte: startDate },
 		})
-		.then((allShift) => {
+		.then(async(allShift) => {
 			//res.send(allShift);
 			for (let i = 0; i < allShift.length; i++) {
-				array.push(allShift[i]);
+				let t =await Shift.findById(allShift[i].shiftTypeId)
+				if(t.shiftname != "Off")
+				{
+					array.push(allShift[i]);
+				}
 			}
 		});
-
-	console.log('Array of Shift');
-	// console.log(array)
-
+	//console.log('Array of Shift');
+   // console.log("array needed ==========>>>>>",array)
+	//commented for testing
 	await array.forEach((eachEvent) => {
 		createShift
 			.remove({
@@ -412,9 +415,15 @@ router.get('/deleteEventsBetweenTwoDates/:start/:end', async (req, res, next) =>
 			})
 			.exec();
 	});
+
+	//commented for testing
 	res.status(201).json({
 		message: 'SHIFTS ARE DELETED SUCCESSFULLY',
 	});
+
+
+
+
 	// console.log('Deleting index: '+array[1]._id);
 	//  //  for(let i = 0 ; i < array.length ; i++){
 	//   // console.log(array[i]._id)
@@ -529,6 +538,7 @@ router.post('/createShift', (req, res) => {
 		comment: req.body.comment,
 		offApprovalStatus: req.body.offApprovalStatus,
 		requestApprovalStatus: req.body.requestApprovalStatus,
+
 	});
 
 	newShift

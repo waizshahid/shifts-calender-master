@@ -168,7 +168,7 @@ class uploadfile extends Component {
 
 	Process = () => {
 		if (this.state.finalArray !== '') {
-			// console.log(this.state.finalArray)
+			console.log("in process")
 			axios
 				.get('shift/deleteEventsBetweenTwoDates/' + this.state.startDate + '/' + this.state.endDate)
 				.then((response) => {

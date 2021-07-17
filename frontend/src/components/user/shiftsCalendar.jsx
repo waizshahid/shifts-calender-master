@@ -187,20 +187,20 @@ const ShiftsCalendar = () => {
 
 				//////// 
 
-				if (shiftName == 'Off') {
-					console.log("shiftoff")
-					axios.post('user/createNotificationHistory', {
-						currentUserId: currentId,
-						userId1: currentId,
-						userId2: currentId,
-						shiftId1: res.data._id,
-						message: "Created FirstTime",
-						adminresponse: "Shift is Created",
-						date: date1,
-						requester: "User",
-						shiftName: shiftName,
-					})
-				}
+				//	if (shiftName == 'Off') {
+				console.log("shiftoff")
+				axios.post('user/createNotificationHistory', {
+					currentUserId: currentId,
+					userId1: currentId,
+					userId2: currentId,
+					shiftId1: res.data._id,
+					message: "Created FirstTime",
+					adminresponse: "Shift is Created",
+					date: date1,
+					requester: "User",
+					shiftName: shiftName,
+				})
+				//	}
 				////////
 				console.log('shiftype idss', shiftTypeId);
 				axios
@@ -592,7 +592,6 @@ const ShiftsCalendar = () => {
 			<br />
 			{loading === false ? (
 				<FullCalendar
-
 					defaultView='dayGridMonth'
 					// timeZone='America/Chicago'
 					defaultDate='2021-06-01'

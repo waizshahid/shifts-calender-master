@@ -125,7 +125,7 @@ router.delete('/deleteshift', (req, res) => {
 	Shift.findOneAndDelete({ _id: req.query.id })
 		.then(async (resp) => {
 			var transport = nodemailer.createTransport({
-				host: 'admin@calls.pvmgonline.com',
+				host: 'box5419.bluehost.com',
 				port: 587,
 				secure: false,
 				requireTLS: true,
@@ -550,7 +550,7 @@ router.post('/createShift', (req, res) => {
 			let shift =await Shift.findOne({_id : newShift.shiftTypeId})
 			
 			var transport = nodemailer.createTransport({
-				host: 'admin@calls.pvmgonline.com',
+				host: 'box5419.bluehost.com',
 				port: 587,
 				secure: false,
 				requireTLS: true,
@@ -950,7 +950,7 @@ router.get('/swapShiftUserbyAdmin/:shiftId/:userId', (req, res) => {
 				.then(async(shiftObj) => {
 				console.log(id , userId , shift , "params , param , response")
 			    var transport = nodemailer.createTransport({
-				host: 'admin@calls.pvmgonline.com',  //outgoing
+				host: 'box5419.bluehost.com',  //outgoing
 				port: 587,
 				secure: false,
 				requireTLS: true,
@@ -1011,7 +1011,7 @@ router.get('/swapShiftUser/:shiftId/:userId/:userId1', (req, res) => {
 					console.log(shift1 , user1 , user2 , "shift1 , user1");
 
 					var transport =await nodemailer.createTransport({
-										host: 'admin@calls.pvmgonline.com',
+										host: 'box5419.bluehost.com',
 										port: 587,
 										secure: false,
 										requireTLS: true,
@@ -1369,7 +1369,7 @@ router.put('/swapShifts', (req, res) => {
 });
 async function sendMail(user1, user2, title_1, title_2) {
 	var transport = nodemailer.createTransport({
-		host: 'admin@calls.pvmgonline.com',
+		host: 'box5419.bluehost.com',
 		port: 587,
 		secure: false,
 		requireTLS: true,
@@ -1433,7 +1433,7 @@ router.put(
 			Shift.update({ _id: req.body.id }, { $set: newPerson }).then(async (resp) => {
 				console.log(resp)
 				var transport = nodemailer.createTransport({
-					host: 'admin@calls.pvmgonline.com',
+					host: 'box5419.bluehost.com',
 					port: 587,
 					secure: false,
 					requireTLS: true,

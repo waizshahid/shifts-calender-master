@@ -127,7 +127,7 @@ router.delete('/deleteshift', (req, res) => {
 			var transport = nodemailer.createTransport({
 				host: 'box5419.bluehost.com',
 				port: 587,
-				secure: false,
+				secure: true,
 				requireTLS: true,
 				auth: {
 					// enter your account details to send email from
@@ -552,7 +552,7 @@ router.post('/createShift', (req, res) => {
 			var transport = nodemailer.createTransport({
 				host: 'box5419.bluehost.com',
 				port: 587,
-				secure: false,
+				secure: true,
 				requireTLS: true,
 				auth: {
 					// enter your account details to send email from
@@ -952,7 +952,7 @@ router.get('/swapShiftUserbyAdmin/:shiftId/:userId', (req, res) => {
 			    var transport = nodemailer.createTransport({
 				host: 'box5419.bluehost.com',  //outgoing
 				port: 587,
-				secure: false,
+				secure: true,
 				requireTLS: true,
 				auth: {
 					// enter your account details to send email from
@@ -990,6 +990,7 @@ router.get('/swapShiftUserbyAdmin/:shiftId/:userId', (req, res) => {
 
 
 router.get('/swapShiftUser/:shiftId/:userId/:userId1', (req, res) => {
+	console.log(req.params.shiftId ,req.params.userId,req.params.userId1 , "paramssss" )
 	const id = req.params.shiftId;
 	const userId = req.params.userId;
 	const userid1 = req.params.userId1;
@@ -1007,14 +1008,13 @@ router.get('/swapShiftUser/:shiftId/:userId/:userId1', (req, res) => {
 					var shift1 = await Shift.findOne({_id : shift.shiftTypeId});
 					var user1 = await User.findOne({_id : userId});
 					var user2 = await User.findOne({_id : userid1 });
-
 					console.log(shift1 , user1 , user2 , "shift1 , user1");
-
 					var transport =await nodemailer.createTransport({
 										host: 'box5419.bluehost.com',
 										port: 587,
-										secure: false,
+										
 										requireTLS: true,
+										secure: false,
 										auth: {
 											// enter your account details to send email from
 											user: 'admin@calls.pvmgonline.com', // generated ethereal user
@@ -1030,7 +1030,7 @@ router.get('/swapShiftUser/:shiftId/:userId/:userId1', (req, res) => {
 									};
 									 transport.sendMail(mailOptions, (error, info) => {
 										if (error) {
-											return console.log(error);
+											return console.log("error nodemailer----",error);
 										}
 										console.log('Message sent: %s', info.messageId);
 									});
@@ -1042,7 +1042,7 @@ router.get('/swapShiftUser/:shiftId/:userId/:userId1', (req, res) => {
 									})
 				
 				.catch((err) => {
-					console.log("in catch1")
+					console.log("in catch1",err)
 					res.status(500).json({
 						error: err,
 					});
@@ -1371,7 +1371,7 @@ async function sendMail(user1, user2, title_1, title_2) {
 	var transport = nodemailer.createTransport({
 		host: 'box5419.bluehost.com',
 		port: 587,
-		secure: false,
+		secure: true,
 		requireTLS: true,
 		
 		auth: {
@@ -1435,7 +1435,7 @@ router.put(
 				var transport = nodemailer.createTransport({
 					host: 'box5419.bluehost.com',
 					port: 587,
-					secure: false,
+					secure: true,
 					requireTLS: true,
 					auth: {
 						// enter your account details to send email from

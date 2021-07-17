@@ -93,10 +93,9 @@ router.post('/sendemail', async (req, res) => {
 		host: 'box5419.bluehost.com',
 		port: 465,
 		secure: true,
-		service: 'gmail', // true for 465, false for other ports
-
+		
 		ignoreTLS: false,
-		secure: false,
+		secure: true,
 		auth: {
 			user: 'admin@calls.pvmgonline.com', // generated ethereal user
 			pass: 'pvmgonline12.', // generated ethereal password
@@ -253,7 +252,6 @@ router.delete('/deleteAllNotifications', (req, res) => {
 });
 
 router.put('/updateResponses/:id', async (req, res) => {
-
 	console.log("updateResponses" , req.params.id)
 	try {
 		let newPerson = {
@@ -261,7 +259,6 @@ router.put('/updateResponses/:id', async (req, res) => {
 			messageFrom: 'Your swap request for the shift has been accepted',
 			status: 'accepted',
 		};
-
 		Notification.findOneAndUpdate({ _id: req.params.id }, { $set: newPerson })
 			.then(async (resp) => {
 				console.log("============?>>>>>>" , resp);
@@ -280,10 +277,9 @@ router.put('/updateResponses/:id', async (req, res) => {
 						host: 'box5419.bluehost.com',
 						port: 465,
 						secure: true,
-						service: 'gmail', // true for 465, false for other ports
-
+						
 						ignoreTLS: false,
-						secure: false,
+						secure: true,
 						auth: {
 							user: 'admin@calls.pvmgonline.com', // generated ethereal user
 							pass: 'pvmgonline12.', // generated ethereal password
@@ -301,7 +297,6 @@ router.put('/updateResponses/:id', async (req, res) => {
 						subject: 'Your Shift Request Accepted', // Subject line
 						text: message, // plain text body
 					};
-
 					// send mail with defined transport object
 					let info = await transporter.sendMail(mesage);
 
@@ -312,7 +307,6 @@ router.put('/updateResponses/:id', async (req, res) => {
 					console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
 					// Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
 				}
-
 				res.send(resp);
 			})
 			.catch((err) => {
@@ -430,10 +424,9 @@ router.delete('/deleteCurrentNotification/:id', (req, res) => {
 					host: 'box5419.bluehost.com',
 					port: 465,
 					secure: true,
-					service: 'gmail', // true for 465, false for other ports
-
+					
 					ignoreTLS: false,
-					secure: false,
+					secure: true,
 					auth: {
 						user: 'admin@calls.pvmgonline.com', // generated ethereal user
 						pass: 'pvmgonline12.', // generated ethereal password
@@ -676,12 +669,9 @@ router.post('/userNotification', (req, res) => {
 				// create reusable transporter object using the default SMTP transport
 				let transporter = nodemailer.createTransport({
 					host: 'box5419.bluehost.com',
-					port: 465,
-					secure: true,
-					service: 'gmail', // true for 465, false for other ports
-
+					port: 465,	
 					ignoreTLS: false,
-					secure: false,
+					secure: true,
 					auth: {
 						user: 'admin@calls.pvmgonline.com', // generated ethereal user
 						pass: 'pvmgonline12.', // generated ethereal password
@@ -1054,10 +1044,9 @@ router.post('/createNotificationHistory', (req, res) => {
 						host: 'box5419.bluehost.com',
 						port: 587,
 						secure: true,
-						service: 'gmail', // true for 465, false for other ports
-
+						
 						ignoreTLS: false,
-						secure: false,
+						secure: true,
 						auth: {
 							user: 'admin@calls.pvmgonline.com', // generated ethereal user
 							pass: 'pvmgonline12.', // generated ethereal password

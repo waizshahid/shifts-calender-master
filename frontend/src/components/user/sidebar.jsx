@@ -127,7 +127,7 @@ const Side = ({ user }) => {
 		console.log(dsplayMessage[message]);
 		const id = dsplayMessage[message]._id;
 		const shiftId1 = dsplayMessage[message].shiftFrom;
-		const userToExchange = dsplayMessage[message].to?._id;
+		const userToExchange = dsplayMessage[message].to ? dsplayMessage[message].to?._id : dsplayMessage[message].currentUserId?._id;
 
 		console.log(id);
 		console.log(userToExchange);
@@ -141,7 +141,7 @@ const Side = ({ user }) => {
 		const date = dsplayMessage[message].regDate;
 		const requester = dsplayMessage[message].requesterType;
 		const shiftName = dsplayMessage[message].shiftName;
-
+		console.log(shiftId1, userToExchange, userId1, "in front end data")
 		axios
 			.get('shift/swapShiftUser/' + shiftId1 + '/' + userToExchange + '/' + userId1)
 			.then((res) => {

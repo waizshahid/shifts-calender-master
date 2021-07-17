@@ -224,20 +224,20 @@ const ShiftsCalender = ({ userObj }) => {
 				console.log('in shift creation admin create shift', res);
 
 
-				if (createShiftType == 'Off') {
-					console.log("shiftoff")
-					axios.post('user/createNotificationHistory', {
-						currentUserId: currentId,
-						userId1: assign,
-						userId2: assign,
-						shiftId1: res.data._id,
-						message: "Created FirstTime",
-						adminresponse: "Shift is Created",
-						date: date1,
-						requester: "Admin",
-						shiftName: createShiftType,
-					})
-				}
+				//if (createShiftType == 'Off') {
+				console.log("shiftoff")
+				axios.post('user/createNotificationHistory', {
+					currentUserId: currentId,
+					userId1: assign,
+					userId2: assign,
+					shiftId1: res.data._id,
+					message: "Created FirstTime",
+					adminresponse: "Shift is Created",
+					date: date1,
+					requester: "Admin",
+					shiftName: createShiftType,
+				})
+				//	}
 
 				axios
 					.get('shift/currentShifts')

@@ -18,7 +18,7 @@ import axios from 'axios';
 
 function App() {
 	axios.defaults.baseURL = 'http://3.138.147.2:3000/api/';
-	// axios.defaults.baseURL = 'http://localhost:4000/api/';
+	 // axios.defaults.baseURL = 'http://localhost:4000/api/';
 	return (
 		<Router>
 			<Switch>

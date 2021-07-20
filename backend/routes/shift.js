@@ -127,7 +127,7 @@ router.delete('/deleteshift', (req, res) => {
 			var transport = nodemailer.createTransport({
 				host: 'box5419.bluehost.com',
 				port: 587,
-				secure: true,
+				secure: false,
 				requireTLS: true,
 				auth: {
 					// enter your account details to send email from
@@ -552,7 +552,7 @@ router.post('/createShift', (req, res) => {
 			var transport = nodemailer.createTransport({
 				host: 'box5419.bluehost.com',
 				port: 587,
-				secure: true,
+				secure: false,
 				requireTLS: true,
 				auth: {
 					// enter your account details to send email from
@@ -952,7 +952,7 @@ router.get('/swapShiftUserbyAdmin/:shiftId/:userId', (req, res) => {
 			    var transport = nodemailer.createTransport({
 				host: 'box5419.bluehost.com',  //outgoing
 				port: 587,
-				secure: true,
+				secure: false,
 				requireTLS: true,
 				auth: {
 					// enter your account details to send email from
@@ -1012,7 +1012,6 @@ router.get('/swapShiftUser/:shiftId/:userId/:userId1', (req, res) => {
 					var transport =await nodemailer.createTransport({
 										host: 'box5419.bluehost.com',
 										port: 587,
-										
 										requireTLS: true,
 										secure: false,
 										auth: {
@@ -1371,7 +1370,7 @@ async function sendMail(user1, user2, title_1, title_2) {
 	var transport = nodemailer.createTransport({
 		host: 'box5419.bluehost.com',
 		port: 587,
-		secure: true,
+		secure: false,
 		requireTLS: true,
 		
 		auth: {
@@ -1435,7 +1434,7 @@ router.put(
 				var transport = nodemailer.createTransport({
 					host: 'box5419.bluehost.com',
 					port: 587,
-					secure: true,
+					secure: false,
 					requireTLS: true,
 					auth: {
 						// enter your account details to send email from

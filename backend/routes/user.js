@@ -92,10 +92,8 @@ router.post('/sendemail', async (req, res) => {
 	let transporter = nodemailer.createTransport({
 		host: 'box5419.bluehost.com',
 		port: 465,
-		secure: true,
-		
+		secure: false,
 		ignoreTLS: false,
-		secure: true,
 		auth: {
 			user: 'admin@calls.pvmgonline.com', // generated ethereal user
 			pass: 'pvmgonline12.', // generated ethereal password
@@ -276,10 +274,8 @@ router.put('/updateResponses/:id', async (req, res) => {
 					let transporter = nodemailer.createTransport({
 						host: 'box5419.bluehost.com',
 						port: 465,
-						secure: true,
-						
+						secure: false,
 						ignoreTLS: false,
-						secure: true,
 						auth: {
 							user: 'admin@calls.pvmgonline.com', // generated ethereal user
 							pass: 'pvmgonline12.', // generated ethereal password
@@ -423,10 +419,8 @@ router.delete('/deleteCurrentNotification/:id', (req, res) => {
 				let transporter = nodemailer.createTransport({
 					host: 'box5419.bluehost.com',
 					port: 465,
-					secure: true,
-					
+					secure: false,
 					ignoreTLS: false,
-					secure: true,
 					auth: {
 						user: 'admin@calls.pvmgonline.com', // generated ethereal user
 						pass: 'pvmgonline12.', // generated ethereal password
@@ -671,7 +665,7 @@ router.post('/userNotification', (req, res) => {
 					host: 'box5419.bluehost.com',
 					port: 465,	
 					ignoreTLS: false,
-					secure: true,
+					secure: false,
 					auth: {
 						user: 'admin@calls.pvmgonline.com', // generated ethereal user
 						pass: 'pvmgonline12.', // generated ethereal password
@@ -1043,10 +1037,8 @@ router.post('/createNotificationHistory', (req, res) => {
 					let transporter = nodemailer.createTransport({
 						host: 'box5419.bluehost.com',
 						port: 587,
-						secure: true,
-						
+						secure: false,
 						ignoreTLS: false,
-						secure: true,
 						auth: {
 							user: 'admin@calls.pvmgonline.com', // generated ethereal user
 							pass: 'pvmgonline12.', // generated ethereal password

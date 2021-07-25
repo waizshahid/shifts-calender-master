@@ -242,7 +242,7 @@ const ShiftsCalender = ({ userObj }) => {
 				axios
 					.get('shift/currentShifts')
 					.then(async (res1) => {
-						//console.log(res1 , "currentShift")
+						// console.log(res1.data.shifts, "currentShift")
 						await setEvents(res1.data.shifts);
 						setLoading(false);
 						message.success('Shift Created Successfully');
@@ -330,8 +330,10 @@ const ShiftsCalender = ({ userObj }) => {
 		});
 	};
 	const handleEventClick = ({ event, el }) => {
+
 		console.log('in event handler .......');
-		console.log('event', event.start);
+		console.log('event', event.start, event._def.extendedProps, event);
+		setTargetId1(event._def.extendedProps.shiftid)
 
 		title = event.title;
 		currentShift = event._def.extendedProps._id;
@@ -591,7 +593,7 @@ const ShiftsCalender = ({ userObj }) => {
 	};
 
 	const prepassnotification = () => {
-		console.log('in pre pass notification');
+		console.log('in pre pass notification', id21);
 		console.log('ccccc', oneEvent.shiftname, oneEvent, data);
 		console.log(data.filter((s) => s.shiftname === oneEvent.shiftname)[0]._id);
 		if (data.filter((s) => s.shiftname === oneEvent.shiftname).length > 0) {

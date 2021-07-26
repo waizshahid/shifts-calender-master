@@ -1164,7 +1164,7 @@ router.get('/currentShifts', (req, res) => {
 		.exec()
 		.then((shifts) => {
 			var date1 = shifts[0].start;
-			 console.log("shifts=================>",shifts[0]);
+			// console.log("shifts=================>",shifts[0]);
 			var count = 0;
 			// userId, start, end, title, color
 			res.status(200).json({
@@ -1198,7 +1198,7 @@ router.get('/currentShifts', (req, res) => {
 						if (shift.comment && shift.comment.length > 8) {
 							return {
 								_id: shift._id,
-								shiftid:shift.shiftTypeId._id,
+								shiftid:shift.shiftTypeId ? shift.shiftTypeId._id : null,
 								start: shift.start,
 								priority: shift.shiftTypeId.priority,
 								end: shift.end,
@@ -1215,7 +1215,7 @@ router.get('/currentShifts', (req, res) => {
 						} else {
 							return {
 								_id: shift._id,
-								shiftid:shift.shiftTypeId._id,
+								shiftid:shift.shiftTypeId ? shift.shiftTypeId._id : null,
 								start: shift.start,
 								priority: shift.shiftTypeId.priority,
 								end: shift.end,
@@ -1233,7 +1233,7 @@ router.get('/currentShifts', (req, res) => {
 					} else {
 						return {
 							_id: shift._id,
-							shiftid:shift.shiftTypeId._id,
+							shiftid:shift.shiftTypeId ? shift.shiftTypeId._id : null,
 							start: shift.start,
 							priority: shift.shiftTypeId.priority,
 							end: shift.end,

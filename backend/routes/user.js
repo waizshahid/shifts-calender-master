@@ -91,7 +91,7 @@ router.post('/sendemail', async (req, res) => {
 	// create reusable transporter object using the default SMTP transport
 	let transporter = nodemailer.createTransport({
 		host: 'box5419.bluehost.com',
-		port: 465,
+		port: 587,
 		secure: false,
 		ignoreTLS: false,
 		auth: {
@@ -273,7 +273,7 @@ router.put('/updateResponses/:id', async (req, res) => {
 					// create reusable transporter object using the default SMTP transport
 					let transporter = nodemailer.createTransport({
 						host: 'box5419.bluehost.com',
-						port: 465,
+						port: 587,
 						secure: false,
 						ignoreTLS: false,
 						auth: {
@@ -418,7 +418,7 @@ router.delete('/deleteCurrentNotification/:id', (req, res) => {
 				// create reusable transporter object using the default SMTP transport
 				let transporter = nodemailer.createTransport({
 					host: 'box5419.bluehost.com',
-					port: 465,
+					port: 587,
 					secure: false,
 					ignoreTLS: false,
 					auth: {
@@ -663,7 +663,7 @@ router.post('/userNotification', (req, res) => {
 				// create reusable transporter object using the default SMTP transport
 				let transporter = nodemailer.createTransport({
 					host: 'box5419.bluehost.com',
-					port: 465,	
+					port: 587,	
 					ignoreTLS: false,
 					secure: false,
 					auth: {

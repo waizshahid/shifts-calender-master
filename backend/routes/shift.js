@@ -1230,7 +1230,7 @@ router.get('/currentShifts', (req, res) => {
 								offApprovalStatus: shift.offApprovalStatus,
 							};
 						}
-					} else if(shift && shift.shiftTypeId) {
+					} else {
 						return {
 							_id: shift._id,
 							shiftid:shift.shiftTypeId._id,

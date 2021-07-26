@@ -1172,7 +1172,7 @@ router.get('/currentShifts', (req, res) => {
 					var date2 = shift.start;
 
 					if (date1 === date2) {
-						if (shift.shiftTypeId.shiftname == 'Off') {
+						if (shift.shiftTypeId && shift.shiftTypeId.shiftname == 'Off') {
 							// console.log('off shits if increased count')
 							count++;
 						}
@@ -1188,7 +1188,7 @@ router.get('/currentShifts', (req, res) => {
 						date1 = shift.start;
 						count = 0;
 					}
-					if (shift.shiftTypeId.shiftname === 'Request') {
+					if (shift.shiftTypeId && shift.shiftTypeId.shiftname === 'Request') {
 						// let dottedComment;
 						// if(shift.comment.length > 10) {
 						//   dottedComment = shift.comment.substring(0,3);

@@ -46,7 +46,7 @@ const History = ({ historyObj }) => {
                                                 Shift Date
                                             </div>
                                             <div className="col-6">
-                                                {new Date(data.shiftDate).toLocaleString('default', { month: 'short', day: 'numeric', year: 'numeric' })}
+                                                {new Date(data.shiftDate).toUTCString(('default', { month: 'short', day: 'numeric', year: 'numeric' }))}
                                             </div>
                                         </div>
                                         {data.message != "Created FirstTime" ?
@@ -55,7 +55,7 @@ const History = ({ historyObj }) => {
                                                     textAlign: 'center',
                                                     fontStyle: 'italic'
                                                 }}>
-                                                    Modified by {data.modifiedBy} on {new Date(data.swappingDate).toLocaleString('default', { month: 'short', day: 'numeric', year: 'numeric' })}
+                                                    Modified by {data.modifiedBy} on {new Date(data.swappingDate).toUTCString('default', { month: 'short', day: 'numeric', year: 'numeric' })}
                                                 </div>
 
                                             </div> :
@@ -64,7 +64,7 @@ const History = ({ historyObj }) => {
                                                     textAlign: 'center',
                                                     fontStyle: 'italic'
                                                 }}>
-                                                    Created by {data.modifiedBy} on {new Date(data.swappingDate).toLocaleString('default', { month: 'short', day: 'numeric', year: 'numeric' })}
+                                                    Created by {data.modifiedBy} on {new Date(data.swappingDate).toUTCString('default', { month: 'short', day: 'numeric', year: 'numeric' })}
                                                 </div>
 
                                             </div>

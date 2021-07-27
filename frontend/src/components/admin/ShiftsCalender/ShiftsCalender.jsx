@@ -498,7 +498,7 @@ const ShiftsCalender = ({ userObj }) => {
 		await setexchangeVisible(false);
 		await setAdminCheck(false);
 		axios
-			.get('shift/deleteThisShift/' + currentShift)
+			.get('shift/deleteThisShift/' + currentShift + '/' + currentId)
 			.then((res1) => {
 				console.log(res1);
 				console.log(res1.data);

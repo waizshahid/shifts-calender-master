@@ -670,7 +670,7 @@ router.post('/userNotification', (req, res) => {
 						user: 'admin@calls.pvmgonline.com', // generated ethereal user
 						pass: 'pvmgonline12.', // generated ethereal password
 					},
-					tls: {
+					tls: { 
 						// do not fail on invalid certs
 						rejectUnauthorized: false,
 					},

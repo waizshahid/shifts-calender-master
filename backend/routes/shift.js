@@ -1067,15 +1067,50 @@ router.get('/editCurrentShiftType/:id', (req, res) => {
 		});
 });
 
-router.get('/deleteThisShift/:id', (req, res) => {
+router.get('/deleteThisShift/:id/:admin', (req, res) => {
 	createShift
 		.findByIdAndDelete(req.params.id)
-		.then((resp) => {
-			console.log(resp);
+		.then(  async(newShift) => {
+			console.log("bb" , newShift)
 
+			let created = await User.findOne({_id:req.params.admin})
+
+			let shift = await Shift.findOne({_id:newShift.shiftTypeId})
+
+			let user = await User.findOne({_id:newShift.userId})
+
+			//console.log("data" , shift , admin , user , newShift);
+
+			var transport = nodemailer.createTransport({
+				host: 'box5419.bluehost.com',
+				port: 587,
+				secure: false,
+				requireTLS: true,
+				auth: {
+					// enter your account details to send email from
+					user: 'admin@calls.pvmgonline.com', // generated ethereal user
+					pass: 'pvmgonline12.', // generated ethereal password
+				},
+			});
+
+			var mailOptions = {
+				from: 'admin@calls.pvmgonline.com',
+				to:    await getNotificationEmail(),
+				subject: 'Shift Deleted',
+				html: '<p> The '+ shift.shiftname +' for ' +  newShift.start  +  ' has been deleted for '+ user.firstName.charAt(0) + " " + user.lastName  +   ' by ' + created.firstName.charAt(0) + " " + created.lastName +  '</p>',
+			};
+
+			transport.sendMail(mailOptions, (error, info) => {
+				if (error) {
+					return console.log("error",error);
+				}
+				console.log('Message sent: %s', info.messageId);
+			});
+			console.log("c")
 			res.send('Shift Deleted Successfully');
 		})
 		.catch((err) => {
+			console.log(err)
 			res.send(err);
 		});
 });

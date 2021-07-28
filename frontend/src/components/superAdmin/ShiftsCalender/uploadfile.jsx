@@ -190,6 +190,30 @@ class uploadfile extends Component {
 		}
 	};
 
+	OffProcess = () => {
+		if (this.state.finalArray !== '') {
+			console.log("in process")
+			axios
+				.get('shift/deleteEventsBetweenTwoDatesOffs/' + this.state.startDate + '/' + this.state.endDate)
+				.then((response) => {
+					console.log('response', response);
+					axios
+						.post('shift/createShiftsFromExcelOffs', this.state.finalArray)
+						.then((res) => {
+							this.setState({
+								visible: true,
+							});
+						})
+						.catch((err) => console.log(err));
+				})
+				.catch((err) => console.log('err', err));
+		} else {
+			this.setState({
+				visibleFail: true,
+			});
+		}
+	};
+
 	deletePreviousData = () => {
 		axios
 			.get('shift/deleteEventsBetweenTwoDates/' + this.state.startDate + '/' + this.state.endDate)
@@ -249,7 +273,6 @@ class uploadfile extends Component {
 			'range-picker': [rangeValue[0].format('YYYY-MM-DD'), rangeValue[1].format('YYYY-MM-DD')],
 		};
 		// console.log('Received values of form: ', values);
-
 		const start = rangeValue[0].format('YYYY-MM-DD');
 		const end = rangeValue[1].format('YYYY-MM-DD');
 
@@ -257,7 +280,7 @@ class uploadfile extends Component {
 			.get('shift/getEventsBetweenTwoDates/' + start + '/' + end)
 			.then((resp) => {
 				console.log(start, end);
-				console.log(resp.data.shifts.length)
+				console.log(resp.data.shifts.length, resp.data.shifts)
 
 				let arr = []
 				for (let i = 0; i < resp.data.shifts.length; i++) {
@@ -369,7 +392,7 @@ class uploadfile extends Component {
 			.get('shift/getEventsBetweenTwoDates/' + start + '/' + end)
 			.then((resp) => {
 				console.log(start, end);
-				//console.log(resp.data.shifts)
+				console.log(resp.data.shifts.length, resp.data.shifts)
 
 				let arr = []
 				for (let i = 0; i < resp.data.shifts.length; i++) {
@@ -378,7 +401,7 @@ class uploadfile extends Component {
 					}
 				}
 
-				//	console.log(arr)
+				//	console.log("array afteer loop",arr)
 
 				this.setState({
 					dateRangeArray: arr,
@@ -411,6 +434,7 @@ class uploadfile extends Component {
 				}
 
 				// Convert to an array
+				console.log(obj, "object")
 				var result = Object.values(obj);
 				// console.log(JSON.stringify(result))
 				// console.log(result)
@@ -453,8 +477,8 @@ class uploadfile extends Component {
 	render() {
 		return (
 			<div className='container-fluid'>
-				<div className='row mt-5'>
-					<div className='col-9'>
+				<div className='row mt-5' >
+					<div className='col-xl-6 col-lg-6 col-md-12 col-sm-12'>
 						<input className='mb-2' type='file' onChange={this.onFileChange} />
 
 						<Button type='primary' onClick={this.Process}>
@@ -465,9 +489,19 @@ class uploadfile extends Component {
 								<div className='col-8'>Upload Excel sheet</div>
 							</div>
 						</Button>
+						<Button className="uploadoffs" type='primary'
+						//onClick={this.OffProcess}
+						>
+							<div className='row'>
+								<div className='col-1'>
+									<i class='fa fa-upload' aria-hidden='true'></i>
+								</div>
+								<div className='col-8'>Upload offs</div>
+							</div>
+						</Button>
 					</div>
-					<div className='col-3 d-flex row'>
-						<Button type='primary' onClick={() => { this.setState({ offrequest: false }); this.selectDate() }}>
+					<div className='col-xl-6  col-lg-6 col-md-12 col-sm-12  d-flex row'>
+						<Button className="twelveham" type='primary' onClick={() => { this.setState({ offrequest: false }); this.selectDate() }}>
 							<div className='row'>
 								<div className='col-1'>
 									<i class='fa fa-download'></i>
@@ -475,7 +509,7 @@ class uploadfile extends Component {
 								<div className='col-8'>Download Excel sheet</div>
 							</div>
 						</Button>
-						<Button style={{ marginLeft: "5px" }} type='primary' onClick={() => { this.setState({ offrequest: true }); this.selectDate() }}>
+						<Button className="twelveham2" type='primary' onClick={() => { this.setState({ offrequest: true }); this.selectDate() }}>
 							<div className='row' >
 								<div className='col-1'>
 									<i class='fa fa-download'></i>

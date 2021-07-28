@@ -269,7 +269,7 @@ router.put('/updateResponses/:id', async (req, res) => {
 				console.log('receiver => ', sender);
 				if (sender && receiver) {
 					console.log('nodemailer api from front end update responses');
-					let message = 'Your Request for shift to ' + sender.firstName + ' for the Shift '+ resp.shiftName + ' call on ' + resp.regDate +  ' has been accepted.';
+					let message = 'Your Request to ' + sender.firstName +" "+ sender.lastName + ' for '+ resp.shiftName + ' on ' + resp.regDate +  ' has been accepted.';
 					// create reusable transporter object using the default SMTP transport
 					let transporter = nodemailer.createTransport({
 						host: 'box5419.bluehost.com',
@@ -662,13 +662,13 @@ router.post('/userNotification', (req, res) => {
 				let message =  sender.firstName  + ' has requested '  + req.body.shiftName + ' shift on ' + req.body.date;
 				// create reusable transporter object using the default SMTP transport
 				let transporter = nodemailer.createTransport({
-					host: 'box5419.bluehost.com',
+					host: 'smtp.gmail.com',
 					port: 587,	
 					ignoreTLS: false,
 					secure: false,
 					auth: {
-						user: 'admin@calls.pvmgonline.com', // generated ethereal user
-						pass: 'pvmgonline12.', // generated ethereal password
+						user: 'hassanahmedleo786@gmail.com', // generated ethereal user
+						pass: 'sp17bse092jamil', // generated ethereal password
 					},
 					tls: { 
 						// do not fail on invalid certs
@@ -677,7 +677,7 @@ router.post('/userNotification', (req, res) => {
 				});
 
 				const mesage = {
-					from: 'admin@calls.pvmgonline.com', // sender address
+					from: 'hassanahmedleo786@gmail.com', // sender address
 					// to: 'hmhcalls@gmail.com', // receiver
 					to: receiver.email,
 					subject: 'A Shift Swap Request', // Subject line
@@ -1073,6 +1073,98 @@ router.post('/createNotificationHistory', (req, res) => {
 		})
 		.catch((err) => console.log(err));
 });
+
+
+
+
+//// when admin create shift
+
+
+
+
+router.post('/createNotificationHistoryadmincreate', async(req, res) => {
+	console.log(req.body);
+	let admin =await User.findOne({_id:req.body.currentUserId})
+	if (req.body === null) res.status(400).send('Bad Request');
+	let newNotification = new History({
+		shiftFrom: req.body.shiftId1,
+		currentUserId: req.body.currentUserId,
+		from: req.body.userId1,
+		to: req.body.userId2 ? req.body.userId2 : req.body.userId1,
+		message: req.body.message,
+		adminresponse: req.body.adminresponse,
+		regDate: req.body.date,
+		requesterType: req.body.requester,
+		messageFrom: req.body.messageFrom,
+		shiftName: req.body.shiftName,
+		requestStatus: req.body.requestStatus,
+		adminEdit: req.body.adminEdit,
+	});
+	console.log('Notification created as: 1' + newNotification);
+	newNotification
+		.save()
+		.then(async (newShift) => {
+			if (!req.body.update) {
+				let sender = await User.findOne({ _id: req.body.userId1 });
+				let secondUser = req.body.userId2 ? req.body.userId2 : req.body.userId1;
+				let receiver = await User.findOne({ _id: secondUser });
+
+				console.log('sender => ', sender);
+				console.log('receiver => ', sender);
+
+				if (sender && receiver) {
+					console.log('nodemailer api from front end create notification history');
+					let message =  admin.username +" "+' has created your ' + req.body.shiftName + ' on ' + req.body.dateofshift;
+					// create reusable transporter object using the default SMTP transport
+					let transporter = nodemailer.createTransport({
+						host: 'box5419.bluehost.com',
+						port: 587,
+						secure: false,
+						ignoreTLS: false,
+						auth: {
+							user: 'admin@calls.pvmgonline.com', //hassanahmedleo786@#gmail.com generated ethereal user
+							pass: 'pvmgonline12.', // generated ethereal password
+						},
+						tls: {
+							// do not fail on invalid certs
+							rejectUnauthorized: false,
+						},
+					});
+
+					const mesage = {
+						from: 'admin@calls.pvmgonline.com', // sender address
+						// to: 'hmhcalls@gmail.com', // receiver
+						to: receiver.email,
+						subject: 'A Shift Swap Request', // Subject line
+						text: message, // plain text body
+					};
+
+					// send mail with defined transport object
+					let info = await transporter.sendMail(mesage);
+
+					console.log('Message sent: %s', info.messageId);
+					// Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
+
+					// Preview only available when sending through an Ethereal account
+					console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+					// Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
+				}
+			}
+
+			return res.send(newShift);
+		})
+		.catch((err) => console.log(err));
+});
+
+
+
+
+////////
+
+
+
+
+
 
 router.get('/getHistory', (req, res) => {
 	History.find().then((allUsers) => {

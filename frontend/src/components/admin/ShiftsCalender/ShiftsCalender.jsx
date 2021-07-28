@@ -76,6 +76,7 @@ const ShiftsCalender = ({ userObj }) => {
 	}
 
 	const showModal = (e) => {
+		//console.log("------------------------", e.dateStr)
 		date = e.dateStr;
 		setVisible(true);
 	};
@@ -162,7 +163,7 @@ const ShiftsCalender = ({ userObj }) => {
 	};
 
 	const handleOk = async (e) => {
-		console.log(createShiftID, assign, currentId, "createShift")
+		console.log(createShiftID, assign, currentId, date, "createShift")
 		console.log(oneEvent)
 		let date1 = new Date().toISOString().slice(0, 10);
 		await setVisible(false);
@@ -226,7 +227,7 @@ const ShiftsCalender = ({ userObj }) => {
 
 				//if (createShiftType == 'Off') {
 				console.log("shiftoff")
-				axios.post('user/createNotificationHistory', {
+				axios.post('user/createNotificationHistoryadmincreate', {
 					currentUserId: currentId,
 					userId1: assign,
 					userId2: assign,
@@ -234,6 +235,7 @@ const ShiftsCalender = ({ userObj }) => {
 					message: "Created FirstTime",
 					adminresponse: "Shift is Created",
 					date: date1,
+					dateofshift: date,
 					requester: "Admin",
 					shiftName: createShiftType,
 				})
@@ -866,7 +868,7 @@ const ShiftsCalender = ({ userObj }) => {
 						<option defaultValue='All Users'>All Users</option>
 						{users.map((dat) => (
 							<option value={dat._id} key={dat._id}>
-								{dat.lastName + ', ' + dat.firstName}
+								{dat.lastName + ' , ' + dat.firstName}
 							</option>
 						))}
 					</select>

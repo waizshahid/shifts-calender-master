@@ -213,6 +213,62 @@ router.post('/createShiftsFromExcel', (req, res) => {
 	});
 });
 
+
+
+
+
+router.post('/createShiftsFromExcelOffs', (req, res) => {
+
+	let off = false;
+	const shiftsArray1 = req.body;
+	for(let i=0; i<shiftsArray1.length; i++)
+	{
+		let type = Shift.findOne({_id:shiftsArray1[i].shiftTypeId})
+		if(type.shiftname != 'Off')
+		{
+			off=true
+		}
+	}
+ 
+	if(off)
+	{
+
+	const shiftsArray = req.body;
+	let temp = [];
+	shiftsArray.forEach((eachShift) => {
+		const shift = new createShift({
+			userId: eachShift.userId,
+			start: eachShift.start,
+			end: eachShift.end,
+			shiftTypeId: eachShift.shiftTypeId,
+			swapable: eachShift.swappable,
+		});
+		temp.push(shift);
+	});
+	console.log('Temp array');
+	// console.log(temp);
+	console.log('Array of Shifts recieved to backend');
+
+	temp.forEach((tempObj) => {
+		tempObj
+			.save()
+			.then((obj) => console.log(obj))
+			.catch((err) => console.log('Could not saved shifts from excel', err));
+	});
+
+	res.status(201).json({
+		message: 'users added successfully',
+	});
+}
+	else{
+		res.status(201).json({
+			message: 'Only Off shifts required',
+		});
+	}
+});
+
+
+
 router.get('/currentAll', (req, res) => {
 	createShift
 		.find()
@@ -264,7 +320,7 @@ router.get('/getEventsBetweenTwoDates/:start/:end', (req, res) => {
 		.populate('shiftTypeId')
 		.exec()
 		.then((shifts) => {
-			// console.log(shifts);
+			 console.log("required shifts==========>>>",shifts);
 			res.status(200).json({
 				shifts: shifts.map((shift) => {
 					// console.log(shift.title);
@@ -420,6 +476,42 @@ router.get('/deleteEventsBetweenTwoDates/:start/:end', async (req, res, next) =>
 	res.status(201).json({
 		message: 'SHIFTS ARE DELETED SUCCESSFULLY',
 	});
+});
+
+	router.get('/deleteEventsBetweenTwoDatesOffs/:start/:end', async (req, res, next) => {
+		const startDate = req.params.start;
+		const endDate = req.params.end;
+		var array = [];
+		await createShift
+			.find({
+				end: { $lte: endDate },
+				start: { $gte: startDate },
+			})
+			.then(async(allShift) => {
+				//res.send(allShift);
+				for (let i = 0; i < allShift.length; i++) {
+					let t =await Shift.findById(allShift[i].shiftTypeId)
+					if(t.shiftname == "Off")
+					{
+						array.push(allShift[i]);
+					}
+				}
+			});
+		//console.log('Array of Shift');
+	   // console.log("array needed ==========>>>>>",array)
+		//commented for testing
+		await array.forEach((eachEvent) => {
+			createShift
+				.remove({
+					_id: eachEvent._id,
+				})
+				.exec();
+		});
+	
+		//commented for testing
+		res.status(201).json({
+			message: 'SHIFTS ARE DELETED SUCCESSFULLY',
+		});
 
 
 

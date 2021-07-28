@@ -62,4 +62,70 @@ overflow: unset !important;}
   min-width:150px;
   width:150px;
 }
- } 
+ }
+ 
+ .twelveham2{  margin-left: 5px }
+ 
+ 
+
+
+ @media screen and (max-width:1200px) {
+
+  .twelveham{
+     margin-left: 10px;
+  }
+   
+ }
+
+
+ @media screen and (max-width:479px) {
+
+  .twelveham{
+     margin-top: 5px;
+  }
+   
+ }
+
+ @media screen and (min-width:373px) {
+
+  .uploadoffs{
+     margin-left: 5px;
+  }
+   
+ }
+
+
+ @media screen and (max-width:630px) {
+
+  .uploadoffs{
+     margin-bottom: 5px;
+  }
+   
+ }
+
+ @media screen and (max-width:372px) {
+
+  .uploadoffs{
+     margin-top: 5px;
+  }
+   
+ }
+
+
+ 
+
+
+ @media screen and (max-width:533px) {
+  .twelveham{
+    margin-left: 15px;
+ }
+
+  .twelveham2{
+    margin-top: 5px;
+     margin-left: 15px;
+  }
+   
+ }
+
+
+

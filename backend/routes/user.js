@@ -659,7 +659,7 @@ router.post('/userNotification', (req, res) => {
 
 			if (sender && receiver) {
 				console.log('nodemailer api from front end userNotification');
-				let message =  sender.firstName  + ' has requested '  + req.body.shiftName + ' shift on ' + req.body.date;
+				let message =  sender.firstName + " " + sender.lastName + ' has requested '  + req.body.shiftName + ' shift on ' + req.body.date;
 				// create reusable transporter object using the default SMTP transport
 				let transporter = nodemailer.createTransport({
 					host: 'box5419.bluehost.com',

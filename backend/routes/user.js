@@ -662,7 +662,7 @@ router.post('/userNotification', (req, res) => {
 				let message =  sender.firstName  + ' has requested '  + req.body.shiftName + ' shift on ' + req.body.date;
 				// create reusable transporter object using the default SMTP transport
 				let transporter = nodemailer.createTransport({
-					host: 'smtp.gmail.com',
+					host: 'box5419.bluehost.com',
 					port: 587,	
 					ignoreTLS: false,
 					secure: false,

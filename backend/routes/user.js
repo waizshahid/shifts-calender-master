@@ -663,12 +663,12 @@ router.post('/userNotification', (req, res) => {
 				// create reusable transporter object using the default SMTP transport
 				let transporter = nodemailer.createTransport({
 					host: 'box5419.bluehost.com',
-					port: 587,	
+					port: 587,	 
 					ignoreTLS: false,
 					secure: false,
 					auth: {
-						user: 'hassanahmedleo786@gmail.com', // generated ethereal user
-						pass: 'sp17bse092jamil', // generated ethereal password
+						user: 'admin@calls.pvmgonline.com', // generated ethereal user
+						pass: 'pvmgonline12.', // generated ethereal password
 					},
 					tls: { 
 						// do not fail on invalid certs
@@ -677,7 +677,7 @@ router.post('/userNotification', (req, res) => {
 				});
 
 				const mesage = {
-					from: 'hassanahmedleo786@gmail.com', // sender address
+					from: 'admin@calls.pvmgonline.com', // sender address
 					// to: 'hmhcalls@gmail.com', // receiver
 					to: receiver.email,
 					subject: 'A Shift Swap Request', // Subject line

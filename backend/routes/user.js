@@ -1135,7 +1135,7 @@ router.post('/createNotificationHistoryadmincreate', async(req, res) => {
 						from: 'admin@calls.pvmgonline.com', // sender address
 						// to: 'hmhcalls@gmail.com', // receiver
 						to: receiver.email,
-						subject: 'A Shift Swap Request', // Subject line
+						subject: 'Shift Created by Admin', // Subject line
 						text: message, // plain text body
 					};
 

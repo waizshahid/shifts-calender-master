@@ -320,7 +320,7 @@ router.get('/getEventsBetweenTwoDates/:start/:end', (req, res) => {
 		.populate('shiftTypeId')
 		.exec()
 		.then((shifts) => {
-			 console.log("required shifts==========>>>",shifts);
+			 //console.log("required shifts==========>>>",shifts);
 			res.status(200).json({
 				shifts: shifts.map((shift) => {
 					// console.log(shift.title);

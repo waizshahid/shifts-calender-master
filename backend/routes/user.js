@@ -1032,7 +1032,7 @@ router.post('/createNotificationHistory', (req, res) => {
 
 				if (sender && receiver) {
 					console.log('nodemailer api from front end create notification history');
-					let message =  sender.firstName +  ' has requested for ' + req.body.shiftName + ' on ' + req.body.date;
+					let message =  sender.firstName + " "+ sender.lastName +  ' has requested for ' + req.body.shiftName + ' on ' + req.body.date;
 					// create reusable transporter object using the default SMTP transport
 					let transporter = nodemailer.createTransport({
 						host: 'box5419.bluehost.com',

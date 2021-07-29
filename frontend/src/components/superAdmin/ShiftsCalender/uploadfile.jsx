@@ -70,7 +70,7 @@ class uploadfile extends Component {
 		total_seconds -= seconds;
 		var hours = Math.floor(total_seconds / (60 * 60));
 		var minutes = Math.floor(total_seconds / 60) % 60;
-		console.log(new Date(date_info.getFullYear(), date_info.getMonth(), date_info.getDate(), hours, minutes, seconds))
+		//	console.log(new Date(date_info.getFullYear(), date_info.getMonth(), date_info.getDate(), hours, minutes, seconds))
 		return new Date(date_info.getFullYear(), date_info.getMonth(), date_info.getDate(), hours, minutes, seconds);
 	};
 
@@ -86,20 +86,23 @@ class uploadfile extends Component {
 			} else {
 				let newRows = [];
 				resp.rows.map((rows, index) => {
-					if (rows.length > 2) newRows.push(rows);
+					if (rows.length > 1) newRows.push(rows);
 				});
 				this.setState({
 					cols: resp.cols,
 					rows: newRows,
 				});
 				// console.log(resp.cols);
-				// console.log(newRows);
+				console.log(newRows);
 				this.UpdateExcel(newRows);
 				let last;
 				this.setState({ startDate: this.ExcelDateToJSDate(resp.rows[1][0]).toISOString().toString().slice(0, 10) });
 				resp.rows.map((rows, index) => {
-					if (rows.length > 5) last = index;
+					console.log(rows.length)
+					if (rows.length > 1) last = index;
 				});
+
+				console.log(this.ExcelDateToJSDate(resp.rows[last][0]).toISOString().toString().slice(0, 10))
 				this.setState({ endDate: this.ExcelDateToJSDate(resp.rows[last][0]).toISOString().toString().slice(0, 10) });
 			}
 		});
@@ -107,6 +110,7 @@ class uploadfile extends Component {
 
 	UpdateExcel = (rows) => {
 		// this.deletePreviousData();
+
 		let shiftTitles = [];
 		let shiftTitleIndex = [];
 		console.log(this.state.types);
@@ -142,7 +146,7 @@ class uploadfile extends Component {
 											.split(' & ')
 											.map((name) => name.trim())
 											.map((usr, id) => {
-												console.log(usr, id);
+												//	console.log(usr, id);
 												if (user.username === usr.toLowerCase()) {
 													Obj = { name: usr.toLowerCase(), userId: user._id, shiftTypeId: shift.id, start: JSdate, end: JSdate, swappable: true };
 													Arr.push(Obj);
@@ -168,22 +172,23 @@ class uploadfile extends Component {
 
 	Process = () => {
 		if (this.state.finalArray !== '') {
-			console.log("in process")
+			console.log("in process", this.state.endDate, this.state.startDate)
+			// axios
+			// 	.get('shift/deleteEventsBetweenTwoDates/' + this.state.startDate + '/' + this.state.endDate)
+			// 	.then((response) => {
+			// 		console.log('response', response);
 			axios
-				.get('shift/deleteEventsBetweenTwoDates/' + this.state.startDate + '/' + this.state.endDate)
-				.then((response) => {
-					console.log('response', response);
-					axios
-						.post('shift/createShiftsFromExcel', this.state.finalArray)
-						.then((res) => {
-							this.setState({
-								visible: true,
-							});
-						})
-						.catch((err) => console.log(err));
+				.post('shift/createShiftsFromExcel', this.state.finalArray)
+				.then((res) => {
+					this.setState({
+						visible: true,
+					});
 				})
-				.catch((err) => console.log('err', err));
-		} else {
+				.catch((err) => console.log('err2 ', err));
+			// 		})
+			// 		.catch((err) => console.log('err1', err));
+		}
+		else {
 			this.setState({
 				visibleFail: true,
 			});
@@ -279,8 +284,8 @@ class uploadfile extends Component {
 		await axios
 			.get('shift/getEventsBetweenTwoDates/' + start + '/' + end)
 			.then((resp) => {
-				console.log(start, end);
-				console.log(resp.data.shifts.length, resp.data.shifts)
+				//console.log(start, end);
+				//console.log(resp.data.shifts.length, resp.data.shifts)
 
 				let arr = []
 				for (let i = 0; i < resp.data.shifts.length; i++) {
@@ -307,7 +312,7 @@ class uploadfile extends Component {
 						shortArr.push(this.state.dateRangeArray[i]);
 					}
 				}
-				// console.log(shortArr);
+				console.log(shortArr);
 				var obj = {};
 				for (var i = 0; i < this.state.dateRangeArray.length; i++) {
 					if (this.state.dateRangeArray[i]) {

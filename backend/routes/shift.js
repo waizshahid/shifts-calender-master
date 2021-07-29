@@ -9,6 +9,7 @@ const createShift = require('../models/createShift');
 const NotificationEmail = require('../models/notificationEmail');
 const User = require('../models/User');
 const Notifications = require('../models/Notifications');
+//const Super = require("../model/superAdmins")
 var nodemailer = require('nodemailer');
 var bodyParser = require('body-parser');
 router.use(bodyParser.json());
@@ -443,6 +444,7 @@ router.get('/getEventsBetweenTwoDates/:start/:end', (req, res) => {
 
 //Deleting all past data
 router.get('/deleteEventsBetweenTwoDates/:start/:end', async (req, res, next) => {
+	console.log("delete shifts params",req.params.start , req.params.start)
 	const startDate = req.params.start;
 	const endDate = req.params.end;
 	var array = [];
@@ -460,7 +462,9 @@ router.get('/deleteEventsBetweenTwoDates/:start/:end', async (req, res, next) =>
 					array.push(allShift[i]);
 				}
 			}
-		});
+		}).catch((err)=> {
+			console.log(err)
+		})
 	//console.log('Array of Shift');
    // console.log("array needed ==========>>>>>",array)
 	//commented for testing
@@ -618,7 +622,7 @@ router.get('/getUserByName/:id', async (req, res) => {
 });
 
 router.post('/createShift', (req, res) => { 
-	
+	console.log("req body of create shift=======>",req.body)
 	if (req.body === null) res.status(400).send('Bad Request');
 	let newShift = new createShift({
 		// _id :
@@ -636,11 +640,11 @@ router.post('/createShift', (req, res) => {
 	newShift
 		.save()
 		.then(async (newShift) => {
-
+            console.log("newShift===>", newShift)
 			let user =await User.findOne({_id : newShift.userId})
 			let created = await User.findOne({_id:req.body.Created})
 			let shift =await Shift.findOne({_id : newShift.shiftTypeId})
-			
+			console.log()
 			var transport = nodemailer.createTransport({
 				host: 'box5419.bluehost.com',
 				port: 587,

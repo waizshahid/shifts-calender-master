@@ -40,9 +40,11 @@ const ShiftsCalender = () => {
 	const [start, setStart] = useState('');
 	const [oneEvent, setOneEvent] = useState({});
 	const [lastNameUsers, setlastNameUsers] = useState([]);
+	const [createShiftID, setCreateShiftId] = useState('');
 	const [end, setEnd] = useState('');
 	const [users, setUsers] = useState([]);
 	const [comment, setComment] = useState('');
+	const [createShiftType, setCreateShiftType] = useState(null)
 	let shiftNameUser = '';
 	const [commentVisible, setcommentVisible] = useState('');
 	const [stop, setStop] = useState(0);
@@ -78,6 +80,7 @@ const ShiftsCalender = () => {
 		setComment(e.target.value);
 	};
 	const handelShift = (e) => {
+		setId(e);
 		// console.log(e.target.value.substring(e.target.value.indexOf(":") + 1))
 		if (e.target.value.substring(e.target.value.indexOf(':') + 1) === 'Request') {
 			setRequestEvent(e);
@@ -85,6 +88,21 @@ const ShiftsCalender = () => {
 			setcommentVisible(false);
 			setShiftType(e.target.value);
 		}
+	};
+
+
+	const setId = (e) => {
+		console.log(e.target.value);
+		axios
+			.get('shift/getShiftId/' + e.target.value)
+			.then((res) => {
+				setCreateShiftId(res.data._id);
+				setCreateShiftType(res.data.shiftname);
+				console.log(res.data.shiftname);
+			})
+			.catch((err) => {
+				message.error('Cannot find the shift type from database');
+			});
 	};
 	const handelDate = (e) => {
 		setStart(e.target.value);
@@ -114,13 +132,15 @@ const ShiftsCalender = () => {
 				'Content-Type': 'application/json;charset=UTF-8',
 			},
 			data: {
-				userId: userId,
+
 				start: date,
-				requestApprovalStatus: 'approved',
-				offApprovalStatus: 'Approved',
-				comment: comment,
-				shiftTypeId: shiftTypeId,
+				userId: userId,
+				Created: currentId,
 				end: date,
+				comment: comment,
+				offApprovalStatus: 'Approved',
+				requestApprovalStatus: 'approved',
+				shiftTypeId: createShiftID,
 				swapable: swapable,
 			},
 		};

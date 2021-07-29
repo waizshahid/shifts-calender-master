@@ -86,7 +86,7 @@ class uploadfile extends Component {
 			} else {
 				let newRows = [];
 				resp.rows.map((rows, index) => {
-					if (rows.length > 1) newRows.push(rows);
+					if (rows.length > 2) newRows.push(rows);
 				});
 				this.setState({
 					cols: resp.cols,
@@ -98,11 +98,11 @@ class uploadfile extends Component {
 				let last;
 				this.setState({ startDate: this.ExcelDateToJSDate(resp.rows[1][0]).toISOString().toString().slice(0, 10) });
 				resp.rows.map((rows, index) => {
-					console.log(rows.length)
-					if (rows.length > 1) last = index;
+
+					if (rows.length > 5) last = index;
 				});
 
-				console.log(this.ExcelDateToJSDate(resp.rows[last][0]).toISOString().toString().slice(0, 10))
+
 				this.setState({ endDate: this.ExcelDateToJSDate(resp.rows[last][0]).toISOString().toString().slice(0, 10) });
 			}
 		});
@@ -173,20 +173,20 @@ class uploadfile extends Component {
 	Process = () => {
 		if (this.state.finalArray !== '') {
 			console.log("in process", this.state.endDate, this.state.startDate)
-			// axios
-			// 	.get('shift/deleteEventsBetweenTwoDates/' + this.state.startDate + '/' + this.state.endDate)
-			// 	.then((response) => {
-			// 		console.log('response', response);
 			axios
-				.post('shift/createShiftsFromExcel', this.state.finalArray)
-				.then((res) => {
-					this.setState({
-						visible: true,
-					});
+				.get('shift/deleteEventsBetweenTwoDates/' + this.state.startDate + '/' + this.state.endDate)
+				.then((response) => {
+					console.log('response', response);
+					axios
+						.post('shift/createShiftsFromExcel', this.state.finalArray)
+						.then((res) => {
+							this.setState({
+								visible: true,
+							});
+						})
+						.catch((err) => console.log('err2 ', err));
 				})
-				.catch((err) => console.log('err2 ', err));
-			// 		})
-			// 		.catch((err) => console.log('err1', err));
+				.catch((err) => console.log('err1', err));
 		}
 		else {
 			this.setState({

@@ -142,7 +142,7 @@ router.delete('/deleteshift', (req, res) => {
 				from: 'admin@calls.pvmgonline.com',
 				to: await getNotificationEmail(),
 				subject: "The " + resp.shiftname+' call has been deleted',
-				html: '<p> Shift ' + resp.shiftname + ' has been deleted.</p>',
+				html: '<p> The ' + resp.shiftname + ' call has been deleted.</p>',
 			};
 
 			transport.sendMail(mailOptions, (error, info) => {
@@ -1063,7 +1063,7 @@ router.get('/swapShiftUserbyAdmin/:shiftId/:userId', (req, res) => {
 				from: 'admin@calls.pvmgonline.com',
 				to: await getNotificationEmail(),
 				subject: "The " + shift.shiftname + ' call has been created',
-				 html: '<p> The '+ shift.shiftname +' for ' +  newShift.start  +  ' has been created by '+ user.username +'</p>',
+				 html: '<p> The '+ shift.shiftname +' call for ' +  newShift.start  +  ' has been created by '+ user.username +'</p>',
 			};
 			transport.sendMail(mailOptions, (error, info) => {
 				if (error) {
@@ -1123,7 +1123,7 @@ router.get('/swapShiftUser/:shiftId/:userId/:userId1', (req, res) => {
 										from: 'admin@calls.pvmgonline.com',
 										to: await getNotificationEmail(),
 										subject: "The " + shift1.shiftname + ' call has been transferred',
-									       html: '<p> The '+ shift1.shiftname +' for ' +  shiftObj.start  +  ' has been transferred to '+ user1.username +  '</br> from '+ user2.username +'</p>',
+									       html: '<p> The '+ shift1.shiftname +' call for ' +  shiftObj.start  +  ' has been transferred to '+ user1.username +  '</br> from '+ user2.username +'</p>',
 									};
 									 transport.sendMail(mailOptions, (error, info) => {
 										if (error) {
@@ -1197,7 +1197,7 @@ router.get('/deleteThisShift/:id/:admin', (req, res) => {
 				from: 'admin@calls.pvmgonline.com',
 				to:    await getNotificationEmail(),
 				subject: "The " + shift.shiftname + ' call has been deleted',
-				html: '<p> The '+ shift.shiftname +' for ' +  newShift.start  +  ' has been deleted for '+ user.firstName.charAt(0) + " " + user.lastName  +   ' by ' + created.firstName.charAt(0) + " " + created.lastName +  '</p>',
+				html: '<p> The '+ shift.shiftname +' call for ' +  newShift.start  +  ' has been deleted for '+ user.firstName.charAt(0) + " " + user.lastName  +   ' by ' + created.firstName.charAt(0) + " " + created.lastName +  '</p>',
 			};
 
 			transport.sendMail(mailOptions, (error, info) => {
@@ -1585,7 +1585,7 @@ router.put(
 					from: 'admin@calls.pvmgonline.com',
 					to: await getNotificationEmail(),
 					subject: 'The' + resp.shiftname +' call has been Updated',
-					html: '<p> Shift ' + resp.shiftname + ' has been updated.</p>',
+					html: '<p> The ' + resp.shiftname + ' call has been updated.</p>',
 				};
 
 				transport.sendMail(mailOptions, (error, info) => {

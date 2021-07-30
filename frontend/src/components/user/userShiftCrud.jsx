@@ -5,22 +5,22 @@ import Register from "../../components/superAdmin/ManageShiftTypes/Register"
 
 
 const UserShiftCrud = () => {
-    
-    const [result, setResult] = useState();
+
+	const [result, setResult] = useState();
 	const [targetShift, setTargetShift] = useState("");
 	const [visible, setVisible] = useState(false);
 	const [editVisible, setEditVisible] = useState(false);
-    const [delVisible, setDelVisible] = useState(false);
-    
-    const getRequiredValues = (data) => {
+	const [delVisible, setDelVisible] = useState(false);
+
+	const getRequiredValues = (data) => {
 		let temp = [];
 		for (var i = 0; i < data.length; i++) {
 			temp.push({
 				key: data[i]._id,
 				shifttitle: data[i].shiftname,
-                color: <div style={{ backgroundColor: data[i].color, width: "30px", height: "20px" }}></div>,
-                editable: data[i].editable,
-                action: (
+				color: <div style={{ backgroundColor: data[i].color, width: "30px", height: "20px" }}></div>,
+				editable: data[i].editable,
+				action: (
 					<div>
 						<i
 							className="fa fa-edit"
@@ -46,17 +46,17 @@ const UserShiftCrud = () => {
 			});
 		}
 		return temp;
-    };
-    
-    const getDisabledValues = (data) => {
+	};
+
+	const getDisabledValues = (data) => {
 		let temp = [];
 		for (var i = 0; i < data.length; i++) {
 			temp.push({
 				key: data[i]._id,
 				shifttitle: data[i].shiftname,
-                color: <div style={{ backgroundColor: data[i].color, width: "30px", height: "20px" }}></div>,
-                editable: data[i].editable,
-                action: (
+				color: <div style={{ backgroundColor: data[i].color, width: "30px", height: "20px" }}></div>,
+				editable: data[i].editable,
+				action: (
 					<div>
 						<i
 							className="fa fa-edit"
@@ -73,46 +73,46 @@ const UserShiftCrud = () => {
 		}
 		return temp;
 	};
-   
-    useEffect(() => {
-		axios.get("shift/getshifts").then((response) => {
-            var disableArray = [];
-            var enableArray = [];
-            for(let i = 0 ; i < response.data.length; i++){
-                if(response.data[i].editable === "enable"){
-                    enableArray.push(response.data[i]);
-                }else if(response.data[i].editable === "disable"){
-                    disableArray.push(response.data[i]);
-                }
-            }
 
-             var temp1 = [];
-             temp1 = temp1.concat(getRequiredValues(enableArray));
-             temp1 = temp1.concat(getDisabledValues(disableArray));
-            
-             setResult(temp1)
-        // // if(response.data.editable === "enable"){
-        //     for(let i = 0 ; i < response.data.length; i++){
-        //         if(response.data[i].editable === "enable"){
-        //             setResult(getRequiredValues(response.data[i]));
-        //             //console.log('enable data gotten');
-        //             console.log(response.data[0].editable);
-        //         }
-        //         // else{
-        //         //     setResult(getDisabledValues(response.data));
-        //         //     console.log('disable data gotten');
-        //         //     console.log(response.data[0].editable);
-        //         // }    
-        //     }    
-                
-        //     // }
-        //     // else{
-        //     //     setResult(getDisabledValues(response.data));
-        //     //     console.log("Exchange Shift data"+response.data);
-            // }
+	useEffect(() => {
+		axios.get("shift/getshifts").then((response) => {
+			var disableArray = [];
+			var enableArray = [];
+			for (let i = 0; i < response.data.length; i++) {
+				if (response.data[i].editable === "enable") {
+					enableArray.push(response.data[i]);
+				} else if (response.data[i].editable === "disable") {
+					disableArray.push(response.data[i]);
+				}
+			}
+
+			var temp1 = [];
+			temp1 = temp1.concat(getRequiredValues(enableArray));
+			temp1 = temp1.concat(getDisabledValues(disableArray));
+
+			setResult(temp1)
+			// // if(response.data.editable === "enable"){
+			//     for(let i = 0 ; i < response.data.length; i++){
+			//         if(response.data[i].editable === "enable"){
+			//             setResult(getRequiredValues(response.data[i]));
+			//             //console.log('enable data gotten');
+			//             console.log(response.data[0].editable);
+			//         }
+			//         // else{
+			//         //     setResult(getDisabledValues(response.data));
+			//         //     console.log('disable data gotten');
+			//         //     console.log(response.data[0].editable);
+			//         // }    
+			//     }    
+
+			//     // }
+			//     // else{
+			//     //     setResult(getDisabledValues(response.data));
+			//     //     console.log("Exchange Shift data"+response.data);
+			// }
 		});
-    }, [visible, editVisible, delVisible]);
-    const deleteUser = () => {
+	}, [visible, editVisible, delVisible]);
+	const deleteUser = () => {
 		axios
 			.delete("shift/deleteshiftUser", { params: { id: targetShift } })
 			.then((response) => {
@@ -120,36 +120,36 @@ const UserShiftCrud = () => {
 			});
 		setDelVisible(false);
 	};
-    const columns = [
+	const columns = [
 		{
 			title: "Shift title",
 			dataIndex: "shifttitle",
 			key: "shifttitle",
-        },
-        {
+		},
+		{
 			title: "Color",
 			dataIndex: "color",
 			key: "color",
-        },
-        {
+		},
+		{
 			title: "Editable",
 			dataIndex: "editable",
 			key: "editable",
-        },
-        {
+		},
+		{
 			title: "Action",
 			dataIndex: "action",
 			key: "action",
-        }
-    ];
-    return (
-        <div className="container pt-5">
+		}
+	];
+	return (
+		<div className="container pt-5">
 			{/* <button className="btn btn-outline-primary" onClick={() => setVisible(true)}>
 				+ Add New Shift Type
 			</button> */}
-            <h2 className="text-center">
-                User CRUD options
-            </h2>
+			<h2 className="text-center">
+				User CRUD options
+			</h2>
 			<br />
 			<br />
 			<Table dataSource={result} columns={columns} />;{/* Register New User */}
@@ -183,7 +183,7 @@ const UserShiftCrud = () => {
 				<p>Are you sure delete this shift type?</p>
 			</Modal>
 		</div>
-    )
-    
+	)
+
 }
 export default UserShiftCrud;

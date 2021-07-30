@@ -109,7 +109,7 @@ const SuperAdmin = ({ superAdmin }) => {
 								</div>
 							</div>
 							{/* {message.adminresponse} */}
-							{'Your call for the shift named ' + message.shiftName + ' has been swapped'}
+							{'Your call for ' + message.shiftName + ' has been swapped'}
 						</div>
 					</div>
 				</Menu.Item>

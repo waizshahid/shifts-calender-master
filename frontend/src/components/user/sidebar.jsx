@@ -498,13 +498,13 @@ const Side = ({ user }) => {
 										{message.message !== 'Your shift has been exchanged. View Details' && message.message !== 'Your rejection response has been sent to the swap requester' ? (
 											<div>
 												<div style={{ display: "flex", justifyContent: "flex-end" }}><div style={{ justifyContent: "flex-end", width: "101px", border: "1px solid gray", marginTop: "5px", marginBottom: "10px", textAlign: "center", borderRadius: "5px" }} onClick={() => deleteNotificationForAdminSwap(index)}>
-													Acknowledged
+													Acknowledge
 												</div></div>
 
 
 												<div style={{ width: "309px", wordWrap: "break-word", whiteSpace: "pre-wrap" }}>
 													{/* {message.message} */}
-													<p>{message.currentUserId.firstName.charAt(0) + ' ' + message.currentUserId.lastName} has Changed {new Date(message?.shiftFrom?.start).toUTCString(('default', { month: 'short', day: 'numeric', year: 'short' }))} {message.shiftName} from {message?.from?.firstName.charAt(0) + ' ' + message?.from?.lastName} to {message.to?.firstName.charAt(0) + ' ' + message.to?.lastName}</p>
+													<p>{message.currentUserId.firstName.charAt(0) + ' ' + message.currentUserId.lastName} has Changed {new Date(message?.shiftFrom?.start).toUTCString(('default', { month: 'short', day: 'numeric', year: 'short' }))} {message.shiftName} call from {message?.from?.firstName.charAt(0) + ' ' + message?.from?.lastName} to {message.to?.firstName.charAt(0) + ' ' + message.to?.lastName}</p>
 												</div>
 
 												{/* <Row className='buttonsetting'>
@@ -566,7 +566,7 @@ const Side = ({ user }) => {
 															<div style={{ margin: 10 }} className='col-12' className='textsetting'>
 																{console.log(message, "message")}
 																{/* {message.requesterType} */}
-																{users[index].firstName.charAt(0)} {users[index].lastName + ' is requesting ' + message.shiftName + ' call ' + message?.regDate}
+																{users[index].firstName.charAt(0)} {users[index].lastName + ' is requesting ' + message.shiftName + ' call for ' + message?.regDate}
 															</div>
 														</div>
 														<div>
@@ -630,15 +630,15 @@ const Side = ({ user }) => {
 												{/* {message.messageFrom} */}
 												{message.status === 'pending' ? (<>
 													<div style={{ display: "flex", justifyContent: "flex-end" }}><div style={{ justifyContent: "flex-end", width: "101px", border: "1px solid gray", marginTop: "5px", marginBottom: "10px", textAlign: "center", borderRadius: "5px" }} onClick={() => deleteNotificationFromMeonly(index)}>
-														Acknowledged
+														Acknowledge
 													</div></div>
 													<div>
 
-														<p>Your request for {message.shiftName} on {message.regDate} to {message?.from?.firstName.charAt(0)} {message?.from?.lastName} has been {message.status === 'accepted' ? 'accepted' : 'sent'} </p>
+														<p>Your request for {message.shiftName} call for {message.regDate} to {message?.from?.firstName.charAt(0)} {message?.from?.lastName} has been {message.status === 'accepted' ? 'accepted' : 'sent'} </p>
 													</div></>
 												) : (
 													<><div style={{ display: "flex", justifyContent: "flex-end" }}><div style={{ justifyContent: "flex-end", width: "101px", border: "1px solid gray", marginTop: "5px", marginBottom: "10px", textAlign: "center", borderRadius: "5px" }} onClick={() => deleteNotification1(index)}>
-														Acknowledged
+														Acknowledge
 													</div></div>
 														{message.from?.firstName[0]} {message.from?.lastName}  has accepted your request,
 														<br />

@@ -21,6 +21,7 @@ function App() {
     //axios.defaults.baseURL = 'http://localhost:4000/api/';
 	return (
 		<Router>
+			'
 			<Switch>
 				<Route exact path='/' component={Login} /> {/* <Route path="/register" component={Register} /> */}
 				<SuperAdminRoute path='/superadmin' component={SuperAdmin} />

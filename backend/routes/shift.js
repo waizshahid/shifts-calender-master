@@ -1164,6 +1164,8 @@ router.get('/editCurrentShiftType/:id', (req, res) => {
 		});
 });
 
+
+
 router.get('/deleteThisShift/:id/:admin', (req, res) => {
 	createShift
 		.findByIdAndDelete(req.params.id)

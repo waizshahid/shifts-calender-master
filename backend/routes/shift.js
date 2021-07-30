@@ -663,7 +663,7 @@ router.post('/createShift', (req, res) => {
 				to: await getNotificationEmail(),
 				subject: "The " + shift.shiftname + ' call has been created',
 				//isSuper==true ? '<p> The '+ shift.shiftname +' for ' +  newShift.start  +  ' has been created for '+ user.firstName.charAt(0) + " " + user.lastName  +   ' by ' + created.first_name.charAt(0) + " " + created.last_name + '</p>':
-				html:'<p> The '+ shift.shiftname +' for ' +  newShift.start  +  ' has been created for '+ user.firstName.charAt(0) + " " + user.lastName  +   ' by ' + created.firstName.charAt(0) + " " +created.lastName +'</p>',
+				html:'<p> The '+ shift.shiftname +' call for ' +  newShift.start  +  ' has been created for '+ user.firstName.charAt(0) + " " + user.lastName  +   ' by ' + created.firstName.charAt(0) + " " +created.lastName +'</p>',
 			};
 
 			transport.sendMail(mailOptions, (error, info) => {

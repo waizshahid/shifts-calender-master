@@ -167,7 +167,7 @@ const ShiftsCalender = ({ userObj }) => {
 		console.log(oneEvent)
 		let date1 = new Date().toISOString().slice(0, 10);
 		await setVisible(false);
-		setLoading(true);
+		//setLoading(true);
 		const userId = assign;
 		// const title = shiftType;
 		// let color = "";

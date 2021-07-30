@@ -174,7 +174,7 @@ const Admin = ({ admin }) => {
 		axios
 			.delete('user/deleteCurrentNotification/' + notificationId, { sendEmail: sendEmail })
 			.then((res) => {
-				refresh();
+				getNotifications();
 			})
 			.catch((err) => {
 				console.log(err);

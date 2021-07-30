@@ -31,11 +31,22 @@ code {
   .fc-view-container .fc-view > table {
   width: 2500px;
   } */
+
+
+@media (max-width:600px) {
+  .fc-scrollgrid{
+      width:  1051px !important;
+    }
+}
+
+
   @media(max-width:600px){
+    
   .fc .fc-scrollgrid-liquid {
     height: 100%;
     overflow: scroll;
 }
+
 .fc .fc-scroller {
 overflow: unset !important;}
 .fc .fc-scroller-harness {

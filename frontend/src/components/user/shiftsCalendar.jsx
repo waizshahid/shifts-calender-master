@@ -177,6 +177,7 @@ const ShiftsCalendar = () => {
 				offApprovalStatus: offAprovalStat,
 				shiftTypeId: shiftTypeId,
 				swapable: swapable,
+				superadmin: false
 			},
 		};
 		axios(options)
@@ -540,7 +541,7 @@ const ShiftsCalendar = () => {
 		await setAdminCheck(false);
 		await setLoading(true);
 		axios
-			.get('shift/deleteThisShift/' + currentShift)
+			.get('shift/deleteThisShift/' + currentShift + '/' + currentId)
 			.then((res1) => {
 				console.log(res1);
 				console.log(res1.data);
@@ -562,7 +563,7 @@ const ShiftsCalendar = () => {
 			})
 			.catch((err) => {
 				console.log(err);
-				message.err(err);
+				//message.err(err);
 			});
 	}
 	//;{filderedData.map((dat) => (

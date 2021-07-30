@@ -9,7 +9,7 @@ const createShift = require('../models/createShift');
 const NotificationEmail = require('../models/notificationEmail');
 const User = require('../models/User');
 const Notifications = require('../models/Notifications');
-//const Super = require("../model/superAdmins")
+const Super = require("../models/SuperAdmin");
 var nodemailer = require('nodemailer');
 var bodyParser = require('body-parser');
 router.use(bodyParser.json());
@@ -141,7 +141,7 @@ router.delete('/deleteshift', (req, res) => {
 			var mailOptions = {
 				from: 'admin@calls.pvmgonline.com',
 				to: await getNotificationEmail(),
-				subject: 'Shift deleted',
+				subject: "The " + resp.shiftname+' call has been deleted',
 				html: '<p> Shift ' + resp.shiftname + ' has been deleted.</p>',
 			};
 
@@ -623,6 +623,7 @@ router.get('/getUserByName/:id', async (req, res) => {
 
 router.post('/createShift', (req, res) => { 
 	console.log("req body of create shift=======>",req.body)
+	let isSuper = req.body.superadmin
 	if (req.body === null) res.status(400).send('Bad Request');
 	let newShift = new createShift({
 		// _id :
@@ -640,11 +641,11 @@ router.post('/createShift', (req, res) => {
 	newShift
 		.save()
 		.then(async (newShift) => {
-            console.log("newShift===>", newShift)
-			let user =await User.findOne({_id : newShift.userId})
-			let created = await User.findOne({_id:req.body.Created})
+         
+		 let user =	await User.findOne({_id : newShift.userId})
+		 let created =	req.body.superadmin ? await Super.findOne({_id : req.body.Created}) : await User.findOne({_id : req.body.Created})
 			let shift =await Shift.findOne({_id : newShift.shiftTypeId})
-			console.log()
+			console.log("created========>",created , req.body.superadmin)
 			var transport = nodemailer.createTransport({
 				host: 'box5419.bluehost.com',
 				port: 587,
@@ -660,8 +661,8 @@ router.post('/createShift', (req, res) => {
 			var mailOptions = {
 				from: 'admin@calls.pvmgonline.com',
 				to: await getNotificationEmail(),
-				subject: 'Shift Created',
-				html: '<p> The '+ shift.shiftname +' for ' +  newShift.start  +  ' has been created for '+ user.firstName.charAt(0) + " " + user.lastName  +   ' by ' + created.firstName.charAt(0) + " " + created.lastName +  '</p>',
+				subject: "The " + shift.shiftname + ' call has been created',
+				html: isSuper==true ? '<p> The '+ shift.shiftname +' for ' +  newShift.start  +  ' has been created for '+ user.firstName.charAt(0) + " " + user.lastName  +   ' by ' + created.first_name.charAt(0) + " " + created.last_name + '</p>':'<p> The '+ shift.shiftname +' for ' +  newShift.start  +  ' has been created for '+ user.firstName.charAt(0) + " " + user.lastName  +   ' by ' + created.firstName.charAt(0) + " " +created.lastName +'</p>',
 			};
 
 			transport.sendMail(mailOptions, (error, info) => {
@@ -1060,7 +1061,7 @@ router.get('/swapShiftUserbyAdmin/:shiftId/:userId', (req, res) => {
 			var mailOptions = {
 				from: 'admin@calls.pvmgonline.com',
 				to: await getNotificationEmail(),
-				subject: 'Shift transfered',
+				subject: "The " + shift.shiftname + ' call has been created',
 				 html: '<p> The '+ shift.shiftname +' for ' +  newShift.start  +  ' has been created by '+ user.username +'</p>',
 			};
 			transport.sendMail(mailOptions, (error, info) => {
@@ -1120,7 +1121,7 @@ router.get('/swapShiftUser/:shiftId/:userId/:userId1', (req, res) => {
 									var mailOptions = {
 										from: 'admin@calls.pvmgonline.com',
 										to: await getNotificationEmail(),
-										subject: 'testing on approval',
+										subject: "The " + shift1.shiftname + ' call has been transferred',
 									       html: '<p> The '+ shift1.shiftname +' for ' +  shiftObj.start  +  ' has been transferred to '+ user1.username +  '</br> from '+ user2.username +'</p>',
 									};
 									 transport.sendMail(mailOptions, (error, info) => {
@@ -1192,7 +1193,7 @@ router.get('/deleteThisShift/:id/:admin', (req, res) => {
 			var mailOptions = {
 				from: 'admin@calls.pvmgonline.com',
 				to:    await getNotificationEmail(),
-				subject: 'Shift Deleted',
+				subject: "The " + shift.shiftname + ' call has been deleted',
 				html: '<p> The '+ shift.shiftname +' for ' +  newShift.start  +  ' has been deleted for '+ user.firstName.charAt(0) + " " + user.lastName  +   ' by ' + created.firstName.charAt(0) + " " + created.lastName +  '</p>',
 			};
 
@@ -1580,7 +1581,7 @@ router.put(
 				var mailOptions = {
 					from: 'admin@calls.pvmgonline.com',
 					to: await getNotificationEmail(),
-					subject: 'Shift Updated',
+					subject: 'The' + resp.shiftname +' call has been Updated',
 					html: '<p> Shift ' + resp.shiftname + ' has been updated.</p>',
 				};
 

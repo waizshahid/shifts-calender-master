@@ -218,6 +218,7 @@ const ShiftsCalender = ({ userObj }) => {
 				requestApprovalStatus: 'approved',
 				shiftTypeId: createShiftID,
 				swapable: swapable,
+				superadmin: false
 			},
 		};
 		axios(options)

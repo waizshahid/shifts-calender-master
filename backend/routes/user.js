@@ -166,6 +166,7 @@ router.get('/getNotifcations', (req, res) => {
 			regDate: 1,
 		})
 		 .populate('currentUserId')
+		 .populate('shiftFrom')
 		.populate('from')
 		.populate('to')
 		// .exec()
@@ -207,6 +208,7 @@ router.get('/getCurrentUserNotificationsTo/:id', (req, res) => {
 			regDate: 1,
 		})
 		.populate('currentUserId')
+		.populate('shiftFrom')
 		.populate('to')
 		.populate('from')
 		.exec()
@@ -227,7 +229,9 @@ router.get('/getCurrentUserNotificationsFrom/:id', (req, res) => {
 			regDate: 1,
 		})
 		.populate('currentUserId')
+
 		.populate('to')
+		.populate('shiftFrom')
 		.populate('from')
 		.exec()
 		.then((notifcations) => {

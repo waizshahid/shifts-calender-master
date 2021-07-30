@@ -222,9 +222,9 @@ const Admin = ({ admin }) => {
 		const date = dsplayMessage[message].regDate;
 		const requester = dsplayMessage[message].requesterType;
 		const shiftName = dsplayMessage[message].shiftName;
-
+		console.log("data in fff", shiftId1, userToExchange, userId1)
 		axios
-			.get('shift/swapShiftUser/' + shiftId1 + '/' + userToExchange + '/' + userId1)
+			.get('shift/swapShiftUser/' + shiftId1._id + '/' + userToExchange + '/' + userId1)
 			.then((res) => {
 				console.log(res);
 				axios
@@ -403,7 +403,7 @@ const Admin = ({ admin }) => {
 											</div></div>
 											<div style={{ margin: 2, width: "309px", wordWrap: "break-word", whiteSpace: "pre-wrap" }}>
 												{/* {console.log(oneE, "opopopop")} */}
-												<p>Your request for {message.shiftName} on {message.regDate} to {message?.from?.firstName.charAt(0)} {message?.from?.lastName} has been {message.status === 'accepted' ? 'accepted' : 'sent'} </p>
+												<p>Your request for {message.shiftName} on {message.shiftFrom?.start} to {message?.from?.firstName.charAt(0)} {message?.from?.lastName} has been {message.status === 'accepted' ? 'accepted' : 'sent'} </p>
 											</div>
 											{/* {message.status === 'accepted' && (
 												<Button style={{ margin: 20 }} key='1' onClick={() => deleteNotification(index)}>
@@ -442,7 +442,7 @@ const Admin = ({ admin }) => {
 														<div style={{ margin: 10 }} className='col-12' className='textsetting'>
 															{console.log(message, "message")}
 															{/* {message.requesterType} */}
-															{message.currentUserId?.firstName?.charAt(0)} {message.currentUserId.lastName + ' is requesting ' + message.shiftName + ' call ' + message?.regDate}
+															{message.currentUserId?.firstName?.charAt(0)} {message.currentUserId.lastName + ' is requesting ' + message.shiftName + ' call on ' + message.shiftFrom?.start}
 														</div>
 													</div>
 													<div>
@@ -474,7 +474,7 @@ const Admin = ({ admin }) => {
 													</div></div>
 													<div style={{ margin: 2, width: "309px", wordWrap: "break-word", whiteSpace: "pre-wrap" }}>
 														{/* {console.log(oneE, "opopopop")} */}
-														<p>Your request for {message.shiftName} on {message.regDate} to {message?.from?.firstName.charAt(0)} {message?.from?.lastName} has been {message.status === 'accepted' ? 'accepted' : 'sent'} </p>
+														<p>Your request for {message.shiftName} on {message.shiftFrom?.start} to {message?.from?.firstName.charAt(0)} {message?.from?.lastName} has been {message.status === 'accepted' ? 'accepted' : 'sent'} </p>
 													</div>
 													{/* {message.status === 'accepted' && (
 												<Button style={{ margin: 20 }} key='1' onClick={() => deleteNotification(index)}>
@@ -509,7 +509,7 @@ const Admin = ({ admin }) => {
 															Detail
 														</Tag>
 														<Tag color='green'>{message.requesterType}</Tag> */}
-															<br /> {message.currentUserId.firstName.charAt(0)} {message.currentUserId.lastName + ' is requesting ' + message?.shiftName + ' call ' + message?.regDate}
+															<br /> {message.currentUserId.firstName.charAt(0)} {message.currentUserId.lastName + ' is requesting ' + message?.shiftName + ' call ' + message.shiftFrom?.start}
 															<br />
 															{/* <Tag color='default'>{message.regDate}</Tag> */}
 															<Row className='buttonsetting'>
@@ -536,32 +536,44 @@ const Admin = ({ admin }) => {
 															<hr />
 														</div>
 													) : (
-														<div>
+														message.message == 'Your shift has been exchanged. View Details' ? (<div>
+															<div style={{ display: "flex", justifyContent: "flex-end" }}><div style={{ justifyContent: "flex-end", width: "101px", border: "1px solid gray", marginTop: "5px", marginBottom: "10px", textAlign: "center", borderRadius: "5px" }} onClick={() => deleteNotification1(index, true)}>
+																Acknowledged
+															</div></div>
+															<div style={{ margin: 2, width: "309px", wordWrap: "break-word", whiteSpace: "pre-wrap" }}>
+																{/* {console.log(oneE, "opopopop")} */}
+																<p>Your {message.shiftName} call for {message.shiftFrom?.start} has been exchanged to {message?.to?.lastName} {message?.to?.firstName.charAt(0)}</p>
+															</div>
+
+															<hr />
+														</div>
+														) : (
 															<div>
-																<div className='row'>
-																	{/* <div className='col-2'>
+																<div>
+																	<div className='row'>
+																		{/* <div className='col-2'>
 																	{' '}
 																	<Tag color='success' onClick={() => showShiftModal1(index)}>
 																		Detail
 																	</Tag>{' '}
 																</div> */}
-																	<div className='col-4'>
-																		<Tag color='success'>{message.requesterType}</Tag>
+																		<div className='col-4'>
+																			<Tag color='success'>{message.requesterType}</Tag>
+																		</div>
+																		<div className='col-2'>
+																			<Tag color='default'>{message.shiftName}</Tag>
+																		</div>
+																		<div className='col-2'>
+																			<Tag color='default'>{message.shiftFrom?.start}</Tag>
+																		</div>
 																	</div>
-																	<div className='col-2'>
-																		<Tag color='default'>{message.shiftName}</Tag>
-																	</div>
-																	<div className='col-2'>
-																		<Tag color='default'>{message.from.regDate}</Tag>
-																	</div>
+																	<div className='row'>{message.message}</div>
+																	<Button style={{ marginRight: 25 }} onClick={() => deleteNotification1(index)}>
+																		Delete this notification
+																	</Button>
+																	<hr />
 																</div>
-																<div className='row'>{message.message}</div>
-																<Button style={{ marginRight: 25 }} onClick={() => deleteNotification1(index)}>
-																	Delete this notification
-																</Button>
-																<hr />
-															</div>
-														</div>
+															</div>)
 													)}
 												</div>
 											) : (

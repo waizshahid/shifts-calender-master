@@ -549,7 +549,7 @@ const ShiftsCalender = () => {
 					</option>
 					{users.map((dat) => (
 						<option value={dat._id} key={dat._id}>
-							{dat.lastName + ',' + dat.firstName}
+							{dat.lastName + ' , ' + dat.firstName}
 						</option>
 					))}{' '}
 				</select>

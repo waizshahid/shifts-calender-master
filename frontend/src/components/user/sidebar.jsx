@@ -143,7 +143,7 @@ const Side = ({ user }) => {
 		const shiftName = dsplayMessage[message].shiftName;
 		console.log(shiftId1, userToExchange, userId1, "in front end data")
 		axios
-			.get('shift/swapShiftUser/' + shiftId1 + '/' + userToExchange + '/' + userId1)
+			.get('shift/swapShiftUser/' + shiftId1._id + '/' + userToExchange + '/' + userId1)
 			.then((res) => {
 				console.log(res);
 				axios
@@ -464,8 +464,8 @@ const Side = ({ user }) => {
         padding: '15px 15px',
         display: 'block',
       }}>Notification</b> */}
-
 			{dsplayMessage.map((message, index) => (
+
 				<Menu.Item key={index}>
 					<div
 						style={{
@@ -504,7 +504,7 @@ const Side = ({ user }) => {
 
 												<div style={{ width: "309px", wordWrap: "break-word", whiteSpace: "pre-wrap" }}>
 													{/* {message.message} */}
-													<p>{message.currentUserId.firstName.charAt(0) + ' ' + message.currentUserId.lastName} has Changed {message?.from?.regDate} {message.shiftName} from {message?.from?.firstName.charAt(0) + ' ' + message?.from?.lastName} to {message.to?.firstName.charAt(0) + ' ' + message.to?.lastName}</p>
+													<p>{message.currentUserId.firstName.charAt(0) + ' ' + message.currentUserId.lastName} has Changed {new Date(message?.shiftFrom?.start).toUTCString(('default', { month: 'short', day: 'numeric', year: 'short' }))} {message.shiftName} from {message?.from?.firstName.charAt(0) + ' ' + message?.from?.lastName} to {message.to?.firstName.charAt(0) + ' ' + message.to?.lastName}</p>
 												</div>
 
 												{/* <Row className='buttonsetting'>
@@ -688,6 +688,7 @@ const Side = ({ user }) => {
 
 	return (
 		<div>
+
 			<Sidebar
 				sidebar={
 					<div style={{ backgroundColor: 'black' }}>

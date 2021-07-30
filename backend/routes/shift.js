@@ -662,7 +662,8 @@ router.post('/createShift', (req, res) => {
 				from: 'admin@calls.pvmgonline.com',
 				to: await getNotificationEmail(),
 				subject: "The " + shift.shiftname + ' call has been created',
-				html: isSuper==true ? '<p> The '+ shift.shiftname +' for ' +  newShift.start  +  ' has been created for '+ user.firstName.charAt(0) + " " + user.lastName  +   ' by ' + created.first_name.charAt(0) + " " + created.last_name + '</p>':'<p> The '+ shift.shiftname +' for ' +  newShift.start  +  ' has been created for '+ user.firstName.charAt(0) + " " + user.lastName  +   ' by ' + created.firstName.charAt(0) + " " +created.lastName +'</p>',
+				//isSuper==true ? '<p> The '+ shift.shiftname +' for ' +  newShift.start  +  ' has been created for '+ user.firstName.charAt(0) + " " + user.lastName  +   ' by ' + created.first_name.charAt(0) + " " + created.last_name + '</p>':
+				html:'<p> The '+ shift.shiftname +' for ' +  newShift.start  +  ' has been created for '+ user.firstName.charAt(0) + " " + user.lastName  +   ' by ' + created.firstName.charAt(0) + " " +created.lastName +'</p>',
 			};
 
 			transport.sendMail(mailOptions, (error, info) => {
@@ -1095,7 +1096,7 @@ router.get('/swapShiftUser/:shiftId/:userId/:userId1', (req, res) => {
 		.findOne({ _id: id })
 		.exec()
 		.then((shift) => {
-			// console.log(shift , "shift in first then")
+			 console.log(shift , "shift in first then")
 			shift.userId = userId;
 			shift
 				.save()
@@ -1107,14 +1108,14 @@ router.get('/swapShiftUser/:shiftId/:userId/:userId1', (req, res) => {
 					var user2 = await User.findOne({_id : userid1 });
 					console.log(shift1 , user1 , user2 , "shift1 , user1");
 					var transport =await nodemailer.createTransport({
-										host: 'box5419.bluehost.com',
+										host: 'smtp.gmail.com',
 										port: 587,
 										requireTLS: true,
 										secure: false,
 										auth: {
 											// enter your account details to send email from
-											user: 'admin@calls.pvmgonline.com', // generated ethereal user
-											pass: 'pvmgonline12.', // generated ethereal password
+											user: 'hassanahmedleo786@gmail.com', // generated ethereal user
+											pass: 'sp17bse092jamil', // generated ethereal password
 										},
 									});
 									console.log('email => ',await getNotificationEmail());

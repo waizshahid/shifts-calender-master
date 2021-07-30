@@ -1108,14 +1108,14 @@ router.get('/swapShiftUser/:shiftId/:userId/:userId1', (req, res) => {
 					var user2 = await User.findOne({_id : userid1 });
 					console.log(shift1 , user1 , user2 , "shift1 , user1");
 					var transport =await nodemailer.createTransport({
-										host: 'smtp.gmail.com',
+										host: 'box5419.bluehost.com',
 										port: 587,
 										requireTLS: true,
 										secure: false,
 										auth: {
 											// enter your account details to send email from
-											user: 'hassanahmedleo786@gmail.com', // generated ethereal user
-											pass: 'sp17bse092jamil', // generated ethereal password
+											user: 'admin@calls.pvmgonline.com', // generated ethereal user
+											pass: 'pvmgonline12.', // generated ethereal password
 										},
 									});
 									console.log('email => ',await getNotificationEmail());

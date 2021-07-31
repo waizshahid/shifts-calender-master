@@ -273,7 +273,7 @@ router.put('/updateResponses/:id', async (req, res) => {
 				console.log('receiver => ', sender);
 				if (sender && receiver) {
 					console.log('nodemailer api from front end update responses');
-					let message = 'Your Request to ' + sender.firstName +" "+ sender.lastName + ' for '+ resp.shiftName + ' call on ' + resp.regDate +  ' has been accepted.';
+					let message = 'Your Request to ' + sender.lastName +" "+ sender.firstName.charAt(0) + ' for '+ resp.shiftName + ' call on ' + resp.regDate +  ' has been accepted.';
 					// create reusable transporter object using the default SMTP transport
 					let transporter = nodemailer.createTransport({
 						host: 'box5419.bluehost.com',
@@ -418,7 +418,7 @@ router.delete('/deleteCurrentNotification/:id', (req, res) => {
 			console.log('receiver => ', sender);
 			if (sender && receiver) {
 				console.log('nodemailer api from front end delete current notification');
-				let message = 'Your request  to ' + sender.firstName  + ' for ' + resp.shiftName +  ' call has been rejected.';
+				let message = 'Your request  to ' + sender.lastName +", "+sender.firstName.charAt(0)  + ' for ' + resp.shiftName +  ' call has been rejected.';
 				// create reusable transporter object using the default SMTP transport
 				let transporter = nodemailer.createTransport({
 					host: 'box5419.bluehost.com',
@@ -663,7 +663,7 @@ router.post('/userNotification', (req, res) => {
 
 			if (sender && receiver) {
 				console.log('nodemailer api from front end userNotification');
-				let message =  sender.firstName + " " + sender.lastName + ' has requested '  + req.body.shiftName + ' call for ' + req.body.date;
+				let message =  sender.lastName + " " + sender.firstName.charAt(0) + ' has requested '  + req.body.shiftName + ' call for ' + req.body.date;
 				// create reusable transporter object using the default SMTP transport
 				let transporter = nodemailer.createTransport({
 					host: 'box5419.bluehost.com',
@@ -1036,7 +1036,7 @@ router.post('/createNotificationHistory', (req, res) => {
 
 				if (sender && receiver) {
 					console.log('nodemailer api from front end create notification history');
-					let message =  sender.firstName + " "+ sender.lastName +  ' has requested for ' + req.body.shiftName + ' call for ' + req.body.date;
+					let message =  sender.lastName + " "+ sender.firstName.charAt(0) +  ' has requested for ' + req.body.shiftName + ' call for ' + req.body.date;
 					// create reusable transporter object using the default SMTP transport
 					let transporter = nodemailer.createTransport({
 						host: 'box5419.bluehost.com',
@@ -1118,7 +1118,7 @@ router.post('/createNotificationHistoryadmincreate', async(req, res) => {
 
 				if (sender && receiver) {
 					console.log('nodemailer api from front end create notification history');
-					let message =  admin.username +" "+' has created your ' + req.body.shiftName + ' call on ' + req.body.dateofshift;
+					let message =  admin.lastName + ", "+ admin.firstName.charAt(0) +" "+' has created your ' + req.body.shiftName + ' call on ' + req.body.dateofshift;
 					// create reusable transporter object using the default SMTP transport
 					let transporter = nodemailer.createTransport({
 						host: 'box5419.bluehost.com',

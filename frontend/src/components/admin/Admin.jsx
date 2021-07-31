@@ -403,7 +403,7 @@ const Admin = ({ admin }) => {
 											</div></div>
 											<div style={{ margin: 2, width: "309px", wordWrap: "break-word", whiteSpace: "pre-wrap" }}>
 												{/* {console.log(oneE, "opopopop")} */}
-												<p>Your request for {message.shiftName} on {message.shiftFrom?.start} to {message?.from?.firstName.charAt(0)} {message?.from?.lastName} has been {message.status === 'accepted' ? 'accepted' : 'sent'} </p>
+												<p>Your request for {message.shiftName} on {message.shiftFrom?.start} to {message?.from?.lastName} , {message?.from?.firstName.charAt(0)}  has been {message.status === 'accepted' ? 'accepted' : 'sent'} </p>
 											</div>
 											{/* {message.status === 'accepted' && (
 												<Button style={{ margin: 20 }} key='1' onClick={() => deleteNotification(index)}>
@@ -442,7 +442,7 @@ const Admin = ({ admin }) => {
 														<div style={{ margin: 10 }} className='col-12' className='textsetting'>
 															{console.log(message, "message")}
 															{/* {message.requesterType} */}
-															{message.currentUserId?.firstName?.charAt(0)} {message.currentUserId.lastName + ' is requesting ' + message.shiftName + ' call on ' + message.shiftFrom?.start}
+															{message.currentUserId.lastName} , {message.currentUserId?.firstName?.charAt(0) + ' is requesting ' + message.shiftName + ' call on ' + message.shiftFrom?.start}
 														</div>
 													</div>
 													<div>
@@ -474,7 +474,7 @@ const Admin = ({ admin }) => {
 													</div></div>
 													<div style={{ margin: 2, width: "309px", wordWrap: "break-word", whiteSpace: "pre-wrap" }}>
 														{/* {console.log(oneE, "opopopop")} */}
-														<p>Your request for {message.shiftName} call on {message.shiftFrom?.start} to {message?.from?.firstName.charAt(0)} {message?.from?.lastName} has been {message.status === 'accepted' ? 'accepted' : 'sent'} </p>
+														<p>Your request for {message.shiftName} call on {message.shiftFrom?.start} to {message?.from?.lastName} , {message?.from?.firstName.charAt(0)}  has been {message.status === 'accepted' ? 'accepted' : 'sent'} </p>
 													</div>
 													{/* {message.status === 'accepted' && (
 												<Button style={{ margin: 20 }} key='1' onClick={() => deleteNotification(index)}>
@@ -509,7 +509,7 @@ const Admin = ({ admin }) => {
 															Detail
 														</Tag>
 														<Tag color='green'>{message.requesterType}</Tag> */}
-															<br /> {message.currentUserId.firstName.charAt(0)} {message.currentUserId.lastName + ' is requesting ' + message?.shiftName + ' call on ' + message.shiftFrom?.start}
+															<br /> {message.currentUserId.lastName} , {message.currentUserId.firstName.charAt(0) + ' is requesting ' + message?.shiftName + ' call on ' + message.shiftFrom?.start}
 															<br />
 															{/* <Tag color='default'>{message.regDate}</Tag> */}
 															<Row className='buttonsetting'>
@@ -542,7 +542,7 @@ const Admin = ({ admin }) => {
 															</div></div>
 															<div style={{ margin: 2, width: "309px", wordWrap: "break-word", whiteSpace: "pre-wrap" }}>
 																{/* {console.log(oneE, "opopopop")} */}
-																<p>Your {message.shiftName} call for {message.shiftFrom?.start} has been exchanged to {message?.to?.lastName} {message?.to?.firstName.charAt(0)}</p>
+																<p>Your {message.shiftName} call for {message.shiftFrom?.start} has been exchanged to {message?.to?.lastName} , {message?.to?.firstName.charAt(0)}</p>
 															</div>
 
 															<hr />
@@ -616,7 +616,7 @@ const Admin = ({ admin }) => {
 				sidebar={
 					<div style={{ backgroundColor: 'black' }}>
 						<Sider style={{ height: '100vh' }}>
-							<h5 className='pt-4 pb-2 text-center text-muted'>{admin.firstName.charAt(0) + ' ' + admin.lastName}</h5>
+							<h5 className='pt-4 pb-2 text-center text-muted'>{admin.lastName + ' , ' + admin.firstName.charAt(0)}</h5>
 							<Menu theme='dark' mode='inline' defaultSelectedKeys={[]}>
 								{/* <Menu.Item key="1" icon={<UserOutlined />}>
 									<Link to="/admin/profile">Profile</Link>

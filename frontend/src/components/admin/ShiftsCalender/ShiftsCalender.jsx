@@ -457,7 +457,7 @@ const ShiftsCalender = ({ userObj }) => {
 
 	function sendemail() {
 		axios.post('user/sendemail', {
-			message: ' Admin ' + myDetails.firstName + ' created shift on ' + date,
+			message: ' Admin ' + myDetails.firstName + ' created call on ' + date,
 		});
 		console.log('after api call');
 	}

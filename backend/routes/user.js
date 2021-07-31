@@ -166,7 +166,7 @@ router.get('/getNotifcations', (req, res) => {
 			regDate: 1,
 		})
 		 .populate('currentUserId')
-		 .populate('shiftFrom')
+		.populate('shiftFrom')
 		.populate('from')
 		.populate('to')
 		// .exec()
@@ -663,7 +663,7 @@ router.post('/userNotification', (req, res) => {
 
 			if (sender && receiver) {
 				console.log('nodemailer api from front end userNotification');
-				let message =  sender.firstName + " " + sender.lastName + ' has requested '  + req.body.shiftName + ' call on ' + req.body.date;
+				let message =  sender.firstName + " " + sender.lastName + ' has requested '  + req.body.shiftName + ' call for ' + req.body.date;
 				// create reusable transporter object using the default SMTP transport
 				let transporter = nodemailer.createTransport({
 					host: 'box5419.bluehost.com',
@@ -1036,7 +1036,7 @@ router.post('/createNotificationHistory', (req, res) => {
 
 				if (sender && receiver) {
 					console.log('nodemailer api from front end create notification history');
-					let message =  sender.firstName + " "+ sender.lastName +  ' has requested for ' + req.body.shiftName + ' call on ' + req.body.date;
+					let message =  sender.firstName + " "+ sender.lastName +  ' has requested for ' + req.body.shiftName + ' call for ' + req.body.date;
 					// create reusable transporter object using the default SMTP transport
 					let transporter = nodemailer.createTransport({
 						host: 'box5419.bluehost.com',

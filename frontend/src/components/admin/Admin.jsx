@@ -503,7 +503,7 @@ const Admin = ({ admin }) => {
 											{message?.from?._id === currentId || message?.to?._id === currentId ? (
 												<div>
 													{' '}
-													{message.message !== 'Your swap request for the shift has been accepted' && message.message !== 'Your rejection response has been sent to the swap requester' && message.message !== 'Your shift has been exchanged. View Details' ? (
+													{message.message !== 'Your swap request for the shift has been accepted' && message.message !== 'Your rejection response has been sent to the swap requester' && message.message !== 'Your shift has been exchanged. View Details' && message.message !== 'Your shift has been swapped. Click for details' ? (
 														<div>
 															{/* <Tag color='success' onClick={() => showShiftModal1(index)}>
 															Detail

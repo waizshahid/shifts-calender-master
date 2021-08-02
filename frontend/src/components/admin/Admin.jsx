@@ -146,7 +146,7 @@ const Admin = ({ admin }) => {
 				for (let i = 0; i < res1.data.length; i++) {
 					if (res1.data[i].requesterType === 'Super Admin') {
 						array.push(res1.data[i]);
-					} else if (res1.data[i].requesterType === 'Admin' && (res1.data[i].currentUserId === currentId || res1.data[i].from?._id == currentId) && res1.data[i].to?._id != null && res1.data[i].to != null) {
+					} else if (res1.data[i].requesterType === 'Admin' && (res1.data[i].currentUserId === currentId || res1.data[i].from?._id == currentId || res1.data[i].to?._id == currentId) && res1.data[i].to?._id != null && res1.data[i].to != null) {
 						array.push(res1.data[i]);
 					} else if (res1.data[i].requesterType === 'User' && (res1.data[i].from?._id === currentId || res1.data[i].from?._id == currentId)) {
 						array.push(res1.data[i]);
@@ -208,7 +208,7 @@ const Admin = ({ admin }) => {
 		console.log(dsplayMessage[message]);
 		const id = dsplayMessage[message]._id;
 		const shiftId1 = dsplayMessage[message].shiftFrom;
-		const userToExchange = dsplayMessage[message].to?._id;
+		const userToExchange = dsplayMessage[message].to?._id ? dsplayMessage[message].to?._id : dsplayMessage[message].currentUserId?._id;
 
 		console.log(id);
 		console.log(userToExchange);
@@ -396,7 +396,8 @@ const Admin = ({ admin }) => {
 								</div>
 							) : message.requesterType === 'Admin' ? (
 								<div>
-									{message.currentUserId === currentId ? (
+									{console.log(message.currentUserId === currentId, "message")}
+									{message.currentUserId._id === currentId ? (
 										<div>
 											<div style={{ display: "flex", justifyContent: "flex-end" }}><div style={{ justifyContent: "flex-end", width: "101px", border: "1px solid gray", marginTop: "5px", marginBottom: "10px", textAlign: "center", borderRadius: "5px" }} onClick={() => deleteNotificationFromMeonly(index)}>
 												Acknowledge
@@ -405,18 +406,7 @@ const Admin = ({ admin }) => {
 												{/* {console.log(oneE, "opopopop")} */}
 												<p>Your request for {message.shiftName} on {message.shiftFrom?.start} to {message?.from?.lastName} , {message?.from?.firstName.charAt(0)}  has been {message.status === 'accepted' ? 'accepted' : 'sent'} </p>
 											</div>
-											{/* {message.status === 'accepted' && (
-												<Button style={{ margin: 20 }} key='1' onClick={() => deleteNotification(index)}>
-													Delete this Request
-												</Button>
-											)} */}
 											<div>
-												{/* <Button style={{ margin: 20 }} key='1' onClick={deleteNotification}>
-												Delete this Request
-											</Button>
-											<Button style={{ paddingLeft: 20 }} onClick={() => setVisible(false)} key='2' type='primary'>
-												OK
-											</Button> */}
 											</div>
 											<hr />
 										</div>
@@ -427,16 +417,6 @@ const Admin = ({ admin }) => {
 												{message.message == "One of the User wants to swap his shift with you. Click for the detail..."}
 												<div>
 													<div className='row'>
-														{/* <div onClick={() => showShiftModal1(index)} className='col-2'>
-													<Tag color='red'>{'Detail'}</Tag>
-												</div> */}
-														{/* <div className='col-4'>
-													<Tag color='green'>{users[index].firstName + ' ' + users[index].lastName}</Tag>
-												</div> */}
-														{/* <div className='col-6'>
-													<Tag color='default'>{message.shiftName}</Tag>
-													<Tag color='default'>{message.regDate}</Tag>
-												</div> */}
 													</div>
 													<div className='row'>
 														<div style={{ margin: 10 }} className='col-12' className='textsetting'>
@@ -447,13 +427,6 @@ const Admin = ({ admin }) => {
 													</div>
 													<div>
 														<Row className='buttonsetting'>
-															{/* <Button onClick={() => deleteNotification1(index)}>Delete this notification</Button> */}
-															{/* <Button onClick={() => updateNotification1(index)} className='rejectbutton'>
-														Reject
-													</Button>
-													<Button type='primary' className='button2setting' onClick={() => swapShift1(index)}>
-														Exchange
-													</Button> */}
 															<Button type='primary' className='button2setting' onClick={() => { swapShift1(index) }}>
 																Accept
 															</Button>
@@ -468,29 +441,38 @@ const Admin = ({ admin }) => {
 											)
 											:
 											(
-												<div>
-													<div style={{ display: "flex", justifyContent: "flex-end" }}><div style={{ justifyContent: "flex-end", width: "101px", border: "1px solid gray", marginTop: "5px", marginBottom: "10px", textAlign: "center", borderRadius: "5px" }} onClick={() => deleteNotificationFromMeonly(index)}>
-														Acknowledge
-													</div></div>
-													<div style={{ margin: 2, width: "309px", wordWrap: "break-word", whiteSpace: "pre-wrap" }}>
-														{/* {console.log(oneE, "opopopop")} */}
-														<p>Your request for {message.shiftName} call on {message.shiftFrom?.start} to {message?.from?.lastName} , {message?.from?.firstName.charAt(0)}  has been {message.status === 'accepted' ? 'accepted' : 'sent'} </p>
-													</div>
-													{/* {message.status === 'accepted' && (
-												<Button style={{ margin: 20 }} key='1' onClick={() => deleteNotification(index)}>
-													Delete this Request
-												</Button>
-											)} */}
-													<div>
-														{/* <Button style={{ margin: 20 }} key='1' onClick={deleteNotification}>
-												Delete this Request
-											</Button>
-											<Button style={{ paddingLeft: 20 }} onClick={() => setVisible(false)} key='2' type='primary'>
-												OK
-											</Button> */}
-													</div>
-													<hr />
-												</div>
+
+
+
+
+												message.message === 'Your shift has been exchanged. View Details' && message.from?._id == currentId ?
+													(
+														<div>
+															<div style={{ display: "flex", justifyContent: "flex-end" }}><div style={{ justifyContent: "flex-end", width: "101px", border: "1px solid gray", marginTop: "5px", marginBottom: "10px", textAlign: "center", borderRadius: "5px" }} onClick={() => deleteNotificationFromMeonly(index)}>
+																Acknowledge
+															</div></div>
+															<div style={{ margin: 2, width: "309px", wordWrap: "break-word", whiteSpace: "pre-wrap" }}>
+																<p>Your {message.shiftName} call on {message.shiftFrom?.start} has been changed to {message?.to ? message?.to?.lastName : message?.currentUserId?.lastName} , {message?.to ? message?.to?.firstName.charAt(0) : message?.currentUserId?.firstName.charAt(0)}</p>
+															</div>
+														</div>
+													)
+													:
+													(
+														<div>
+															<div style={{ display: "flex", justifyContent: "flex-end" }}><div style={{ justifyContent: "flex-end", width: "101px", border: "1px solid gray", marginTop: "5px", marginBottom: "10px", textAlign: "center", borderRadius: "5px" }} onClick={() => deleteNotificationFromMeonly(index)}>
+																Acknowledge
+															</div></div>
+															<div style={{ margin: 2, width: "309px", wordWrap: "break-word", whiteSpace: "pre-wrap" }}>
+																{/* {console.log(oneE, "opopopop")} */}
+																<p>Your request for {message.shiftName} call on {message.shiftFrom?.start} to {message?.from?.lastName} , {message?.from?.firstName.charAt(0)}  has been {message.status === 'accepted' ? 'accepted' : 'sent'} </p>
+															</div>
+
+															<div>
+
+															</div>
+															<hr />
+														</div>
+													)
 											)
 									)
 									}
@@ -505,27 +487,12 @@ const Admin = ({ admin }) => {
 													{' '}
 													{message.message !== 'Your swap request for the shift has been accepted' && message.message !== 'Your rejection response has been sent to the swap requester' && message.message !== 'Your shift has been exchanged. View Details' && message.message !== 'Your shift has been swapped. Click for details' ? (
 														<div>
-															{/* <Tag color='success' onClick={() => showShiftModal1(index)}>
-															Detail
-														</Tag>
-														<Tag color='green'>{message.requesterType}</Tag> */}
+
 															<br /> {message.currentUserId.lastName} , {message.currentUserId.firstName.charAt(0) + ' is requesting ' + message?.shiftName + ' call on ' + message.shiftFrom?.start}
 															<br />
-															{/* <Tag color='default'>{message.regDate}</Tag> */}
-															<Row className='buttonsetting'>
-																{/* <Button style={{ marginRight: 25 }} onClick={() => deleteNotification1(index)}>
-																Delete this notification
-															</Button>
-															<Button onClick={() => updateNotification1(index)} className='rejectbutton'>
-																Reject
-															</Button>
-															<Button type='primary' className='button2setting' onClick={() => swapShift1(index)}>
-																Exchange
-															</Button> */}
 
-																{/* <Button style={{ marginRight: 25 }} onClick={() => deleteNotification1(index)}>
-																Delete this notification
-															</Button> */}
+															<Row className='buttonsetting'>
+
 																<Button onClick={() => deleteNotification1(index, true)} className='rejectbutton'>
 																	Reject
 																</Button>
@@ -541,8 +508,8 @@ const Admin = ({ admin }) => {
 																Acknowledge
 															</div></div>
 															<div style={{ margin: 2, width: "309px", wordWrap: "break-word", whiteSpace: "pre-wrap" }}>
-																{/* {console.log(oneE, "opopopop")} */}
-																<p>Your {message.shiftName} call for {message.shiftFrom?.start} has been exchanged to {message?.to?.lastName} , {message?.to?.firstName.charAt(0)}</p>
+
+																<p>Your {message.shiftName} call for {message.shiftFrom?.start} has been exchanged to {message?.to ? message?.to?.lastName : message?.currentUserId?.lastName} , {message?.to ? message?.to?.firstName.charAt(0) : message?.currentUserId?.firstName.charAt(0)}</p>
 															</div>
 
 															<hr />
@@ -551,12 +518,7 @@ const Admin = ({ admin }) => {
 															<div>
 																<div>
 																	<div className='row'>
-																		{/* <div className='col-2'>
-																	{' '}
-																	<Tag color='success' onClick={() => showShiftModal1(index)}>
-																		Detail
-																	</Tag>{' '}
-																</div> */}
+
 																		<div className='col-4'>
 																			<Tag color='success'>{message.requesterType}</Tag>
 																		</div>

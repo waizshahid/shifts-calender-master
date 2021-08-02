@@ -414,7 +414,7 @@ const Admin = ({ admin }) => {
 										message.status == 'pending' ?
 											(<div>
 
-												{message.message == "Your shift has been swapped. Click for details"}
+												{message.message == "One of the User wants to swap his shift with you. Click for the detail..."}
 												<div>
 													<div className='row'>
 													</div>

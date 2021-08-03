@@ -1091,7 +1091,7 @@ router.get('/swapShiftUser/:shiftId/:userId/:userId1', (req, res) => {
 	console.log(req.params.shiftId ,req.params.userId,req.params.userId1 , "paramssss" )
 	const id = req.params.shiftId;
 	const userId = req.params.userId;
-	const userid1 = req.params.userId1;
+	const userid1 = req.params.userId1; 
 	createShift
 		.findOne({ _id: id })
 		.exec()

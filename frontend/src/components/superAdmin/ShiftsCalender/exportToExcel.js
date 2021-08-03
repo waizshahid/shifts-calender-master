@@ -27,7 +27,7 @@ function s2ab(s) {
 
 export default (data) => {
 	import('xlsx').then((XLSX) => {
-		console.log(data);
+	//	console.log(data);
 		const wb = new Workbook();
 		const ws = XLSX.utils.json_to_sheet(data);
 

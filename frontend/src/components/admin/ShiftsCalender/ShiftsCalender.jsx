@@ -497,7 +497,7 @@ const ShiftsCalender = ({ userObj }) => {
 	const deleteShift = async () => {
 		console.log(currentShift);
 		const key = 'updatable';
-		await setLoading(true);
+		//await setLoading(true);
 		await setexchangeVisible(false);
 		await setAdminCheck(false);
 		axios
@@ -596,8 +596,8 @@ const ShiftsCalender = ({ userObj }) => {
 	};
 
 	const prepassnotification = () => {
-		console.log('in pre pass notification', id21);
-		console.log('ccccc', oneEvent.shiftname, oneEvent, data);
+		// console.log('in pre pass notification', id21);
+		// console.log('ccccc', oneEvent.shiftname, oneEvent, data);
 		console.log(data.filter((s) => s.shiftname === oneEvent.shiftname)[0]._id);
 		if (data.filter((s) => s.shiftname === oneEvent.shiftname).length > 0) {
 			axios.put('/user/updatingshift', { id: oneEvent._id, shiftid: id21 }).then(() => {
@@ -610,8 +610,8 @@ const ShiftsCalender = ({ userObj }) => {
 	};
 
 	const passNotification = (adminEdit) => {
-		console.log('Event', oneEvent);
-		console.log('id', oneEvent._id);
+		// console.log('Event', oneEvent);
+		// console.log('id', oneEvent._id);
 		const userId1 = oneEvent.userId;
 		let shiftId1 = oneEvent._id;
 		console.log('shiftid', id2);
@@ -621,7 +621,7 @@ const ShiftsCalender = ({ userObj }) => {
 		const adminresponse = 'The requested shifts  has been swapped.';
 		const requester = 'Admin';
 		const currentUserId = currentId;
-		console.log('data', userId1, userId2, shiftId1);
+		// console.log('data', userId1, userId2, shiftId1);
 		let shiftName = '';
 		let shiftIdforn = '';
 		axios
@@ -634,7 +634,7 @@ const ShiftsCalender = ({ userObj }) => {
 						break;
 					}
 				}
-				console.log(shiftIdforn, "shiftIdforn")
+				// console.log(shiftIdforn, "shiftIdforn")
 				axios
 					.post('user/userNotification', {
 						currentUserId,
@@ -664,11 +664,11 @@ const ShiftsCalender = ({ userObj }) => {
 							})
 							.then((resp) => {
 								if (userId2 !== '') {
-									console.log(shiftId1, userId2)
+									// console.log(shiftId1, userId2)
 									axios
 										.get('shift/swapShiftUserbyAdmin/' + shiftId1 + '/' + userId2)
 										.then((res1) => {
-											console.log(res1);
+											// console.log(res1);
 											window.location.reload();
 										})
 										.catch((err) => {

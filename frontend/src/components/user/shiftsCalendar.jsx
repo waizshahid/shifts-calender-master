@@ -63,6 +63,7 @@ const ShiftsCalendar = () => {
 	};
 	useEffect(
 		(e) => {
+			console.log("in 1")
 
 			setShiftType(shiftNameUser);
 		},
@@ -118,7 +119,7 @@ const ShiftsCalendar = () => {
 	};
 
 	useEffect(() => {
-		console.log(shiftName, "on offselect")
+		console.log(shiftName, "on offselect 2")
 		AfterSetOff();
 	}, [off]);
 
@@ -315,6 +316,7 @@ const ShiftsCalendar = () => {
 	};
 
 	useEffect(() => {
+		console.log("in 3")
 		axios.get('shift/currentShifts').then((res) => {
 			// let temp1 = []
 			// let temp2 = []
@@ -400,6 +402,7 @@ const ShiftsCalendar = () => {
 		});
 	}
 	useEffect(() => {
+		console.log("in 4")
 		console.log(oneEvent.userId);
 		console.log(oneEvent._id);
 		console.log(currentId);
@@ -622,9 +625,10 @@ const ShiftsCalendar = () => {
 						No shift right now
 					</option>
 					{data.map((sh) => (
-						<option value={sh._id + ':' + sh.shiftname} key={sh._id}>
-							{sh.shiftname}
-						</option>
+						sh.shiftname == 'HASC ' || sh.shiftname == 'Off' || sh.shiftname == 'Request' || sh.shiftname == 'Pain' ?
+							<option value={sh._id + ':' + sh.shiftname} key={sh._id}>
+								{sh.shiftname}
+							</option> : null
 					))}
 				</select>
 				{commentVisible === 'true' ? (

@@ -133,12 +133,6 @@ class uploadfile extends Component {
 		console.log(shiftTitleIndex);
 		let Arr = [];
 		let Obj = {};
-
-
-
-
-
-
 		// newArr.map((shift, index) => {
 		// 	this.state.rows.map((row, index) => {
 		// 		if (row[index] == shift.name)
@@ -146,10 +140,10 @@ class uploadfile extends Component {
 		// 				if (i > 0) {
 		// 					let JSdate = this.ExcelDateToJSDate(col[0]).toISOString().toString().slice(0, 10);
 		// 					this.state.users.map((user) => {
-		// 						if (col[2] !== undefined) {
-		// 							//console.log("col[index]", col[2]);
-		// 							if (col[2].split(' & ').length > 0) {
-		// 								col[2]
+		// 						if (col[index] !== undefined) {
+		// 							//console.log("col[index]", col[index]);
+		// 							if (col[index].split(' & ').length > 0) {
+		// 								col[index]
 		// 									.split(' & ')
 		// 									.map((name) => name.trim())
 		// 									.map((usr, id) => {
@@ -176,8 +170,7 @@ class uploadfile extends Component {
 		for (let d = 0; d < this.state.rows.length; d++) {
 			if (d > 0) {
 				let JSdate = this.ExcelDateToJSDate(this.state.rows[d][0]).toISOString().toString().slice(0, 10);
-				//let user = await this.state.users.find((user, index) => (user.username == this.state.rows[d][2]));
-				//let shift = await newArr.find((shift, index) => (shift.name == this.state.rows[d][1]));
+
 				let user;
 				let shift;
 
@@ -186,55 +179,18 @@ class uploadfile extends Component {
 						user = this.state.users[u]
 					}
 				}
-
-
 				for (let s = 0; s < newArr.length; s++) {
 					if (newArr[s].name == this.state.rows[d][1]) {
 						shift = newArr[s]
 					}
 				}
 				//console.log(user, shift, JSdate)
-
 				Obj = { name: this.state.rows[d][2].toLowerCase(), userId: user._id, shiftTypeId: shift.id, start: JSdate, end: JSdate, swappable: true };
 				Arr.push(Obj);
-
 			}
 		}
-
-		// this.state.rows.map(async (data, i1) => {
-		// 	if (i1 > 0) {
-		// 		let JSdate = await this.ExcelDateToJSDate(data[0]).toISOString().toString().slice(0, 10);
-		// 		//let user = await this.state.users.find((user, index) => (user.username == data[2]));
-		// 		//let shift = await newArr.find((shift, index) => (shift.name == data[1]));
-		// 		let user;
-		// 		let shift;
-
-		// 		for (let u = 0; u < this.state.users.length; u++) {
-		// 			if (this.state.users[u].username == data[2]) {
-		// 				user = this.state.users[u]
-		// 			}
-		// 		}
-
-
-		// 		for (let s = 0; s < newArr.length; s++) {
-		// 			if (newArr[s].name == data[1]) {
-		// 				shift = newArr[s]
-		// 			}
-		// 		}
-		// 		//console.log(user, shift, JSdate)
-
-		// 		Obj = { name: data[2].toLowerCase(), userId: user._id, shiftTypeId: shift.id, start: JSdate, end: JSdate, swappable: true };
-		// 		await Arr.push(Obj);
-
-		// 	}
-
-		// })
-
-
-
 		console.log('Array to be pass to backend');
 		console.log(Arr);
-
 		this.setState({ finalArray: Arr });
 	};
 
@@ -265,7 +221,7 @@ class uploadfile extends Component {
 
 	OffProcess = () => {
 		if (this.state.finalArray !== '') {
-			console.log("in process")
+			console.log("in process", this.state.finalArray)
 			axios
 				.get('shift/deleteEventsBetweenTwoDatesOffs/' + this.state.startDate + '/' + this.state.endDate)
 				.then((response) => {
@@ -369,21 +325,62 @@ class uploadfile extends Component {
 					}
 				}
 				console.log(shortArr);
+
+
 				var obj = {};
-				for (var i = 0; i < this.state.dateRangeArray.length; i++) {
+				// for (var i = 0; i < this.state.dateRangeArray.length; i++) {
+				// 	if (this.state.dateRangeArray[i]) {
+				// 		var date = this.state.dateRangeArray[i].Date;
+				// 		var p_date = obj[date] || {};
+				// 		obj[date] = Object.assign(p_date, this.state.dateRangeArray[i]);
+				// 	}
+				// }
+				// var result = Object.values(obj);
+				// console.log(result);
+
+
+
+				//Hassan code with new pattern
+
+				let arrWithnewPattern = []
+				let arrtocheck = []
+				let checkrep = false
+				for (let i = 0; i < this.state.dateRangeArray.length; i++) {
+					checkrep = false
 					if (this.state.dateRangeArray[i]) {
-						var date = this.state.dateRangeArray[i].Date;
-						var p_date = obj[date] || {};
-						obj[date] = Object.assign(p_date, this.state.dateRangeArray[i]);
+
+						let datetofind = this.state.dateRangeArray[i].Date
+
+						for (let check1 = 0; check1 < arrtocheck.length; check1++) {
+							if (arrtocheck[check1] == datetofind) {
+								checkrep = true
+							}
+						}
+						if (checkrep == true) {
+							console.log("continue")
+							continue;
+						}
+						else {
+							arrtocheck.push(datetofind)
+							//console.log(datetofind, i)
+							for (let j = 0; j < this.state.dateRangeArray.length; j++) {
+
+								if (datetofind == this.state.dateRangeArray[j].Date) {
+									var obj1 = {}
+									obj1.Date = datetofind;
+									obj1.Shift = Object.keys(this.state.dateRangeArray[j])[1]
+									obj1.name = this.state.dateRangeArray[j][Object.keys(this.state.dateRangeArray[j])[1]]
+									//console.log(obj1)
+									arrWithnewPattern.push(obj1)
+								}
+							}
+						}
 					}
 				}
-
-				var result = Object.values(obj);
-
-				console.log(result);
+				arrtocheck = []
+				var result = arrWithnewPattern
 				let heading = [];
 				let items = result.map((item) => Object.keys(item));
-
 				if (items && items.length > 0) {
 					items.forEach((item) => {
 						item.forEach((i) => {
@@ -580,7 +577,7 @@ class uploadfile extends Component {
 							</div>
 						</Button>
 						<Button className="uploadoffs" type='primary'
-						//onClick={this.OffProcess}
+							onClick={this.OffProcess}
 						>
 							<div className='row'>
 								<div className='col-1'>

@@ -195,22 +195,41 @@ class uploadfile extends Component {
 	};
 
 	Process = () => {
+		let result = [];
 		if (this.state.finalArray !== '') {
-			console.log("in process", this.state.endDate, this.state.startDate)
-			axios
-				.get('shift/deleteEventsBetweenTwoDates/' + this.state.startDate + '/' + this.state.endDate)
-				.then((response) => {
-					console.log('response', response, this.state.finalArray);
-					axios
-						.post('shift/createShiftsFromExcel', this.state.finalArray)
-						.then((res) => {
-							this.setState({
-								visible: true,
-							});
-						})
-						.catch((err) => console.log('err2 ', err));
-				})
-				.catch((err) => console.log('err1', err));
+			console.log("in process", this.state.finalArray)
+			for (let check = 0; check < this.state.finalArray.length; check++) {
+				for (let check2 = 0; check2 < this.state.types.length; check2++) {
+					if (this.state.finalArray[check].shiftTypeId == this.state.types[check2].id && this.state.types[check2].name == "Off") {
+						result.push(this.state.finalArray[check])
+					}
+				}
+				// result = this.state.types.find(shift => this.state.finalArray[check].shiftTypeId == shift.id && shift.name == "Off")
+			}
+			console.log(result)
+			if (result.length > 1) {
+				alert("Offs not allowed")
+			}
+
+			else {
+
+				axios
+					.get('shift/deleteEventsBetweenTwoDates/' + this.state.startDate + '/' + this.state.endDate)
+					.then((response) => {
+						console.log('response', response, this.state.finalArray);
+						axios
+							.post('shift/createShiftsFromExcel', this.state.finalArray)
+							.then((res) => {
+								this.setState({
+									visible: true,
+								});
+							})
+							.catch((err) => console.log('err2 ', err));
+					})
+					.catch((err) => console.log('err1', err));
+			}
+
+
 		}
 		else {
 			this.setState({
@@ -220,22 +239,41 @@ class uploadfile extends Component {
 	};
 
 	OffProcess = () => {
+		let result = [];
 		if (this.state.finalArray !== '') {
-			console.log("in process", this.state.finalArray)
-			axios
-				.get('shift/deleteEventsBetweenTwoDatesOffs/' + this.state.startDate + '/' + this.state.endDate)
-				.then((response) => {
-					console.log('response', response);
-					axios
-						.post('shift/createShiftsFromExcelOffs', this.state.finalArray)
-						.then((res) => {
-							this.setState({
-								visible: true,
-							});
-						})
-						.catch((err) => console.log(err));
-				})
-				.catch((err) => console.log('err', err));
+			console.log("in process", this.state.finalArray, this.state.types)
+			for (let check = 0; check < this.state.finalArray.length; check++) {
+				for (let check2 = 0; check2 < this.state.types.length; check2++) {
+					if (this.state.finalArray[check].shiftTypeId == this.state.types[check2].id && this.state.types[check2].name == "Off") {
+						result.push(this.state.finalArray[check])
+					}
+				}
+				// result = this.state.types.find(shift => this.state.finalArray[check].shiftTypeId == shift.id && shift.name == "Off")
+			}
+			console.log(result)
+			if (result.length > 1) {
+
+				axios
+					.get('shift/deleteEventsBetweenTwoDatesOffs/' + this.state.startDate + '/' + this.state.endDate)
+					.then((response) => {
+						console.log('response', response);
+						axios
+							.post('shift/createShiftsFromExcelOffs', this.state.finalArray)
+							.then((res) => {
+								this.setState({
+									visible: true,
+								});
+							})
+							.catch((err) => console.log(err));
+					})
+					.catch((err) => console.log('err', err));
+			}
+
+			else {
+
+				alert("Only off can upload here")
+			}
+
 		} else {
 			this.setState({
 				visibleFail: true,

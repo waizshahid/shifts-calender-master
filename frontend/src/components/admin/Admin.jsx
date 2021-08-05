@@ -404,7 +404,7 @@ const Admin = ({ admin }) => {
 											</div></div>
 											<div style={{ margin: 2, width: "309px", wordWrap: "break-word", whiteSpace: "pre-wrap" }}>
 												{/* {console.log(oneE, "opopopop")} */}
-												<p>Your request for {message.shiftName} on {message.shiftFrom?.start} to {message?.from?.lastName} , {message?.from?.firstName.charAt(0)}  has been {message.status === 'accepted' ? 'accepted' : 'sent'} </p>
+												<p>Your request for {message.shiftName} on {message.shiftFrom?.start} to {message?.from?.lastName}, {message?.from?.firstName.charAt(0)}  has been {message.status === 'accepted' ? 'accepted' : 'sent'} </p>
 											</div>
 											<div>
 											</div>
@@ -422,7 +422,7 @@ const Admin = ({ admin }) => {
 														<div style={{ margin: 10 }} className='col-12' className='textsetting'>
 															{console.log(message, "message")}
 															{/* {message.requesterType} */}
-															{message.currentUserId.lastName} , {message.currentUserId?.firstName?.charAt(0) + ' is requesting ' + message.shiftName + ' call on ' + message.shiftFrom?.start}
+															{message.currentUserId.lastName}, {message.currentUserId?.firstName?.charAt(0) + ' is requesting ' + message.shiftName + ' call on ' + message.shiftFrom?.start}
 														</div>
 													</div>
 													<div>
@@ -452,7 +452,7 @@ const Admin = ({ admin }) => {
 																Acknowledge
 															</div></div>
 															<div style={{ margin: 2, width: "309px", wordWrap: "break-word", whiteSpace: "pre-wrap" }}>
-																<p>Your {message.shiftName} call on {message.shiftFrom?.start} has been changed to {message?.to ? message?.to?.lastName : message?.currentUserId?.lastName} , {message?.to ? message?.to?.firstName.charAt(0) : message?.currentUserId?.firstName.charAt(0)}</p>
+																<p>Your {message.shiftName} call on {message.shiftFrom?.start} has been changed to {message?.to ? message?.to?.lastName : message?.currentUserId?.lastName}, {message?.to ? message?.to?.firstName.charAt(0) : message?.currentUserId?.firstName.charAt(0)}</p>
 															</div>
 														</div>
 													)
@@ -464,7 +464,7 @@ const Admin = ({ admin }) => {
 															</div></div>
 															<div style={{ margin: 2, width: "309px", wordWrap: "break-word", whiteSpace: "pre-wrap" }}>
 																{/* {console.log(oneE, "opopopop")} */}
-																<p>Your request for {message.shiftName} call on {message.shiftFrom?.start} to {message?.from?.lastName} , {message?.from?.firstName.charAt(0)}  has been {message.status === 'accepted' ? 'accepted' : 'sent'} </p>
+																<p>Your request for {message.shiftName} call on {message.shiftFrom?.start} to {message?.from?.lastName}, {message?.from?.firstName.charAt(0)}  has been {message.status === 'accepted' ? 'accepted' : 'sent'} </p>
 															</div>
 
 															<div>
@@ -488,7 +488,7 @@ const Admin = ({ admin }) => {
 													{message.message !== 'Your swap request for the shift has been accepted' && message.message !== 'Your rejection response has been sent to the swap requester' && message.message !== 'Your shift has been exchanged. View Details' && message.message !== 'Your shift has been swapped. Click for details' ? (
 														<div>
 
-															<br /> {message.currentUserId.lastName} , {message.currentUserId.firstName.charAt(0) + ' is requesting ' + message?.shiftName + ' call on ' + message.shiftFrom?.start}
+															<br /> {message.currentUserId.lastName}, {message.currentUserId.firstName.charAt(0) + ' is requesting ' + message?.shiftName + ' call on ' + message.shiftFrom?.start}
 															<br />
 
 															<Row className='buttonsetting'>
@@ -509,7 +509,7 @@ const Admin = ({ admin }) => {
 															</div></div>
 															<div style={{ margin: 2, width: "309px", wordWrap: "break-word", whiteSpace: "pre-wrap" }}>
 
-																<p>Your {message.shiftName} call for {message.shiftFrom?.start} has been exchanged to {message?.to ? message?.to?.lastName : message?.currentUserId?.lastName} , {message?.to ? message?.to?.firstName.charAt(0) : message?.currentUserId?.firstName.charAt(0)}</p>
+																<p>Your {message.shiftName} call for {message.shiftFrom?.start} has been exchanged to {message?.to ? message?.to?.lastName : message?.currentUserId?.lastName}, {message?.to ? message?.to?.firstName.charAt(0) : message?.currentUserId?.firstName.charAt(0)}</p>
 															</div>
 
 															<hr />
@@ -578,7 +578,7 @@ const Admin = ({ admin }) => {
 				sidebar={
 					<div style={{ backgroundColor: 'black' }}>
 						<Sider style={{ height: '100vh' }}>
-							<h5 className='pt-4 pb-2 text-center text-muted'>{admin.lastName + ' , ' + admin.firstName.charAt(0)}</h5>
+							<h5 className='pt-4 pb-2 text-center text-muted'>{admin.lastName + ', ' + admin.firstName.charAt(0)}</h5>
 							<Menu theme='dark' mode='inline' defaultSelectedKeys={[]}>
 								{/* <Menu.Item key="1" icon={<UserOutlined />}>
 									<Link to="/admin/profile">Profile</Link>

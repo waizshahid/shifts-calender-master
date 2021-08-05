@@ -76,6 +76,8 @@ class uploadfile extends Component {
 
 
 	onFileChange = (event) => {
+		let offs = false
+		console.log(event.target.files)
 		this.setState({ file: event.target.files[0] });
 		let fileObj = event.target.files[0];
 
@@ -84,9 +86,11 @@ class uploadfile extends Component {
 			if (err) {
 				console.log(err);
 			} else {
-				let newRows = [];
 
-				console.log(resp.rows, resp.cols)
+				let newRows = [];
+				resp.rows[0].length > 5 ? offs = false : offs = true;
+				console.log(resp.rows[0].length, resp.rows)
+
 				resp.rows.map((rows, index) => {
 					if (rows.length > 2) newRows.push(rows);
 				});
@@ -96,12 +100,13 @@ class uploadfile extends Component {
 				});
 				// console.log(resp.cols);
 				console.log(newRows);
-				this.UpdateExcel(newRows);
+				offs ? this.UpdateExceloff(newRows) : this.UpdateExcel(newRows);
 				let last;
 				this.setState({ startDate: this.ExcelDateToJSDate(resp.rows[1][0]).toISOString().toString().slice(0, 10) });
 				resp.rows.map((rows, index) => {
 
-					if (rows.length > 2) last = index;
+					if (offs && rows.length > 2) last = index;
+					else if (!offs && rows.length > 5) last = index;
 				});
 
 
@@ -110,7 +115,7 @@ class uploadfile extends Component {
 		});
 	};
 
-	UpdateExcel = (rows) => {
+	UpdateExceloff = (rows) => {
 		// this.deletePreviousData();
 
 		let shiftTitles = [];
@@ -193,6 +198,70 @@ class uploadfile extends Component {
 		console.log(Arr);
 		this.setState({ finalArray: Arr });
 	};
+
+
+	UpdateExcel = (rows) => {
+		// this.deletePreviousData();
+
+		let shiftTitles = [];
+		let shiftTitleIndex = [];
+		console.log(this.state.types);
+
+		// console.log(rows[0]);
+
+		let newArr = [];
+		rows[0].map((name, index) => {
+			console.log(name);
+			this.state.types.map((type) => {
+				if (name === type.name) {
+					newArr.push(type);
+					shiftTitleIndex.push(index);
+				}
+			});
+		});
+		// console.log(JSON.stringify(newArr));
+		// console.log(shiftTitleIndex);
+		let Arr = [];
+		let Obj = {};
+		newArr.map((shift, index) => {
+			this.state.rows[0].map((row, index) => {
+				if (row === shift.name)
+					this.state.rows.map((col, i) => {
+						// console.log(col);
+						if (i > 0) {
+							let JSdate = this.ExcelDateToJSDate(col[0]).toISOString().toString().slice(0, 10);
+							this.state.users.map((user) => {
+								if (col[index] !== undefined) {
+									// console.log(col[index]);
+									if (col[index].split(' & ').length > 0) {
+										col[index]
+											.split(' & ')
+											.map((name) => name.trim())
+											.map((usr, id) => {
+												//	console.log(usr, id);
+												if (user.username === usr.toLowerCase()) {
+													Obj = { name: usr.toLowerCase(), userId: user._id, shiftTypeId: shift.id, start: JSdate, end: JSdate, swappable: true };
+													Arr.push(Obj);
+												}
+											});
+									} else {
+										if (user.username === col[index].toLowerCase()) {
+											Obj = { name: col[index].toLowerCase(), userId: user._id, shiftTypeId: shift.id, start: JSdate, end: JSdate, swappable: true };
+											Arr.push(Obj);
+										}
+									}
+								}
+							});
+						}
+					});
+			});
+		});
+		console.log('Array to be pass to backend');
+		console.log(Arr);
+
+		this.setState({ finalArray: Arr });
+	};
+
 
 	Process = () => {
 		let result = [];
@@ -475,8 +544,8 @@ class uploadfile extends Component {
 		axios
 			.get('shift/getEventsBetweenTwoDates/' + start + '/' + end)
 			.then((resp) => {
-				//console.log(start, end);
-				//console.log(resp.data.shifts.length, resp.data.shifts)
+				console.log(start, end);
+				console.log(resp.data.shifts.length, resp.data.shifts)
 
 				let arr = []
 				for (let i = 0; i < resp.data.shifts.length; i++) {
@@ -484,10 +553,13 @@ class uploadfile extends Component {
 						arr.push(resp.data.shifts[i])
 					}
 				}
-				console.log("array afteer loop", arr)
+
+				//	console.log("array afteer loop",arr)
+
 				this.setState({
 					dateRangeArray: arr,
 				});
+
 				// console.log(JSON.stringify(this.state.dateRangeArray))
 				// console.log(this.state.data)
 				// console.log(this.state.dateRangeArray);
@@ -500,72 +572,25 @@ class uploadfile extends Component {
 						shortArr.push(this.state.dateRangeArray[i]);
 					}
 				}
-				//console.log(shortArr, "array after 3");
+				// console.log(shortArr);
 				var obj = {};
-
-				// previous code 
-
-
-				// for (var i = 0; i < this.state.dateRangeArray.length; i++) {
-				// 	if (this.state.dateRangeArray[i]) {
-				// 		var date = this.state.dateRangeArray[i].Date;
-				// 		// Get previous date saved inside the result
-
-				// 		var p_date = obj[date] || {};
-				// 		// console.log(p_date);
-				// 		// Merge the previous date with the next date
-				// 		obj[date] = Object.assign(p_date, this.state.dateRangeArray[i]);
-				// 	}
-				// }
-
-
-				// Hassan code to change view to three column i.e, date , shift , user
-				let arrWithnewPattern = []
-				let arrtocheck = []
-				let checkrep = false
-				for (let i = 0; i < this.state.dateRangeArray.length; i++) {
-					checkrep = false
+				for (var i = 0; i < this.state.dateRangeArray.length; i++) {
 					if (this.state.dateRangeArray[i]) {
+						var date = this.state.dateRangeArray[i].Date;
+						// Get previous date saved inside the result
 
-						let datetofind = this.state.dateRangeArray[i].Date
-
-						for (let check1 = 0; check1 < arrtocheck.length; check1++) {
-							if (arrtocheck[check1] == datetofind) {
-								checkrep = true
-							}
-						}
-						if (checkrep == true) {
-							console.log("continue")
-							continue;
-						}
-						else {
-							arrtocheck.push(datetofind)
-							//console.log(datetofind, i)
-							for (let j = 0; j < this.state.dateRangeArray.length; j++) {
-
-								if (datetofind == this.state.dateRangeArray[j].Date) {
-									var obj1 = {}
-									obj1.Date = datetofind;
-									obj1.Shift = Object.keys(this.state.dateRangeArray[j])[1]
-									obj1.name = this.state.dateRangeArray[j][Object.keys(this.state.dateRangeArray[j])[1]]
-									//console.log(obj1)
-									arrWithnewPattern.push(obj1)
-								}
-							}
-						}
+						var p_date = obj[date] || {};
+						// console.log(p_date);
+						// Merge the previous date with the next date
+						obj[date] = Object.assign(p_date, this.state.dateRangeArray[i]);
 					}
 				}
-				arrtocheck = []
-				var result = arrWithnewPattern
-
-				//Convert to an array
-				// console.log(obj, "object")
-				// var result = Object.values(obj);
-				// // console.log(JSON.stringify(result))
-				// console.log(result, "result")
-
+				// Convert to an array
+				console.log(obj, "object")
+				var result = Object.values(obj);
+				// console.log(JSON.stringify(result))
+				// console.log(result)
 				// let arr = []
-
 				// for(let i = 0 ; i < result.length ; i++){
 				//   result[i].Date = this.toShort(result[i].Date)
 				// }

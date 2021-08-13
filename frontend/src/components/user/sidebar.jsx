@@ -32,7 +32,6 @@ const Side = ({ user }) => {
 	const currentFName = decoded.firstName;
 	const currentLName = decoded.lastName;
 	const currentEmail = decoded.email;
-
 	const [visible, setVisible] = useState(false);
 	const [sentVisible, setsentVisible] = useState(false);
 	const [editProfile, setEditProfile] = useState(false);
@@ -250,12 +249,10 @@ const Side = ({ user }) => {
 
 	const deleteNotificationForAdminSwap = (message) => {
 		console.log('message lelo', message, dsplayMessage[message]);
-
 		const notificationId = dsplayMessage[message]._id;
 		console.log(dsplayMessage[message]._id);
 		console.log();
 		let currentid = jwt_decode(localStorage.getItem("usertoken")).id
-
 		if (dsplayMessage[message].from?._id == currentid) {
 			axios
 				.put('user/deleteFromid/' + notificationId)
@@ -1021,7 +1018,7 @@ const Side = ({ user }) => {
 					</Modal>
 				</div>
 				<Switch>
-					<Route exact path='/user/shifts-calender' component={ShiftsCalendar} />
+					<Route exact path='/user/shifts-calender' ><ShiftsCalendar userObj={myDetails} getNotifications={getNotifications} /></Route>
 					<Route exact path='/user/user-shifts/my-shifts' component={RestricSwapping} />
 					<Route exact path='/user/user-shifts' component={UserShiftCrud} />
 					<Route exact path='/user/user-shifts/my-off-shifts' component={OffShift} />

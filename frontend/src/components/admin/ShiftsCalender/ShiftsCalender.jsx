@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation, useParams } from 'react-router';
 import { Calendar, momentLocalizer, Views } from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
@@ -34,7 +35,9 @@ let currentShift = '';
 let shiftUserName = '';
 let shiftNameUser = '';
 let users = [];
-const ShiftsCalender = ({ userObj }) => {
+const ShiftsCalender = ({ userObj, getNotifications }) => {
+	const Location = useLocation();
+	const params = useParams()
 	const [visible, setVisible] = useState(false);
 	const [data, setData] = useState([]);
 	const [history, setHistory] = useState([]);
@@ -739,10 +742,12 @@ const ShiftsCalender = ({ userObj }) => {
 						})
 						.then((res) => {
 							console.log(res.data);
-							window.location.reload();
+							getNotifications()
+							setexchangeVisible(false)
+
 						})
 						.catch((err) => {
-							console.log(err.response);
+							console.log(err.response, err);
 						});
 				})
 				.catch((err) => {
@@ -863,6 +868,7 @@ const ShiftsCalender = ({ userObj }) => {
 	// } else {
 	return (
 		<div className='m-sm-4 m-2'>
+			{console.log(getNotifications, userObj, Location, params)}
 			<div className='row'>
 				<div className='col-3'>
 					<select id='selectDoctor' name='cars' className='custom-select bg-light m-2 shadow-sm' onChange={handleDoctors}>

@@ -131,13 +131,7 @@ const Admin = ({ admin }) => {
 	}
 
 	const getNotifications = () => {
-		//   axios.get("user/getCurrentUserNotificationsTo/"+currentId).then((res1) => {
-		// axios.get("user/getCurrentUserNotificationsFrom/"+currentId).then((res2) => {
-		// let array = [...res1.data,...res2.data];
-		// // console.log(array)
-		// setMessage(array)
-		// })
-		// })
+
 		axios
 			.get('user/getNotifcations')
 			.then(async (res1) => {
@@ -686,7 +680,7 @@ const Admin = ({ admin }) => {
 
 				<Switch>
 					<Route exact path='/admin/profile' component={Profile} />
-					<Route exact path='/admin/shifts-calender' component={ShiftsCalender} userObj={myDetails} />
+					<Route exact path='/admin/shifts-calender'><ShiftsCalender userObj={myDetails} getNotifications={getNotifications} /></Route>
 					<Route exact path='/admin/manage-users' component={ManageUsers} />
 					<Route exact path='/admin/exchange-shifts' component={ExchangeShift} />
 					{/* <Route exact path="/admin/upload" component={UploadFile} /> */}

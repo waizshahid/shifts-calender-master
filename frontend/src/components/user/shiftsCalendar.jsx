@@ -15,7 +15,7 @@ let name = '';
 let day = '';
 let sName = '';
 
-const ShiftsCalendar = () => {
+const ShiftsCalendar = ({ getNotifications }) => {
 	const [events, setEvents] = useState([]);
 	const [oneEvent, setOneEvent] = useState({});
 	const [visible, setVisible] = useState(false);
@@ -526,10 +526,11 @@ const ShiftsCalendar = () => {
 						})
 						.then((res) => {
 							console.log(res.data);
-							window.location.reload();
+							setexchangeVisible(false);
+							getNotifications();
 						})
 						.catch((err) => {
-							console.log(err.response);
+							console.log(err.response, err);
 						});
 				})
 				.catch((err) => {

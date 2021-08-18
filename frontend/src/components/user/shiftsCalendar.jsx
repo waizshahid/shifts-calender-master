@@ -626,7 +626,7 @@ const ShiftsCalendar = ({ getNotifications }) => {
 						No shift right now
 					</option>
 					{data.map((sh) => (
-						sh.shiftname == 'HASC ' || sh.shiftname == 'Off' || sh.shiftname == 'Request' || sh.shiftname == 'Pain' ?
+						sh.shiftname == 'HASC' || sh.shiftname == 'Off' || sh.shiftname == 'Request' || sh.shiftname == 'Pain' ?
 							<option value={sh._id + ':' + sh.shiftname} key={sh._id}>
 								{sh.shiftname}
 							</option> : null

@@ -109,7 +109,7 @@ const Side = ({ user }) => {
 					.put('user/updateResponses/' + id)
 					.then((res) => {
 						// console.log(res)
-						updateHistory(currentUserId, userId1, userId2, shiftId1, message, adminresponse, date, requester, shiftName, true);
+						updateHistory(currentUserId, userId1, userId2, shiftId1, message, adminresponse, date, requester, shiftName, false);
 					})
 					.catch((err) => {
 						console.log(err);
@@ -149,7 +149,7 @@ const Side = ({ user }) => {
 					.put('user/updateResponses/' + id)
 					.then((res) => {
 						// console.log(res)
-						updateHistory(currentUserId, userId1, userId2, shiftId1, message1, adminresponse, date, requester, shiftName, true);
+						updateHistory(currentUserId, userId1, userId2, shiftId1, message1, adminresponse, date, requester, shiftName, false);
 					})
 					.catch((err) => {
 						console.log(err);

@@ -190,7 +190,7 @@ const ShiftsCalendar = ({ getNotifications }) => {
 				//////// 
 
 				//	if (shiftName == 'Off') {
-				console.log("shiftoff")
+				console.log("shiftoff", date)
 				axios.post('user/createNotificationHistory', {
 					currentUserId: currentId,
 					userId1: currentId,

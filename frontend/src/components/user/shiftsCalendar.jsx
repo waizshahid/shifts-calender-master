@@ -130,7 +130,7 @@ const ShiftsCalendar = ({ getNotifications }) => {
 
 	const AfterSetOff = () => {
 		console.log('in create shift ccccccccc');
-		let date1 = new Date().toISOString().slice(0, 10);
+		let date1 = new Date().toISOString().slice(0, 10); 
 		const userId = currentId;
 		let shiftTypeId = shiftType;
 		console.log(userId);
@@ -192,7 +192,7 @@ const ShiftsCalendar = ({ getNotifications }) => {
 				//	if (shiftName == 'Off') {
 				console.log("shiftoff", date)
 				axios.post('user/createNotificationHistory', {
-					currentUserId: currentId,
+					currentUserId: currentId, 
 					userId1: currentId,
 					userId2: currentId,
 					shiftId1: res.data._id,

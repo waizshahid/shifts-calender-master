@@ -87,10 +87,8 @@ const Side = ({ user }) => {
 		const id = dsplayMessage[index]._id;
 		const shiftId1 = dsplayMessage[index].shiftFrom;
 		const userToExchange = dsplayMessage[index].to;
-
 		console.log(id);
 		console.log(userToExchange);
-
 		const currentUserId = currentId;
 		const userId1 = dsplayMessage[index].from;
 		const userId2 = userToExchange;
